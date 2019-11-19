@@ -67,8 +67,6 @@ otros			.
 "%"					return OPBINARIO;
 "--"					return OPBINARIO;
 "!"					return OPUNARIO;
-"+"					return OPUNARIO ;
-"-"					return OPUNARIO ;
 "#"					return OPUNARIO;
 "?"					return OPUNARIO;
 "++"					return OPTERNARIO_1;
@@ -107,7 +105,7 @@ void parse( const int aux, char ret[] ){
 		case 276: strcpy( ret, "Return\0" ); break;
 		case 277: strcpy( ret, "Inibloque\0" ); break;
 		case 278: strcpy( ret, "FinBloque\0" ); break;
-		case 279: strcpy( ret, "InicioVariables\0" ); break;
+		case 279: strcpy( ret, "IniVariables\0" ); break;
 		case 280: strcpy( ret, "FinVariables\0" ); break;
 		case 281: strcpy( ret, "Constante_Booleana\0" ); break;
 		case 282: strcpy( ret, "Cadena\0" ); break;

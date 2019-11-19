@@ -370,8 +370,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 		YY_FATAL_ERROR( "token too large, exceeds YYLMAX" ); \
 	yy_flex_strncpy( yytext, (yytext_ptr), yyleng + 1 ); \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 62
-#define YY_END_OF_BUFFER 63
+#define YY_NUM_RULES 60
+#define YY_END_OF_BUFFER 61
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -381,23 +381,23 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[164] =
     {   0,
-        0,    0,   63,   61,   60,   59,   48,   61,   51,   46,
-       61,   61,   27,   28,   41,   49,   25,   50,   61,   42,
-       23,   61,   26,   35,   33,   36,   52,   54,   58,   58,
-       58,   58,   58,   58,   58,   58,   58,   58,   58,   58,
-       58,   58,   31,   32,   45,   29,   61,   30,   43,    0,
-       22,   39,    0,   44,   53,   47,   24,    0,   23,   55,
-       37,   34,   38,   58,   58,   58,   58,   58,   58,   58,
-       58,   58,   58,   58,   58,   58,   58,   58,   58,   11,
-       58,   58,   40,   21,   58,   58,   58,   58,   58,   58,
-       58,   58,   58,   58,   58,   58,   58,   58,   58,   58,
+        0,    0,   61,   59,   58,   57,   48,   59,   49,   46,
+       59,   59,   27,   28,   41,   54,   25,   55,   59,   42,
+       23,   59,   26,   35,   33,   36,   50,   52,   56,   56,
+       56,   56,   56,   56,   56,   56,   56,   56,   56,   56,
+       56,   56,   31,   32,   45,   29,   59,   30,   43,    0,
+       22,   39,    0,   44,   51,   47,   24,    0,   23,   53,
+       37,   34,   38,   56,   56,   56,   56,   56,   56,   56,
+       56,   56,   56,   56,   56,   56,   56,   56,   56,   11,
+       56,   56,   40,   21,   56,   56,   56,   56,   56,   56,
+       56,   56,   56,   56,   56,   56,   56,   56,   56,   56,
 
-       58,   17,   58,   58,   58,   58,   58,   58,   58,   58,
-       58,   58,   14,   58,   58,    7,   10,   58,    3,   12,
-       58,   58,   58,    8,   58,   58,   20,   58,    9,   58,
-       58,   58,   58,   58,   58,   58,   58,    2,   18,   58,
-        0,   58,   58,   58,   58,   58,   58,   58,    0,   58,
-       58,   58,    4,    5,   16,   15,    6,   13,   58,   58,
+       56,   17,   56,   56,   56,   56,   56,   56,   56,   56,
+       56,   56,   14,   56,   56,    7,   10,   56,    3,   12,
+       56,   56,   56,    8,   56,   56,   20,   56,    9,   56,
+       56,   56,   56,   56,   56,   56,   56,    2,   18,   56,
+        0,   56,   56,   56,   56,   56,   56,   56,    0,   56,
+       56,   56,    4,    5,   16,   15,    6,   13,   56,   56,
         1,   19,    0
     } ;
 
@@ -588,12 +588,12 @@ static const flex_int16_t yy_chk[414] =
     } ;
 
 /* Table of booleans, true if rule could match eol. */
-static const flex_int32_t yy_rule_can_match_eol[63] =
+static const flex_int32_t yy_rule_can_match_eol[61] =
     {   0,
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
     0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
-    0, 0, 0,     };
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 
+    0,     };
 
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
@@ -1152,75 +1152,65 @@ return OPUNARIO;
 case 49:
 YY_RULE_SETUP
 #line 70 "p2.lex"
-return OPUNARIO ;
+return OPUNARIO;
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
 #line 71 "p2.lex"
-return OPUNARIO ;
+return OPUNARIO;
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
 #line 72 "p2.lex"
-return OPUNARIO;
+return OPTERNARIO_1;
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
 #line 73 "p2.lex"
-return OPUNARIO;
+return OPTERNARIO_2;
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
 #line 74 "p2.lex"
-return OPTERNARIO_1;
+return DOSPUNTOSIGUAL;
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
 #line 75 "p2.lex"
-return OPTERNARIO_2;
+return SIGNO;
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
 #line 76 "p2.lex"
-return DOSPUNTOSIGUAL;
+return SIGNO;	
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
 #line 77 "p2.lex"
-return SIGNO;
+return IDENTIFICADOR;
 	YY_BREAK
 case 57:
+/* rule 57 can match eol */
 YY_RULE_SETUP
 #line 78 "p2.lex"
-return SIGNO;	
+printf("\n");
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
 #line 79 "p2.lex"
-return IDENTIFICADOR;
+;
 	YY_BREAK
 case 59:
-/* rule 59 can match eol */
 YY_RULE_SETUP
 #line 80 "p2.lex"
-printf("\n");
+printf("\n(Linea %d) Error lexico: token %s\n", yylineno, yytext);
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 81 "p2.lex"
-;
-	YY_BREAK
-case 61:
-YY_RULE_SETUP
 #line 82 "p2.lex"
-printf("\n(Linea %d) Error lexico: token %s\n", yylineno, yytext);
-	YY_BREAK
-case 62:
-YY_RULE_SETUP
-#line 84 "p2.lex"
 ECHO;
 	YY_BREAK
-#line 1224 "lex.yy.c"
+#line 1214 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2237,7 +2227,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 84 "p2.lex"
+#line 82 "p2.lex"
 
 
 void parse( const int aux, char ret[] ){
