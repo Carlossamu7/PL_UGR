@@ -1,0 +1,11 @@
+PRINCIPAL{
+	VAR
+		ENTERO nombre;
+		nombre = 2;
+	FINVAR
+
+	PARA i :=  0  HASTA 10  PASO 1 { serie_dobles@i = (i*2);}
+}
+
+
+3r4r
