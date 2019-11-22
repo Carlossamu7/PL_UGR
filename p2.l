@@ -80,7 +80,7 @@ otros			.
 "+"						return SIGNO;
 "-"						return SIGNO;
 {identificador} 		return IDENTIFICADOR;
-[\n]					printf("\n");
+[\n]					/*printf("\n")*/;
 {blanco}				;
 {otros}					printf("\n(Linea %d) Error lexico: token %s\n", yylineno, yytext);
 

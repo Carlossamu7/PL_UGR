@@ -1,4 +1,4 @@
-main(){
+PRINCIPAL{
     VAR
         ENTERO ve ;
         REAL vr ;

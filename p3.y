@@ -76,7 +76,7 @@ declar_variables_locales		: INIVARIABLES
 variables_locales				: variables_locales cuerpo_declar_variables
 								| cuerpo_declar_variables ;
 
-cuerpo_declar_variables			: TIPO lista_identificadores FINLINEA ;
+cuerpo_declar_variables			: tipo lista_identificadores FINLINEA ;
 								| error; 
 								/**
 								 * 	error es una palabra reservada de yacc 
