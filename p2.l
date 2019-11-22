@@ -1,5 +1,5 @@
 %{
-	#include "tabla_simbolos.h"
+	//#include "tabla_simbolos.h" // Lo incluimos en el yacc, y éste (lex) lo incluimosal final del yacc
 	#include <stdlib.h>
 	#include <string.h>
 %}
@@ -78,7 +78,7 @@ otros			.
 "@"						return OPTERNARIO_2;
 ":="					return DOSPUNTOSIGUAL;
 "+"						return SIGNO;
-"-"						return SIGNO;	
+"-"						return SIGNO;
 {identificador} 		return IDENTIFICADOR;
 [\n]					printf("\n");
 {blanco}				;
@@ -86,6 +86,7 @@ otros			.
 
 %%
 
+/*
 void parse( const int aux, char ret[] ){
 	switch(aux){
 		case 257: strcpy( ret, "Cabecera\0" ); break;
@@ -140,5 +141,6 @@ int main(){
 	}
 	exit (1);
 }
+*/
 
 

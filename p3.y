@@ -34,10 +34,11 @@
 
 /* En el guión de prácticas pone que todos son left menos los unarios, ++ y -- */
 %left OPBINARIO
-%left OPTERNARIO_1
-%left OPTERNARIO_2
 %left SIGNO
 %left OPUNARIO
+
+%nonassoc OPTERNARIO_1
+%nonassoc OPTERNARIO_2
 
 /*  COIN
 %left OR
@@ -50,61 +51,82 @@
 %right NOT
 */
 
-%start Programa
+%start programa
 
 %%
 
-Programa						: Cabecera_programa bloque ;
+programa						: CABECERA bloque ;
 
-Bloque							: Inicio_de_bloque
-					 			  Declar_de_variables_locales
-					 			  Declar_de_subprogs
-							 	  Sentencias
-							 	  Fin_de_bloque ;
+bloque							: INIBLOQUE
+					 			  declar_variables_locales
+					 			  declar_subprogs
+							 	  sentencias
+							 	  FINBLOQUE ;
 
-Declar_de_subprogs				: /* vacío */
-								| Declar_de_subprogs Declar_subprog ;
+declar_subprogs					: declar_subprogs declar_subprog
+								| /* vacío */ ;
 
-Declar_subprog					: Cabecera_subprograma bloque ;
+declar_subprog					: cabecera_subprog bloque ;
 
-Declar_de_variables_locales		: /* vacío */
-								| Marca_ini_declar_variables
-						 	 		Variables_locales
-				 				  Marca_fin_declar_variables ;
+declar_variables_locales		: INIVARIABLES
+						 	 		variables_locales
+				 				  FINVARIABLES
+								| /* vacío */ ;
 
-Marca_ini_declar_variables		: INIVARIABLES ;
+variables_locales				: variables_locales cuerpo_declar_variables
+								| cuerpo_declar_variables ;
 
-Marca_fin_declar_variables		: FINVARIABLES ;
-
-Cabecera_programa				: CABECERA ;
-
-Inicio_de_bloque				: INIBLOQUE ;
-
-Fin_de_bloque					: FINBLOQUE ;
-
-Variables_locales				: Variables_locales Cuerpo_declar_variables
-								| Cuerpo_declar_variables ;
-
-Cuerpo_declar_variables			: TIPO Lista_de_identificadores FINLINEA ;
+cuerpo_declar_variables			: TIPO lista_identificadores FINLINEA ;
 								| error; 
 								/**
 								 * 	error es una palabra reservada de yacc 
 								 * 	y hace que si se llega a ella, se llama
 								 * 	a la funcion yyerror y a través de ella
-								 * 	controlamos los errores 
+								 * 	controlamos los errores. Es recomendable
+								 *  ponerla es las reglas más simples, no en 
+								 *  las compuestas pq por ejemplo si la pones 
+								 *	en bloque y falla el analizador en la
+								 *	declaración de variables, ignora el bloque
+								 *	completo y perdemos esa información
 								*/
 
-Lista_de_identificadores		: Lista_de_identificadores COMA Identificador
-								| Identificador ;
+lista_identificadores			: lista_identificadores COMA IDENTIFICADOR
+								| IDENTIFICADOR ;
 
-/* FALTAN AQUI */
+cabecera_subprog				: TIPO IDENTIFICADOR PARIZQ lista_parametros PARDER ;
 
+sentencias						: sentencias sentencia
+								| sentencia ;
 
+sentencia						: bloque
+								| sentencia_asignacion
+								| sentencia_if
+								| sentencia_while
+								| sentencia_entrada
+								| sentencia_salida
+								| sentencia_return
+								| sentencia_for ;
 
+sentencia_asignacion			: IDENTIFICADOR ASIGNACION expresion 
+									/* TODO: No sería exp_cad en vez de expresion?*/ ;
+
+sentencia_if					: CONDICION PARIZQ expresion PARDER sentencia
+								| CONDICION PARIZQ expresion PARDER sentencia
+								  ABRIRCORCHETE SUBCONDICION sentencia CERRARCORCHETE ;
+
+sentencia_while					: CICLO PARIZQ expresion PARDER sentencia ;
+
+sentencia_entrada				: ENTRADA lista_variables ;
+
+sentencia_salida				: SALIDA lista_exp_cadena ;
+
+sentencia_return				: RETURN expresion ;
+
+sentencia_for					: BUCLE IDENTIFICADOR DOSPUNTOSIGUAL expresion HASTA expresion PASO expresion sentencia ;
 
 lista_parametros				: lista_parametros COMA TIPO IDENTIFICADOR ;
 
-lista_exp_cad					: lista_exp_cad COMA exp_cad
+lista_exp_cadena				: lista_exp_cadena COMA exp_cad
 								| exp_cad ;
 
 exp_cad							: expresion
