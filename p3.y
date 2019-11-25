@@ -3,7 +3,8 @@
 	#include <stdio.h>
 	#include <string.h>
 
-	#define YYDEBUG 0		
+	#define YYDEBUG 1
+	int yydebug = 0;	
 
 	int yylex();  // Para evitar warning al compilar
 	void yyerror(const char * msg);
@@ -17,20 +18,44 @@
 
 %error-verbose	/* Hace que bison (yacc) te de detalles sobre los errores */
 
+
 %token CABECERA
 %token IDENTIFICADOR
+%token OPBINARIO
+%token OPTERNARIO_1
+%token OPTERNARIO_2
+%token SIGNO
+%token ENTERO
+%token REAL
 %token TIPO
-%token ENTERO REAL CONSTANTE_BOOLEANA CONSTANTE_CARACTER CADENA LISTA_DE
-%token BUCLE DESDE HASTA PASO
-%token CONDICION SUBCONDICION CICLO
+%token BUCLE
+%token DESDE
+%token HASTA
+%token PASO
+%token CONDICION
+%token SUBCONDICION
+%token CICLO
 %token ASIGNACION
-%token ENTRADA SALIDA
+%token ENTRADA
+%token SALIDA
 %token RETURN
-%token INIVARIABLES FINVARIABLES
-%token INIBLOQUE FINBLOQUE
-%token PARIZQ PARDER
-%token ABRIRCORCHETE CERRARCORCHETE
-%token FINLINEA COMA DOSPUNTOSIGUAL
+%token INIBLOQUE
+%token FINBLOQUE
+%token INIVARIABLES
+%token FINVARIABLES
+%token CONSTANTE_BOOLEANA
+%token CADENA
+%token CONSTANTE_CARACTER
+%token PARIZQ
+%token PARDER
+%token COMA
+%token FINLINEA
+%token DOSPUNTOSIGUAL
+%token ABRIRCORCHETE
+%token CERRARCORCHETE
+%token OPUNARIO
+%token LISTA_DE
+
 
 /* En el guión de prácticas pone que todos son left menos los unarios, ++ y -- */
 %left OPBINARIO
@@ -93,7 +118,7 @@ cuerpo_declar_variables			: tipo lista_identificadores FINLINEA ;
 lista_identificadores			: lista_identificadores COMA IDENTIFICADOR
 								| IDENTIFICADOR ;
 
-cabecera_subprog				: TIPO IDENTIFICADOR PARIZQ lista_parametros PARDER ;
+cabecera_subprog				: tipo IDENTIFICADOR PARIZQ lista_parametros PARDER ;
 
 sentencias						: sentencias sentencia
 								| sentencia ;
@@ -105,26 +130,27 @@ sentencia						: bloque
 								| sentencia_entrada
 								| sentencia_salida
 								| sentencia_return
-								| sentencia_for ;
+								| sentencia_for 
+								| funcion FINLINEA ;
 
-sentencia_asignacion			: IDENTIFICADOR ASIGNACION expresion 
-									/* TODO: No sería exp_cad en vez de expresion?*/ ;
+sentencia_asignacion			: IDENTIFICADOR ASIGNACION exp_cad FINLINEA ;
 
 sentencia_if					: CONDICION PARIZQ expresion PARDER sentencia
-								| CONDICION PARIZQ expresion PARDER sentencia
-								  ABRIRCORCHETE SUBCONDICION sentencia CERRARCORCHETE ;
+								  SUBCONDICION sentencia 
+								| CONDICION PARIZQ expresion PARDER sentencia ;
 
 sentencia_while					: CICLO PARIZQ expresion PARDER sentencia ;
 
-sentencia_entrada				: ENTRADA lista_variables ;
+sentencia_entrada				: ENTRADA lista_variables FINLINEA ;
 
-sentencia_salida				: SALIDA lista_exp_cadena ;
+sentencia_salida				: SALIDA lista_exp_cadena FINLINEA ;
 
-sentencia_return				: RETURN expresion ;
+sentencia_return				: RETURN expresion FINLINEA ;
 
 sentencia_for					: BUCLE IDENTIFICADOR DOSPUNTOSIGUAL expresion HASTA expresion PASO expresion sentencia ;
 
-lista_parametros				: lista_parametros COMA TIPO IDENTIFICADOR ;
+lista_parametros				: lista_parametros COMA tipo IDENTIFICADOR 
+								| tipo IDENTIFICADOR ;
 
 lista_exp_cadena				: lista_exp_cadena COMA exp_cad
 								| exp_cad ;
