@@ -199,6 +199,7 @@ signo							: SIGNO
 /** Aqui incluimos el fichero generado por el ’lex’
  *	que implementa la funcion ’yylex’
  **/
+
 #ifdef DOSWINDOWS /* Variable de entorno que indica la plataforma */
 #include "lexyy.c"
 #else

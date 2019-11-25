@@ -40,7 +40,6 @@ int linea = 1;
 %right OPUNARIO
 
 
-
 /*Inicio de la sintaxis*/
 
 %start Programa
