@@ -101,7 +101,8 @@ declar_variables_locales		: INIVARIABLES
 variables_locales				: variables_locales cuerpo_declar_variables
 								| cuerpo_declar_variables ;
 
-cuerpo_declar_variables			: tipo lista_identificadores FINLINEA ;
+cuerpo_declar_variables			: tipo lista_identificadores FINLINEA 
+								| tipo sentencia_asignacion 
 								| error; 
 								/**
 								 * 	error es una palabra reservada de yacc 
@@ -170,37 +171,21 @@ expresion						: PARIZQ expresion PARDER
 								| expresion SIGNO expresion
 								| expresion OPBINARIO expresion
 								| IDENTIFICADOR
+								| lista
 								| constante
 								| funcion
 								| expresion OPTERNARIO_1 expresion OPTERNARIO_2 expresion ;
 
 funcion							: IDENTIFICADOR PARIZQ lista_expresiones PARDER ;
 
-constante						: ENTERO
-								| REAL
+constante						: signo ENTERO
+								| signo REAL
 								| CONSTANTE_CARACTER
 								| CONSTANTE_BOOLEANA ;
 
-lista							: lista_entero
-								| lista_real
-								| lista_caracter
-								| lista_booleana ;
-
-lista_entero					: ABRIRCORCHETE lista_entero CERRARCORCHETE
-								| lista_entero COMA signo ENTERO
-								| signo ENTERO ;
-
-lista_real						: ABRIRCORCHETE lista_real CERRARCORCHETE
-								| lista_real COMA signo REAL
-								| signo REAL ;
-
-lista_caracter					: ABRIRCORCHETE lista_caracter CERRARCORCHETE
-								| lista_caracter COMA CONSTANTE_CARACTER
-								| CONSTANTE_CARACTER ;
-
-lista_booleana					: ABRIRCORCHETE lista_booleana CERRARCORCHETE
-								| lista_booleana COMA CONSTANTE_BOOLEANA
-								| CONSTANTE_BOOLEANA ;
+lista							: ABRIRCORCHETE lista CERRARCORCHETE
+								| lista COMA signo constante
+								| signo constante ;						
 
 tipo							: TIPO
 								| LISTA_DE TIPO ;

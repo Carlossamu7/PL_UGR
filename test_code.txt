@@ -1,6 +1,14 @@
 PRINCIPAL{
     VAR
         ENTERO ve ;
+        REAL vr ;
+        CARACTER vc ;
+        BOOLEANO vb ;
+
+        LISTA DE ENTERO le, le2 ;
+        LISTA DE REAL lr, lr2 ;
+        LISTA DE CARACTER lc, lc2 ;
+        LISTA DE BOOLEANO lb ;
     FINVAR
 
     ENTERO funcionA (ENTERO a1, ENTERO a2, CARACTER a3){
@@ -27,9 +35,9 @@ PRINCIPAL{
             }
 
             xf= functionC (VERDADERO, 10);
-            x2= xf*(funcionC(FALSO,1)-funcionC(VERDADERO,23))/10.0;
+            x2= xf*(funcionC(FALSO,1*2)-funcionC(VERDADERO,23))/10.0;
             MIENTRAS (x2*funcionC(FALSO,1)-xf<10.0)
-            x2= x2*xf ;
+                x2= x2*xf ;
         }
         REAL funcionD (REAL d1){
             VAR
@@ -70,6 +78,6 @@ PRINCIPAL{
     }
 
 
-    
+
     a = 3;
 }
