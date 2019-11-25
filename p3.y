@@ -3,7 +3,7 @@
 	#include <stdio.h>
 	#include <string.h>
 
-	#define YYDEBUG 0		
+	#define YYDEBUG 1	
 
 	int yylex();  // Para evitar warning al compilar
 	void yyerror(const char * msg);
@@ -17,20 +17,44 @@
 
 %error-verbose	/* Hace que bison (yacc) te de detalles sobre los errores */
 
+
 %token CABECERA
 %token IDENTIFICADOR
+%token OPBINARIO
+%token OPTERNARIO_1
+%token OPTERNARIO_2
+%token SIGNO
+%token ENTERO
+%token REAL
 %token TIPO
-%token ENTERO REAL CONSTANTE_BOOLEANA CONSTANTE_CARACTER CADENA LISTA_DE
-%token BUCLE DESDE HASTA PASO
-%token CONDICION SUBCONDICION CICLO
+%token BUCLE
+%token DESDE
+%token HASTA
+%token PASO
+%token CONDICION
+%token SUBCONDICION
+%token CICLO
 %token ASIGNACION
-%token ENTRADA SALIDA
+%token ENTRADA
+%token SALIDA
 %token RETURN
-%token INIVARIABLES FINVARIABLES
-%token INIBLOQUE FINBLOQUE
-%token PARIZQ PARDER
-%token ABRIRCORCHETE CERRARCORCHETE
-%token FINLINEA COMA DOSPUNTOSIGUAL
+%token INIBLOQUE
+%token FINBLOQUE
+%token INIVARIABLES
+%token FINVARIABLES
+%token CONSTANTE_BOOLEANA
+%token CADENA
+%token CONSTANTE_CARACTER
+%token PARIZQ
+%token PARDER
+%token COMA
+%token FINLINEA
+%token DOSPUNTOSIGUAL
+%token ABRIRCORCHETE
+%token CERRARCORCHETE
+%token OPUNARIO
+%token LISTA_DE
+
 
 /* En el guión de prácticas pone que todos son left menos los unarios, ++ y -- */
 %left OPBINARIO
@@ -63,7 +87,7 @@ bloque							: INIBLOQUE
 							 	  sentencias
 							 	  FINBLOQUE ;
 
-declar_subprogs					: declar_subprogs declar_subprog
+declar_subprogs					: declar_subprogs declar_subprog ;
 								| /* vacío */ ;
 
 declar_subprog					: cabecera_subprog bloque ;
@@ -107,8 +131,7 @@ sentencia						: bloque
 								| sentencia_return
 								| sentencia_for ;
 
-sentencia_asignacion			: IDENTIFICADOR ASIGNACION expresion 
-									/* TODO: No sería exp_cad en vez de expresion?*/ ;
+sentencia_asignacion			: IDENTIFICADOR ASIGNACION exp_cad FINLINEA ;
 
 sentencia_if					: CONDICION PARIZQ expresion PARDER sentencia
 								| CONDICION PARIZQ expresion PARDER sentencia
@@ -116,11 +139,11 @@ sentencia_if					: CONDICION PARIZQ expresion PARDER sentencia
 
 sentencia_while					: CICLO PARIZQ expresion PARDER sentencia ;
 
-sentencia_entrada				: ENTRADA lista_variables ;
+sentencia_entrada				: ENTRADA lista_variables FINLINEA ;
 
-sentencia_salida				: SALIDA lista_exp_cadena ;
+sentencia_salida				: SALIDA lista_exp_cadena FINLINEA ;
 
-sentencia_return				: RETURN expresion ;
+sentencia_return				: RETURN expresion FINLINEA ;
 
 sentencia_for					: BUCLE IDENTIFICADOR DOSPUNTOSIGUAL expresion HASTA expresion PASO expresion sentencia ;
 
@@ -148,7 +171,7 @@ expresion						: PARIZQ expresion PARDER
 								| funcion
 								| expresion OPTERNARIO_1 expresion OPTERNARIO_2 expresion ;
 
-funcion							: IDENTIFICADOR PARIZQ lista_expresiones PARDER ;
+funcion							: IDENTIFICADOR PARIZQ lista_expresiones PARDER FINLINEA ;
 
 constante						: ENTERO
 								| REAL
