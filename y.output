@@ -3,32 +3,12 @@ Terminals unused in grammar
    DESDE
 
 
-Estado 26 conflictos: 3 desplazamiento(s)/reducción(ones)
-Estado 27 conflictos: 3 desplazamiento(s)/reducción(ones)
-Estado 42 conflictos: 3 desplazamiento(s)/reducción(ones)
-Estado 45 conflictos: 3 desplazamiento(s)/reducción(ones)
-Estado 47 conflictos: 3 desplazamiento(s)/reducción(ones)
-Estado 48 conflictos: 3 desplazamiento(s)/reducción(ones)
-Estado 52 conflictos: 2 desplazamiento/reducción, 5 reducción/reducción
-Estado 56 conflictos: 3 desplazamiento(s)/reducción(ones)
-Estado 57 conflictos: 1 desplazamiento(s)/reducción(ones)
-Estado 58 conflictos: 3 desplazamiento(s)/reducción(ones)
-Estado 64 conflictos: 1 desplazamiento(s)/reducción(ones)
-Estado 65 conflictos: 2 desplazamiento(s)/reducción(ones)
-Estado 76 conflictos: 3 desplazamiento(s)/reducción(ones)
-Estado 87 conflictos: 3 desplazamiento(s)/reducción(ones)
-Estado 89 conflictos: 3 desplazamiento(s)/reducción(ones)
-Estado 90 conflictos: 3 desplazamiento(s)/reducción(ones)
-Estado 91 conflictos: 3 desplazamiento(s)/reducción(ones)
-Estado 92 conflictos: 1 desplazamiento(s)/reducción(ones)
-Estado 101 conflictos: 3 desplazamiento(s)/reducción(ones)
-Estado 116 conflictos: 3 desplazamiento(s)/reducción(ones)
-Estado 117 conflictos: 1 desplazamiento(s)/reducción(ones)
-Estado 119 conflictos: 3 desplazamiento(s)/reducción(ones)
-Estado 128 conflictos: 3 desplazamiento(s)/reducción(ones)
+State 52 conflicts: 2 reduce/reduce
+State 63 conflicts: 17 reduce/reduce
+State 64 conflicts: 1 shift/reduce
 
 
-Gramática
+Grammar
 
     0 $accept: programa $end
 
@@ -37,12 +17,12 @@ Gramática
     2 bloque: INIBLOQUE declar_variables_locales declar_subprogs sentencias FINBLOQUE
 
     3 declar_subprogs: declar_subprogs declar_subprog
-    4                | /* vacío */
+    4                | %empty
 
     5 declar_subprog: cabecera_subprog bloque
 
     6 declar_variables_locales: INIVARIABLES variables_locales FINVARIABLES
-    7                         | /* vacío */
+    7                         | %empty
 
     8 variables_locales: variables_locales cuerpo_declar_variables
     9                  | cuerpo_declar_variables
@@ -118,17 +98,17 @@ Gramática
    59          | CONSTANTE_BOOLEANA
 
    60 lista: ABRIRCORCHETE lista CERRARCORCHETE
-   61      | lista COMA signo constante
-   62      | signo constante
+   61      | lista COMA constante
+   62      | constante
 
    63 tipo: TIPO
    64     | LISTA_DE TIPO
 
    65 signo: SIGNO
-   66      | /* vacío */
+   66      | %empty
 
 
-Terminales con las reglas donde aparecen
+Terminals, with rules where they appear
 
 $end (0) 0
 error (256) 12
@@ -170,932 +150,926 @@ OPUNARIO (292) 46
 LISTA_DE (293) 64
 
 
-No terminales con las reglas donde aparecen
+Nonterminals, with rules where they appear
 
 $accept (39)
-    en la izquierda: 0
+    on left: 0
 programa (40)
-    en la izquierda: 1, en la derecha: 0
+    on left: 1, on right: 0
 bloque (41)
-    en la izquierda: 2, en la derecha: 1 5 18
+    on left: 2, on right: 1 5 18
 declar_subprogs (42)
-    en la izquierda: 3 4, en la derecha: 2 3
+    on left: 3 4, on right: 2 3
 declar_subprog (43)
-    en la izquierda: 5, en la derecha: 3
+    on left: 5, on right: 3
 declar_variables_locales (44)
-    en la izquierda: 6 7, en la derecha: 2
+    on left: 6 7, on right: 2
 variables_locales (45)
-    en la izquierda: 8 9, en la derecha: 6 8
+    on left: 8 9, on right: 6 8
 cuerpo_declar_variables (46)
-    en la izquierda: 10 11 12, en la derecha: 8 9
+    on left: 10 11 12, on right: 8 9
 lista_identificadores (47)
-    en la izquierda: 13 14, en la derecha: 10 13
+    on left: 13 14, on right: 10 13
 cabecera_subprog (48)
-    en la izquierda: 15, en la derecha: 5
+    on left: 15, on right: 5
 sentencias (49)
-    en la izquierda: 16 17, en la derecha: 2 16
+    on left: 16 17, on right: 2 16
 sentencia (50)
-    en la izquierda: 18 19 20 21 22 23 24 25 26, en la derecha: 16
-    17 28 29 30 34
+    on left: 18 19 20 21 22 23 24 25 26, on right: 16 17 28 29 30 34
 sentencia_asignacion (51)
-    en la izquierda: 27, en la derecha: 11 19
+    on left: 27, on right: 11 19
 sentencia_if (52)
-    en la izquierda: 28 29, en la derecha: 20
+    on left: 28 29, on right: 20
 sentencia_while (53)
-    en la izquierda: 30, en la derecha: 21
+    on left: 30, on right: 21
 sentencia_entrada (54)
-    en la izquierda: 31, en la derecha: 22
+    on left: 31, on right: 22
 sentencia_salida (55)
-    en la izquierda: 32, en la derecha: 23
+    on left: 32, on right: 23
 sentencia_return (56)
-    en la izquierda: 33, en la derecha: 24
+    on left: 33, on right: 24
 sentencia_for (57)
-    en la izquierda: 34, en la derecha: 25
+    on left: 34, on right: 25
 lista_parametros (58)
-    en la izquierda: 35 36, en la derecha: 15 35
+    on left: 35 36, on right: 15 35
 lista_exp_cadena (59)
-    en la izquierda: 37 38, en la derecha: 32 37
+    on left: 37 38, on right: 32 37
 exp_cad (60)
-    en la izquierda: 39 40, en la derecha: 27 37 38
+    on left: 39 40, on right: 27 37 38
 lista_variables (61)
-    en la izquierda: 41 42, en la derecha: 31 41
+    on left: 41 42, on right: 31 41
 lista_expresiones (62)
-    en la izquierda: 43 44, en la derecha: 43 55
+    on left: 43 44, on right: 43 55
 expresion (63)
-    en la izquierda: 45 46 47 48 49 50 51 52 53 54, en la derecha:
-    28 29 30 33 34 39 43 44 45 46 47 48 49 54
+    on left: 45 46 47 48 49 50 51 52 53 54, on right: 28 29 30 33 34
+    39 43 44 45 46 47 48 49 54
 funcion (64)
-    en la izquierda: 55, en la derecha: 26 53
+    on left: 55, on right: 26 53
 constante (65)
-    en la izquierda: 56 57 58 59, en la derecha: 52 61 62
+    on left: 56 57 58 59, on right: 52 61 62
 lista (66)
-    en la izquierda: 60 61 62, en la derecha: 51 60 61
+    on left: 60 61 62, on right: 51 60 61
 tipo (67)
-    en la izquierda: 63 64, en la derecha: 10 11 15 35 36
+    on left: 63 64, on right: 10 11 15 35 36
 signo (68)
-    en la izquierda: 65 66, en la derecha: 56 57 61 62
+    on left: 65 66, on right: 56 57
 
 
-estado 0
+State 0
 
     0 $accept: . programa $end
 
-    CABECERA  desplazar e ir al estado 1
+    CABECERA  shift, and go to state 1
 
-    programa  ir al estado 2
+    programa  go to state 2
 
 
-estado 1
+State 1
 
     1 programa: CABECERA . bloque
 
-    INIBLOQUE  desplazar e ir al estado 3
+    INIBLOQUE  shift, and go to state 3
 
-    bloque  ir al estado 4
+    bloque  go to state 4
 
 
-estado 2
+State 2
 
     0 $accept: programa . $end
 
-    $end  desplazar e ir al estado 5
+    $end  shift, and go to state 5
 
 
-estado 3
+State 3
 
     2 bloque: INIBLOQUE . declar_variables_locales declar_subprogs sentencias FINBLOQUE
 
-    INIVARIABLES  desplazar e ir al estado 6
+    INIVARIABLES  shift, and go to state 6
 
-    $default  reduce usando la regla 7 (declar_variables_locales)
+    $default  reduce using rule 7 (declar_variables_locales)
 
-    declar_variables_locales  ir al estado 7
+    declar_variables_locales  go to state 7
 
 
-estado 4
+State 4
 
     1 programa: CABECERA bloque .
 
-    $default  reduce usando la regla 1 (programa)
+    $default  reduce using rule 1 (programa)
 
 
-estado 5
+State 5
 
     0 $accept: programa $end .
 
-    $default  aceptar
+    $default  accept
 
 
-estado 6
+State 6
 
     6 declar_variables_locales: INIVARIABLES . variables_locales FINVARIABLES
 
-    error     desplazar e ir al estado 8
-    TIPO      desplazar e ir al estado 9
-    LISTA_DE  desplazar e ir al estado 10
+    error     shift, and go to state 8
+    TIPO      shift, and go to state 9
+    LISTA_DE  shift, and go to state 10
 
-    variables_locales        ir al estado 11
-    cuerpo_declar_variables  ir al estado 12
-    tipo                     ir al estado 13
+    variables_locales        go to state 11
+    cuerpo_declar_variables  go to state 12
+    tipo                     go to state 13
 
 
-estado 7
+State 7
 
     2 bloque: INIBLOQUE declar_variables_locales . declar_subprogs sentencias FINBLOQUE
 
-    $default  reduce usando la regla 4 (declar_subprogs)
+    $default  reduce using rule 4 (declar_subprogs)
 
-    declar_subprogs  ir al estado 14
+    declar_subprogs  go to state 14
 
 
-estado 8
+State 8
 
    12 cuerpo_declar_variables: error .
 
-    $default  reduce usando la regla 12 (cuerpo_declar_variables)
+    $default  reduce using rule 12 (cuerpo_declar_variables)
 
 
-estado 9
+State 9
 
    63 tipo: TIPO .
 
-    $default  reduce usando la regla 63 (tipo)
+    $default  reduce using rule 63 (tipo)
 
 
-estado 10
+State 10
 
    64 tipo: LISTA_DE . TIPO
 
-    TIPO  desplazar e ir al estado 15
+    TIPO  shift, and go to state 15
 
 
-estado 11
+State 11
 
     6 declar_variables_locales: INIVARIABLES variables_locales . FINVARIABLES
     8 variables_locales: variables_locales . cuerpo_declar_variables
 
-    error         desplazar e ir al estado 8
-    TIPO          desplazar e ir al estado 9
-    FINVARIABLES  desplazar e ir al estado 16
-    LISTA_DE      desplazar e ir al estado 10
+    error         shift, and go to state 8
+    TIPO          shift, and go to state 9
+    FINVARIABLES  shift, and go to state 16
+    LISTA_DE      shift, and go to state 10
 
-    cuerpo_declar_variables  ir al estado 17
-    tipo                     ir al estado 13
+    cuerpo_declar_variables  go to state 17
+    tipo                     go to state 13
 
 
-estado 12
+State 12
 
     9 variables_locales: cuerpo_declar_variables .
 
-    $default  reduce usando la regla 9 (variables_locales)
+    $default  reduce using rule 9 (variables_locales)
 
 
-estado 13
+State 13
 
    10 cuerpo_declar_variables: tipo . lista_identificadores FINLINEA
    11                        | tipo . sentencia_asignacion
 
-    IDENTIFICADOR  desplazar e ir al estado 18
+    IDENTIFICADOR  shift, and go to state 18
 
-    lista_identificadores  ir al estado 19
-    sentencia_asignacion   ir al estado 20
+    lista_identificadores  go to state 19
+    sentencia_asignacion   go to state 20
 
 
-estado 14
+State 14
 
     2 bloque: INIBLOQUE declar_variables_locales declar_subprogs . sentencias FINBLOQUE
     3 declar_subprogs: declar_subprogs . declar_subprog
 
-    IDENTIFICADOR  desplazar e ir al estado 21
-    TIPO           desplazar e ir al estado 9
-    BUCLE          desplazar e ir al estado 22
-    CONDICION      desplazar e ir al estado 23
-    CICLO          desplazar e ir al estado 24
-    ENTRADA        desplazar e ir al estado 25
-    SALIDA         desplazar e ir al estado 26
-    RETURN         desplazar e ir al estado 27
-    INIBLOQUE      desplazar e ir al estado 3
-    LISTA_DE       desplazar e ir al estado 10
+    IDENTIFICADOR  shift, and go to state 21
+    TIPO           shift, and go to state 9
+    BUCLE          shift, and go to state 22
+    CONDICION      shift, and go to state 23
+    CICLO          shift, and go to state 24
+    ENTRADA        shift, and go to state 25
+    SALIDA         shift, and go to state 26
+    RETURN         shift, and go to state 27
+    INIBLOQUE      shift, and go to state 3
+    LISTA_DE       shift, and go to state 10
 
-    bloque                ir al estado 28
-    declar_subprog        ir al estado 29
-    cabecera_subprog      ir al estado 30
-    sentencias            ir al estado 31
-    sentencia             ir al estado 32
-    sentencia_asignacion  ir al estado 33
-    sentencia_if          ir al estado 34
-    sentencia_while       ir al estado 35
-    sentencia_entrada     ir al estado 36
-    sentencia_salida      ir al estado 37
-    sentencia_return      ir al estado 38
-    sentencia_for         ir al estado 39
-    funcion               ir al estado 40
-    tipo                  ir al estado 41
+    bloque                go to state 28
+    declar_subprog        go to state 29
+    cabecera_subprog      go to state 30
+    sentencias            go to state 31
+    sentencia             go to state 32
+    sentencia_asignacion  go to state 33
+    sentencia_if          go to state 34
+    sentencia_while       go to state 35
+    sentencia_entrada     go to state 36
+    sentencia_salida      go to state 37
+    sentencia_return      go to state 38
+    sentencia_for         go to state 39
+    funcion               go to state 40
+    tipo                  go to state 41
 
 
-estado 15
+State 15
 
    64 tipo: LISTA_DE TIPO .
 
-    $default  reduce usando la regla 64 (tipo)
+    $default  reduce using rule 64 (tipo)
 
 
-estado 16
+State 16
 
     6 declar_variables_locales: INIVARIABLES variables_locales FINVARIABLES .
 
-    $default  reduce usando la regla 6 (declar_variables_locales)
+    $default  reduce using rule 6 (declar_variables_locales)
 
 
-estado 17
+State 17
 
     8 variables_locales: variables_locales cuerpo_declar_variables .
 
-    $default  reduce usando la regla 8 (variables_locales)
+    $default  reduce using rule 8 (variables_locales)
 
 
-estado 18
+State 18
 
    14 lista_identificadores: IDENTIFICADOR .
    27 sentencia_asignacion: IDENTIFICADOR . ASIGNACION exp_cad FINLINEA
 
-    ASIGNACION  desplazar e ir al estado 42
+    ASIGNACION  shift, and go to state 42
 
-    $default  reduce usando la regla 14 (lista_identificadores)
+    $default  reduce using rule 14 (lista_identificadores)
 
 
-estado 19
+State 19
 
    10 cuerpo_declar_variables: tipo lista_identificadores . FINLINEA
    13 lista_identificadores: lista_identificadores . COMA IDENTIFICADOR
 
-    COMA      desplazar e ir al estado 43
-    FINLINEA  desplazar e ir al estado 44
+    COMA      shift, and go to state 43
+    FINLINEA  shift, and go to state 44
 
 
-estado 20
+State 20
 
    11 cuerpo_declar_variables: tipo sentencia_asignacion .
 
-    $default  reduce usando la regla 11 (cuerpo_declar_variables)
+    $default  reduce using rule 11 (cuerpo_declar_variables)
 
 
-estado 21
+State 21
 
    27 sentencia_asignacion: IDENTIFICADOR . ASIGNACION exp_cad FINLINEA
    55 funcion: IDENTIFICADOR . PARIZQ lista_expresiones PARDER
 
-    ASIGNACION  desplazar e ir al estado 42
-    PARIZQ      desplazar e ir al estado 45
+    ASIGNACION  shift, and go to state 42
+    PARIZQ      shift, and go to state 45
 
 
-estado 22
+State 22
 
    34 sentencia_for: BUCLE . IDENTIFICADOR DOSPUNTOSIGUAL expresion HASTA expresion PASO expresion sentencia
 
-    IDENTIFICADOR  desplazar e ir al estado 46
+    IDENTIFICADOR  shift, and go to state 46
 
 
-estado 23
+State 23
 
    28 sentencia_if: CONDICION . PARIZQ expresion PARDER sentencia SUBCONDICION sentencia
    29             | CONDICION . PARIZQ expresion PARDER sentencia
 
-    PARIZQ  desplazar e ir al estado 47
+    PARIZQ  shift, and go to state 47
 
 
-estado 24
+State 24
 
    30 sentencia_while: CICLO . PARIZQ expresion PARDER sentencia
 
-    PARIZQ  desplazar e ir al estado 48
+    PARIZQ  shift, and go to state 48
 
 
-estado 25
+State 25
 
    31 sentencia_entrada: ENTRADA . lista_variables FINLINEA
 
-    IDENTIFICADOR  desplazar e ir al estado 49
+    IDENTIFICADOR  shift, and go to state 49
 
-    lista_variables  ir al estado 50
+    lista_variables  go to state 50
 
 
-estado 26
+State 26
 
    32 sentencia_salida: SALIDA . lista_exp_cadena FINLINEA
 
-    IDENTIFICADOR       desplazar e ir al estado 51
-    SIGNO               desplazar e ir al estado 52
-    CONSTANTE_BOOLEANA  desplazar e ir al estado 53
-    CADENA              desplazar e ir al estado 54
-    CONSTANTE_CARACTER  desplazar e ir al estado 55
-    PARIZQ              desplazar e ir al estado 56
-    ABRIRCORCHETE       desplazar e ir al estado 57
-    OPUNARIO            desplazar e ir al estado 58
+    IDENTIFICADOR       shift, and go to state 51
+    SIGNO               shift, and go to state 52
+    CONSTANTE_BOOLEANA  shift, and go to state 53
+    CADENA              shift, and go to state 54
+    CONSTANTE_CARACTER  shift, and go to state 55
+    PARIZQ              shift, and go to state 56
+    ABRIRCORCHETE       shift, and go to state 57
+    OPUNARIO            shift, and go to state 58
 
-    SIGNO               [reduce usando la regla 66 (signo)]
-    CONSTANTE_BOOLEANA  [reduce usando la regla 66 (signo)]
-    CONSTANTE_CARACTER  [reduce usando la regla 66 (signo)]
-    $default            reduce usando la regla 66 (signo)
+    $default  reduce using rule 66 (signo)
 
-    lista_exp_cadena  ir al estado 59
-    exp_cad           ir al estado 60
-    expresion         ir al estado 61
-    funcion           ir al estado 62
-    constante         ir al estado 63
-    lista             ir al estado 64
-    signo             ir al estado 65
+    lista_exp_cadena  go to state 59
+    exp_cad           go to state 60
+    expresion         go to state 61
+    funcion           go to state 62
+    constante         go to state 63
+    lista             go to state 64
+    signo             go to state 65
 
 
-estado 27
+State 27
 
    33 sentencia_return: RETURN . expresion FINLINEA
 
-    IDENTIFICADOR       desplazar e ir al estado 51
-    SIGNO               desplazar e ir al estado 52
-    CONSTANTE_BOOLEANA  desplazar e ir al estado 53
-    CONSTANTE_CARACTER  desplazar e ir al estado 55
-    PARIZQ              desplazar e ir al estado 56
-    ABRIRCORCHETE       desplazar e ir al estado 57
-    OPUNARIO            desplazar e ir al estado 58
+    IDENTIFICADOR       shift, and go to state 51
+    SIGNO               shift, and go to state 52
+    CONSTANTE_BOOLEANA  shift, and go to state 53
+    CONSTANTE_CARACTER  shift, and go to state 55
+    PARIZQ              shift, and go to state 56
+    ABRIRCORCHETE       shift, and go to state 57
+    OPUNARIO            shift, and go to state 58
 
-    SIGNO               [reduce usando la regla 66 (signo)]
-    CONSTANTE_BOOLEANA  [reduce usando la regla 66 (signo)]
-    CONSTANTE_CARACTER  [reduce usando la regla 66 (signo)]
-    $default            reduce usando la regla 66 (signo)
+    $default  reduce using rule 66 (signo)
 
-    expresion  ir al estado 66
-    funcion    ir al estado 62
-    constante  ir al estado 63
-    lista      ir al estado 64
-    signo      ir al estado 65
+    expresion  go to state 66
+    funcion    go to state 62
+    constante  go to state 63
+    lista      go to state 64
+    signo      go to state 65
 
 
-estado 28
+State 28
 
    18 sentencia: bloque .
 
-    $default  reduce usando la regla 18 (sentencia)
+    $default  reduce using rule 18 (sentencia)
 
 
-estado 29
+State 29
 
     3 declar_subprogs: declar_subprogs declar_subprog .
 
-    $default  reduce usando la regla 3 (declar_subprogs)
+    $default  reduce using rule 3 (declar_subprogs)
 
 
-estado 30
+State 30
 
     5 declar_subprog: cabecera_subprog . bloque
 
-    INIBLOQUE  desplazar e ir al estado 3
+    INIBLOQUE  shift, and go to state 3
 
-    bloque  ir al estado 67
+    bloque  go to state 67
 
 
-estado 31
+State 31
 
     2 bloque: INIBLOQUE declar_variables_locales declar_subprogs sentencias . FINBLOQUE
    16 sentencias: sentencias . sentencia
 
-    IDENTIFICADOR  desplazar e ir al estado 21
-    BUCLE          desplazar e ir al estado 22
-    CONDICION      desplazar e ir al estado 23
-    CICLO          desplazar e ir al estado 24
-    ENTRADA        desplazar e ir al estado 25
-    SALIDA         desplazar e ir al estado 26
-    RETURN         desplazar e ir al estado 27
-    INIBLOQUE      desplazar e ir al estado 3
-    FINBLOQUE      desplazar e ir al estado 68
+    IDENTIFICADOR  shift, and go to state 21
+    BUCLE          shift, and go to state 22
+    CONDICION      shift, and go to state 23
+    CICLO          shift, and go to state 24
+    ENTRADA        shift, and go to state 25
+    SALIDA         shift, and go to state 26
+    RETURN         shift, and go to state 27
+    INIBLOQUE      shift, and go to state 3
+    FINBLOQUE      shift, and go to state 68
 
-    bloque                ir al estado 28
-    sentencia             ir al estado 69
-    sentencia_asignacion  ir al estado 33
-    sentencia_if          ir al estado 34
-    sentencia_while       ir al estado 35
-    sentencia_entrada     ir al estado 36
-    sentencia_salida      ir al estado 37
-    sentencia_return      ir al estado 38
-    sentencia_for         ir al estado 39
-    funcion               ir al estado 40
+    bloque                go to state 28
+    sentencia             go to state 69
+    sentencia_asignacion  go to state 33
+    sentencia_if          go to state 34
+    sentencia_while       go to state 35
+    sentencia_entrada     go to state 36
+    sentencia_salida      go to state 37
+    sentencia_return      go to state 38
+    sentencia_for         go to state 39
+    funcion               go to state 40
 
 
-estado 32
+State 32
 
    17 sentencias: sentencia .
 
-    $default  reduce usando la regla 17 (sentencias)
+    $default  reduce using rule 17 (sentencias)
 
 
-estado 33
+State 33
 
    19 sentencia: sentencia_asignacion .
 
-    $default  reduce usando la regla 19 (sentencia)
+    $default  reduce using rule 19 (sentencia)
 
 
-estado 34
+State 34
 
    20 sentencia: sentencia_if .
 
-    $default  reduce usando la regla 20 (sentencia)
+    $default  reduce using rule 20 (sentencia)
 
 
-estado 35
+State 35
 
    21 sentencia: sentencia_while .
 
-    $default  reduce usando la regla 21 (sentencia)
+    $default  reduce using rule 21 (sentencia)
 
 
-estado 36
+State 36
 
    22 sentencia: sentencia_entrada .
 
-    $default  reduce usando la regla 22 (sentencia)
+    $default  reduce using rule 22 (sentencia)
 
 
-estado 37
+State 37
 
    23 sentencia: sentencia_salida .
 
-    $default  reduce usando la regla 23 (sentencia)
+    $default  reduce using rule 23 (sentencia)
 
 
-estado 38
+State 38
 
    24 sentencia: sentencia_return .
 
-    $default  reduce usando la regla 24 (sentencia)
+    $default  reduce using rule 24 (sentencia)
 
 
-estado 39
+State 39
 
    25 sentencia: sentencia_for .
 
-    $default  reduce usando la regla 25 (sentencia)
+    $default  reduce using rule 25 (sentencia)
 
 
-estado 40
+State 40
 
    26 sentencia: funcion . FINLINEA
 
-    FINLINEA  desplazar e ir al estado 70
+    FINLINEA  shift, and go to state 70
 
 
-estado 41
+State 41
 
    15 cabecera_subprog: tipo . IDENTIFICADOR PARIZQ lista_parametros PARDER
 
-    IDENTIFICADOR  desplazar e ir al estado 71
+    IDENTIFICADOR  shift, and go to state 71
 
 
-estado 42
+State 42
 
    27 sentencia_asignacion: IDENTIFICADOR ASIGNACION . exp_cad FINLINEA
 
-    IDENTIFICADOR       desplazar e ir al estado 51
-    SIGNO               desplazar e ir al estado 52
-    CONSTANTE_BOOLEANA  desplazar e ir al estado 53
-    CADENA              desplazar e ir al estado 54
-    CONSTANTE_CARACTER  desplazar e ir al estado 55
-    PARIZQ              desplazar e ir al estado 56
-    ABRIRCORCHETE       desplazar e ir al estado 57
-    OPUNARIO            desplazar e ir al estado 58
+    IDENTIFICADOR       shift, and go to state 51
+    SIGNO               shift, and go to state 52
+    CONSTANTE_BOOLEANA  shift, and go to state 53
+    CADENA              shift, and go to state 54
+    CONSTANTE_CARACTER  shift, and go to state 55
+    PARIZQ              shift, and go to state 56
+    ABRIRCORCHETE       shift, and go to state 57
+    OPUNARIO            shift, and go to state 58
 
-    SIGNO               [reduce usando la regla 66 (signo)]
-    CONSTANTE_BOOLEANA  [reduce usando la regla 66 (signo)]
-    CONSTANTE_CARACTER  [reduce usando la regla 66 (signo)]
-    $default            reduce usando la regla 66 (signo)
+    $default  reduce using rule 66 (signo)
 
-    exp_cad    ir al estado 72
-    expresion  ir al estado 61
-    funcion    ir al estado 62
-    constante  ir al estado 63
-    lista      ir al estado 64
-    signo      ir al estado 65
+    exp_cad    go to state 72
+    expresion  go to state 61
+    funcion    go to state 62
+    constante  go to state 63
+    lista      go to state 64
+    signo      go to state 65
 
 
-estado 43
+State 43
 
    13 lista_identificadores: lista_identificadores COMA . IDENTIFICADOR
 
-    IDENTIFICADOR  desplazar e ir al estado 73
+    IDENTIFICADOR  shift, and go to state 73
 
 
-estado 44
+State 44
 
    10 cuerpo_declar_variables: tipo lista_identificadores FINLINEA .
 
-    $default  reduce usando la regla 10 (cuerpo_declar_variables)
+    $default  reduce using rule 10 (cuerpo_declar_variables)
 
 
-estado 45
+State 45
 
    55 funcion: IDENTIFICADOR PARIZQ . lista_expresiones PARDER
 
-    IDENTIFICADOR       desplazar e ir al estado 51
-    SIGNO               desplazar e ir al estado 52
-    CONSTANTE_BOOLEANA  desplazar e ir al estado 53
-    CONSTANTE_CARACTER  desplazar e ir al estado 55
-    PARIZQ              desplazar e ir al estado 56
-    ABRIRCORCHETE       desplazar e ir al estado 57
-    OPUNARIO            desplazar e ir al estado 58
+    IDENTIFICADOR       shift, and go to state 51
+    SIGNO               shift, and go to state 52
+    CONSTANTE_BOOLEANA  shift, and go to state 53
+    CONSTANTE_CARACTER  shift, and go to state 55
+    PARIZQ              shift, and go to state 56
+    ABRIRCORCHETE       shift, and go to state 57
+    OPUNARIO            shift, and go to state 58
 
-    SIGNO               [reduce usando la regla 66 (signo)]
-    CONSTANTE_BOOLEANA  [reduce usando la regla 66 (signo)]
-    CONSTANTE_CARACTER  [reduce usando la regla 66 (signo)]
-    $default            reduce usando la regla 66 (signo)
+    $default  reduce using rule 66 (signo)
 
-    lista_expresiones  ir al estado 74
-    expresion          ir al estado 75
-    funcion            ir al estado 62
-    constante          ir al estado 63
-    lista              ir al estado 64
-    signo              ir al estado 65
+    lista_expresiones  go to state 74
+    expresion          go to state 75
+    funcion            go to state 62
+    constante          go to state 63
+    lista              go to state 64
+    signo              go to state 65
 
 
-estado 46
+State 46
 
    34 sentencia_for: BUCLE IDENTIFICADOR . DOSPUNTOSIGUAL expresion HASTA expresion PASO expresion sentencia
 
-    DOSPUNTOSIGUAL  desplazar e ir al estado 76
+    DOSPUNTOSIGUAL  shift, and go to state 76
 
 
-estado 47
+State 47
 
    28 sentencia_if: CONDICION PARIZQ . expresion PARDER sentencia SUBCONDICION sentencia
    29             | CONDICION PARIZQ . expresion PARDER sentencia
 
-    IDENTIFICADOR       desplazar e ir al estado 51
-    SIGNO               desplazar e ir al estado 52
-    CONSTANTE_BOOLEANA  desplazar e ir al estado 53
-    CONSTANTE_CARACTER  desplazar e ir al estado 55
-    PARIZQ              desplazar e ir al estado 56
-    ABRIRCORCHETE       desplazar e ir al estado 57
-    OPUNARIO            desplazar e ir al estado 58
+    IDENTIFICADOR       shift, and go to state 51
+    SIGNO               shift, and go to state 52
+    CONSTANTE_BOOLEANA  shift, and go to state 53
+    CONSTANTE_CARACTER  shift, and go to state 55
+    PARIZQ              shift, and go to state 56
+    ABRIRCORCHETE       shift, and go to state 57
+    OPUNARIO            shift, and go to state 58
 
-    SIGNO               [reduce usando la regla 66 (signo)]
-    CONSTANTE_BOOLEANA  [reduce usando la regla 66 (signo)]
-    CONSTANTE_CARACTER  [reduce usando la regla 66 (signo)]
-    $default            reduce usando la regla 66 (signo)
+    $default  reduce using rule 66 (signo)
 
-    expresion  ir al estado 77
-    funcion    ir al estado 62
-    constante  ir al estado 63
-    lista      ir al estado 64
-    signo      ir al estado 65
+    expresion  go to state 77
+    funcion    go to state 62
+    constante  go to state 63
+    lista      go to state 64
+    signo      go to state 65
 
 
-estado 48
+State 48
 
    30 sentencia_while: CICLO PARIZQ . expresion PARDER sentencia
 
-    IDENTIFICADOR       desplazar e ir al estado 51
-    SIGNO               desplazar e ir al estado 52
-    CONSTANTE_BOOLEANA  desplazar e ir al estado 53
-    CONSTANTE_CARACTER  desplazar e ir al estado 55
-    PARIZQ              desplazar e ir al estado 56
-    ABRIRCORCHETE       desplazar e ir al estado 57
-    OPUNARIO            desplazar e ir al estado 58
+    IDENTIFICADOR       shift, and go to state 51
+    SIGNO               shift, and go to state 52
+    CONSTANTE_BOOLEANA  shift, and go to state 53
+    CONSTANTE_CARACTER  shift, and go to state 55
+    PARIZQ              shift, and go to state 56
+    ABRIRCORCHETE       shift, and go to state 57
+    OPUNARIO            shift, and go to state 58
 
-    SIGNO               [reduce usando la regla 66 (signo)]
-    CONSTANTE_BOOLEANA  [reduce usando la regla 66 (signo)]
-    CONSTANTE_CARACTER  [reduce usando la regla 66 (signo)]
-    $default            reduce usando la regla 66 (signo)
+    $default  reduce using rule 66 (signo)
 
-    expresion  ir al estado 78
-    funcion    ir al estado 62
-    constante  ir al estado 63
-    lista      ir al estado 64
-    signo      ir al estado 65
+    expresion  go to state 78
+    funcion    go to state 62
+    constante  go to state 63
+    lista      go to state 64
+    signo      go to state 65
 
 
-estado 49
+State 49
 
    42 lista_variables: IDENTIFICADOR .
 
-    $default  reduce usando la regla 42 (lista_variables)
+    $default  reduce using rule 42 (lista_variables)
 
 
-estado 50
+State 50
 
    31 sentencia_entrada: ENTRADA lista_variables . FINLINEA
    41 lista_variables: lista_variables . COMA IDENTIFICADOR
 
-    COMA      desplazar e ir al estado 79
-    FINLINEA  desplazar e ir al estado 80
+    COMA      shift, and go to state 79
+    FINLINEA  shift, and go to state 80
 
 
-estado 51
+State 51
 
    50 expresion: IDENTIFICADOR .
    55 funcion: IDENTIFICADOR . PARIZQ lista_expresiones PARDER
 
-    PARIZQ  desplazar e ir al estado 45
+    PARIZQ  shift, and go to state 45
 
-    $default  reduce usando la regla 50 (expresion)
+    $default  reduce using rule 50 (expresion)
 
 
-estado 52
+State 52
 
    47 expresion: SIGNO . expresion
    65 signo: SIGNO .
 
-    IDENTIFICADOR       desplazar e ir al estado 51
-    CONSTANTE_BOOLEANA  desplazar e ir al estado 53
-    CONSTANTE_CARACTER  desplazar e ir al estado 55
-    PARIZQ              desplazar e ir al estado 56
-    ABRIRCORCHETE       desplazar e ir al estado 57
-    OPUNARIO            desplazar e ir al estado 58
+    IDENTIFICADOR       shift, and go to state 51
+    SIGNO               shift, and go to state 52
+    CONSTANTE_BOOLEANA  shift, and go to state 53
+    CONSTANTE_CARACTER  shift, and go to state 55
+    PARIZQ              shift, and go to state 56
+    ABRIRCORCHETE       shift, and go to state 57
+    OPUNARIO            shift, and go to state 58
 
-    SIGNO               reduce usando la regla 65 (signo)
-    SIGNO               [reduce usando la regla 66 (signo)]
-    ENTERO              reduce usando la regla 65 (signo)
-    ENTERO              [reduce usando la regla 66 (signo)]
-    REAL                reduce usando la regla 65 (signo)
-    REAL                [reduce usando la regla 66 (signo)]
-    CONSTANTE_BOOLEANA  [reduce usando la regla 65 (signo)]
-    CONSTANTE_BOOLEANA  [reduce usando la regla 66 (signo)]
-    CONSTANTE_CARACTER  [reduce usando la regla 65 (signo)]
-    CONSTANTE_CARACTER  [reduce usando la regla 66 (signo)]
-    $default            reduce usando la regla 65 (signo)
+    ENTERO    reduce using rule 65 (signo)
+    ENTERO    [reduce using rule 66 (signo)]
+    REAL      reduce using rule 65 (signo)
+    REAL      [reduce using rule 66 (signo)]
+    $default  reduce using rule 65 (signo)
 
-    expresion  ir al estado 81
-    funcion    ir al estado 62
-    constante  ir al estado 63
-    lista      ir al estado 64
-    signo      ir al estado 65
+    expresion  go to state 81
+    funcion    go to state 62
+    constante  go to state 63
+    lista      go to state 64
+    signo      go to state 65
 
 
-estado 53
+State 53
 
    59 constante: CONSTANTE_BOOLEANA .
 
-    $default  reduce usando la regla 59 (constante)
+    $default  reduce using rule 59 (constante)
 
 
-estado 54
+State 54
 
    40 exp_cad: CADENA .
 
-    $default  reduce usando la regla 40 (exp_cad)
+    $default  reduce using rule 40 (exp_cad)
 
 
-estado 55
+State 55
 
    58 constante: CONSTANTE_CARACTER .
 
-    $default  reduce usando la regla 58 (constante)
+    $default  reduce using rule 58 (constante)
 
 
-estado 56
+State 56
 
    45 expresion: PARIZQ . expresion PARDER
 
-    IDENTIFICADOR       desplazar e ir al estado 51
-    SIGNO               desplazar e ir al estado 52
-    CONSTANTE_BOOLEANA  desplazar e ir al estado 53
-    CONSTANTE_CARACTER  desplazar e ir al estado 55
-    PARIZQ              desplazar e ir al estado 56
-    ABRIRCORCHETE       desplazar e ir al estado 57
-    OPUNARIO            desplazar e ir al estado 58
+    IDENTIFICADOR       shift, and go to state 51
+    SIGNO               shift, and go to state 52
+    CONSTANTE_BOOLEANA  shift, and go to state 53
+    CONSTANTE_CARACTER  shift, and go to state 55
+    PARIZQ              shift, and go to state 56
+    ABRIRCORCHETE       shift, and go to state 57
+    OPUNARIO            shift, and go to state 58
 
-    SIGNO               [reduce usando la regla 66 (signo)]
-    CONSTANTE_BOOLEANA  [reduce usando la regla 66 (signo)]
-    CONSTANTE_CARACTER  [reduce usando la regla 66 (signo)]
-    $default            reduce usando la regla 66 (signo)
+    $default  reduce using rule 66 (signo)
 
-    expresion  ir al estado 82
-    funcion    ir al estado 62
-    constante  ir al estado 63
-    lista      ir al estado 64
-    signo      ir al estado 65
+    expresion  go to state 82
+    funcion    go to state 62
+    constante  go to state 63
+    lista      go to state 64
+    signo      go to state 65
 
 
-estado 57
+State 57
 
    60 lista: ABRIRCORCHETE . lista CERRARCORCHETE
 
-    SIGNO          desplazar e ir al estado 83
-    ABRIRCORCHETE  desplazar e ir al estado 57
+    SIGNO               shift, and go to state 83
+    CONSTANTE_BOOLEANA  shift, and go to state 53
+    CONSTANTE_CARACTER  shift, and go to state 55
+    ABRIRCORCHETE       shift, and go to state 57
 
-    SIGNO     [reduce usando la regla 66 (signo)]
-    $default  reduce usando la regla 66 (signo)
+    $default  reduce using rule 66 (signo)
 
-    lista  ir al estado 84
-    signo  ir al estado 85
+    constante  go to state 84
+    lista      go to state 85
+    signo      go to state 65
 
 
-estado 58
+State 58
 
    46 expresion: OPUNARIO . expresion
 
-    IDENTIFICADOR       desplazar e ir al estado 51
-    SIGNO               desplazar e ir al estado 52
-    CONSTANTE_BOOLEANA  desplazar e ir al estado 53
-    CONSTANTE_CARACTER  desplazar e ir al estado 55
-    PARIZQ              desplazar e ir al estado 56
-    ABRIRCORCHETE       desplazar e ir al estado 57
-    OPUNARIO            desplazar e ir al estado 58
+    IDENTIFICADOR       shift, and go to state 51
+    SIGNO               shift, and go to state 52
+    CONSTANTE_BOOLEANA  shift, and go to state 53
+    CONSTANTE_CARACTER  shift, and go to state 55
+    PARIZQ              shift, and go to state 56
+    ABRIRCORCHETE       shift, and go to state 57
+    OPUNARIO            shift, and go to state 58
 
-    SIGNO               [reduce usando la regla 66 (signo)]
-    CONSTANTE_BOOLEANA  [reduce usando la regla 66 (signo)]
-    CONSTANTE_CARACTER  [reduce usando la regla 66 (signo)]
-    $default            reduce usando la regla 66 (signo)
+    $default  reduce using rule 66 (signo)
 
-    expresion  ir al estado 86
-    funcion    ir al estado 62
-    constante  ir al estado 63
-    lista      ir al estado 64
-    signo      ir al estado 65
+    expresion  go to state 86
+    funcion    go to state 62
+    constante  go to state 63
+    lista      go to state 64
+    signo      go to state 65
 
 
-estado 59
+State 59
 
    32 sentencia_salida: SALIDA lista_exp_cadena . FINLINEA
    37 lista_exp_cadena: lista_exp_cadena . COMA exp_cad
 
-    COMA      desplazar e ir al estado 87
-    FINLINEA  desplazar e ir al estado 88
+    COMA      shift, and go to state 87
+    FINLINEA  shift, and go to state 88
 
 
-estado 60
+State 60
 
    38 lista_exp_cadena: exp_cad .
 
-    $default  reduce usando la regla 38 (lista_exp_cadena)
+    $default  reduce using rule 38 (lista_exp_cadena)
 
 
-estado 61
+State 61
 
    39 exp_cad: expresion .
    48 expresion: expresion . SIGNO expresion
    49          | expresion . OPBINARIO expresion
    54          | expresion . OPTERNARIO_1 expresion OPTERNARIO_2 expresion
 
-    OPBINARIO     desplazar e ir al estado 89
-    OPTERNARIO_1  desplazar e ir al estado 90
-    SIGNO         desplazar e ir al estado 91
+    OPBINARIO     shift, and go to state 89
+    OPTERNARIO_1  shift, and go to state 90
+    SIGNO         shift, and go to state 91
 
-    $default  reduce usando la regla 39 (exp_cad)
+    $default  reduce using rule 39 (exp_cad)
 
 
-estado 62
+State 62
 
    53 expresion: funcion .
 
-    $default  reduce usando la regla 53 (expresion)
+    $default  reduce using rule 53 (expresion)
 
 
-estado 63
+State 63
 
    52 expresion: constante .
+   62 lista: constante .
 
-    $default  reduce usando la regla 52 (expresion)
+    IDENTIFICADOR  reduce using rule 52 (expresion)
+    IDENTIFICADOR  [reduce using rule 62 (lista)]
+    OPBINARIO      reduce using rule 52 (expresion)
+    OPBINARIO      [reduce using rule 62 (lista)]
+    OPTERNARIO_1   reduce using rule 52 (expresion)
+    OPTERNARIO_1   [reduce using rule 62 (lista)]
+    OPTERNARIO_2   reduce using rule 52 (expresion)
+    OPTERNARIO_2   [reduce using rule 62 (lista)]
+    SIGNO          reduce using rule 52 (expresion)
+    SIGNO          [reduce using rule 62 (lista)]
+    BUCLE          reduce using rule 52 (expresion)
+    BUCLE          [reduce using rule 62 (lista)]
+    HASTA          reduce using rule 52 (expresion)
+    HASTA          [reduce using rule 62 (lista)]
+    PASO           reduce using rule 52 (expresion)
+    PASO           [reduce using rule 62 (lista)]
+    CONDICION      reduce using rule 52 (expresion)
+    CONDICION      [reduce using rule 62 (lista)]
+    CICLO          reduce using rule 52 (expresion)
+    CICLO          [reduce using rule 62 (lista)]
+    ENTRADA        reduce using rule 52 (expresion)
+    ENTRADA        [reduce using rule 62 (lista)]
+    SALIDA         reduce using rule 52 (expresion)
+    SALIDA         [reduce using rule 62 (lista)]
+    RETURN         reduce using rule 52 (expresion)
+    RETURN         [reduce using rule 62 (lista)]
+    INIBLOQUE      reduce using rule 52 (expresion)
+    INIBLOQUE      [reduce using rule 62 (lista)]
+    PARDER         reduce using rule 52 (expresion)
+    PARDER         [reduce using rule 62 (lista)]
+    COMA           reduce using rule 52 (expresion)
+    COMA           [reduce using rule 62 (lista)]
+    FINLINEA       reduce using rule 52 (expresion)
+    FINLINEA       [reduce using rule 62 (lista)]
+    $default       reduce using rule 52 (expresion)
 
 
-estado 64
+State 64
 
    51 expresion: lista .
-   61 lista: lista . COMA signo constante
+   61 lista: lista . COMA constante
 
-    COMA  desplazar e ir al estado 92
+    COMA  shift, and go to state 92
 
-    COMA      [reduce usando la regla 51 (expresion)]
-    $default  reduce usando la regla 51 (expresion)
+    COMA      [reduce using rule 51 (expresion)]
+    $default  reduce using rule 51 (expresion)
 
 
-estado 65
+State 65
 
    56 constante: signo . ENTERO
    57          | signo . REAL
-   62 lista: signo . constante
 
-    SIGNO               desplazar e ir al estado 83
-    ENTERO              desplazar e ir al estado 93
-    REAL                desplazar e ir al estado 94
-    CONSTANTE_BOOLEANA  desplazar e ir al estado 53
-    CONSTANTE_CARACTER  desplazar e ir al estado 55
-
-    ENTERO  [reduce usando la regla 66 (signo)]
-    REAL    [reduce usando la regla 66 (signo)]
-
-    constante  ir al estado 95
-    signo      ir al estado 96
+    ENTERO  shift, and go to state 93
+    REAL    shift, and go to state 94
 
 
-estado 66
+State 66
 
    33 sentencia_return: RETURN expresion . FINLINEA
    48 expresion: expresion . SIGNO expresion
    49          | expresion . OPBINARIO expresion
    54          | expresion . OPTERNARIO_1 expresion OPTERNARIO_2 expresion
 
-    OPBINARIO     desplazar e ir al estado 89
-    OPTERNARIO_1  desplazar e ir al estado 90
-    SIGNO         desplazar e ir al estado 91
-    FINLINEA      desplazar e ir al estado 97
+    OPBINARIO     shift, and go to state 89
+    OPTERNARIO_1  shift, and go to state 90
+    SIGNO         shift, and go to state 91
+    FINLINEA      shift, and go to state 95
 
 
-estado 67
+State 67
 
     5 declar_subprog: cabecera_subprog bloque .
 
-    $default  reduce usando la regla 5 (declar_subprog)
+    $default  reduce using rule 5 (declar_subprog)
 
 
-estado 68
+State 68
 
     2 bloque: INIBLOQUE declar_variables_locales declar_subprogs sentencias FINBLOQUE .
 
-    $default  reduce usando la regla 2 (bloque)
+    $default  reduce using rule 2 (bloque)
 
 
-estado 69
+State 69
 
    16 sentencias: sentencias sentencia .
 
-    $default  reduce usando la regla 16 (sentencias)
+    $default  reduce using rule 16 (sentencias)
 
 
-estado 70
+State 70
 
    26 sentencia: funcion FINLINEA .
 
-    $default  reduce usando la regla 26 (sentencia)
+    $default  reduce using rule 26 (sentencia)
 
 
-estado 71
+State 71
 
    15 cabecera_subprog: tipo IDENTIFICADOR . PARIZQ lista_parametros PARDER
 
-    PARIZQ  desplazar e ir al estado 98
+    PARIZQ  shift, and go to state 96
 
 
-estado 72
+State 72
 
    27 sentencia_asignacion: IDENTIFICADOR ASIGNACION exp_cad . FINLINEA
 
-    FINLINEA  desplazar e ir al estado 99
+    FINLINEA  shift, and go to state 97
 
 
-estado 73
+State 73
 
    13 lista_identificadores: lista_identificadores COMA IDENTIFICADOR .
 
-    $default  reduce usando la regla 13 (lista_identificadores)
+    $default  reduce using rule 13 (lista_identificadores)
 
 
-estado 74
+State 74
 
    43 lista_expresiones: lista_expresiones . COMA expresion
    55 funcion: IDENTIFICADOR PARIZQ lista_expresiones . PARDER
 
-    PARDER  desplazar e ir al estado 100
-    COMA    desplazar e ir al estado 101
+    PARDER  shift, and go to state 98
+    COMA    shift, and go to state 99
 
 
-estado 75
+State 75
 
    44 lista_expresiones: expresion .
    48 expresion: expresion . SIGNO expresion
    49          | expresion . OPBINARIO expresion
    54          | expresion . OPTERNARIO_1 expresion OPTERNARIO_2 expresion
 
-    OPBINARIO     desplazar e ir al estado 89
-    OPTERNARIO_1  desplazar e ir al estado 90
-    SIGNO         desplazar e ir al estado 91
+    OPBINARIO     shift, and go to state 89
+    OPTERNARIO_1  shift, and go to state 90
+    SIGNO         shift, and go to state 91
 
-    $default  reduce usando la regla 44 (lista_expresiones)
+    $default  reduce using rule 44 (lista_expresiones)
 
 
-estado 76
+State 76
 
    34 sentencia_for: BUCLE IDENTIFICADOR DOSPUNTOSIGUAL . expresion HASTA expresion PASO expresion sentencia
 
-    IDENTIFICADOR       desplazar e ir al estado 51
-    SIGNO               desplazar e ir al estado 52
-    CONSTANTE_BOOLEANA  desplazar e ir al estado 53
-    CONSTANTE_CARACTER  desplazar e ir al estado 55
-    PARIZQ              desplazar e ir al estado 56
-    ABRIRCORCHETE       desplazar e ir al estado 57
-    OPUNARIO            desplazar e ir al estado 58
+    IDENTIFICADOR       shift, and go to state 51
+    SIGNO               shift, and go to state 52
+    CONSTANTE_BOOLEANA  shift, and go to state 53
+    CONSTANTE_CARACTER  shift, and go to state 55
+    PARIZQ              shift, and go to state 56
+    ABRIRCORCHETE       shift, and go to state 57
+    OPUNARIO            shift, and go to state 58
 
-    SIGNO               [reduce usando la regla 66 (signo)]
-    CONSTANTE_BOOLEANA  [reduce usando la regla 66 (signo)]
-    CONSTANTE_CARACTER  [reduce usando la regla 66 (signo)]
-    $default            reduce usando la regla 66 (signo)
+    $default  reduce using rule 66 (signo)
 
-    expresion  ir al estado 102
-    funcion    ir al estado 62
-    constante  ir al estado 63
-    lista      ir al estado 64
-    signo      ir al estado 65
+    expresion  go to state 100
+    funcion    go to state 62
+    constante  go to state 63
+    lista      go to state 64
+    signo      go to state 65
 
 
-estado 77
+State 77
 
    28 sentencia_if: CONDICION PARIZQ expresion . PARDER sentencia SUBCONDICION sentencia
    29             | CONDICION PARIZQ expresion . PARDER sentencia
@@ -1103,706 +1077,646 @@ estado 77
    49          | expresion . OPBINARIO expresion
    54          | expresion . OPTERNARIO_1 expresion OPTERNARIO_2 expresion
 
-    OPBINARIO     desplazar e ir al estado 89
-    OPTERNARIO_1  desplazar e ir al estado 90
-    SIGNO         desplazar e ir al estado 91
-    PARDER        desplazar e ir al estado 103
+    OPBINARIO     shift, and go to state 89
+    OPTERNARIO_1  shift, and go to state 90
+    SIGNO         shift, and go to state 91
+    PARDER        shift, and go to state 101
 
 
-estado 78
+State 78
 
    30 sentencia_while: CICLO PARIZQ expresion . PARDER sentencia
    48 expresion: expresion . SIGNO expresion
    49          | expresion . OPBINARIO expresion
    54          | expresion . OPTERNARIO_1 expresion OPTERNARIO_2 expresion
 
-    OPBINARIO     desplazar e ir al estado 89
-    OPTERNARIO_1  desplazar e ir al estado 90
-    SIGNO         desplazar e ir al estado 91
-    PARDER        desplazar e ir al estado 104
+    OPBINARIO     shift, and go to state 89
+    OPTERNARIO_1  shift, and go to state 90
+    SIGNO         shift, and go to state 91
+    PARDER        shift, and go to state 102
 
 
-estado 79
+State 79
 
    41 lista_variables: lista_variables COMA . IDENTIFICADOR
 
-    IDENTIFICADOR  desplazar e ir al estado 105
+    IDENTIFICADOR  shift, and go to state 103
 
 
-estado 80
+State 80
 
    31 sentencia_entrada: ENTRADA lista_variables FINLINEA .
 
-    $default  reduce usando la regla 31 (sentencia_entrada)
+    $default  reduce using rule 31 (sentencia_entrada)
 
 
-estado 81
+State 81
 
    47 expresion: SIGNO expresion .
    48          | expresion . SIGNO expresion
    49          | expresion . OPBINARIO expresion
    54          | expresion . OPTERNARIO_1 expresion OPTERNARIO_2 expresion
 
-    OPTERNARIO_1  desplazar e ir al estado 90
+    OPTERNARIO_1  shift, and go to state 90
 
-    $default  reduce usando la regla 47 (expresion)
+    $default  reduce using rule 47 (expresion)
 
 
-estado 82
+State 82
 
    45 expresion: PARIZQ expresion . PARDER
    48          | expresion . SIGNO expresion
    49          | expresion . OPBINARIO expresion
    54          | expresion . OPTERNARIO_1 expresion OPTERNARIO_2 expresion
 
-    OPBINARIO     desplazar e ir al estado 89
-    OPTERNARIO_1  desplazar e ir al estado 90
-    SIGNO         desplazar e ir al estado 91
-    PARDER        desplazar e ir al estado 106
+    OPBINARIO     shift, and go to state 89
+    OPTERNARIO_1  shift, and go to state 90
+    SIGNO         shift, and go to state 91
+    PARDER        shift, and go to state 104
 
 
-estado 83
+State 83
 
    65 signo: SIGNO .
 
-    $default  reduce usando la regla 65 (signo)
+    $default  reduce using rule 65 (signo)
 
 
-estado 84
+State 84
+
+   62 lista: constante .
+
+    $default  reduce using rule 62 (lista)
+
+
+State 85
 
    60 lista: ABRIRCORCHETE lista . CERRARCORCHETE
-   61      | lista . COMA signo constante
+   61      | lista . COMA constante
 
-    COMA            desplazar e ir al estado 92
-    CERRARCORCHETE  desplazar e ir al estado 107
-
-
-estado 85
-
-   62 lista: signo . constante
-
-    SIGNO               desplazar e ir al estado 83
-    CONSTANTE_BOOLEANA  desplazar e ir al estado 53
-    CONSTANTE_CARACTER  desplazar e ir al estado 55
-
-    $default  reduce usando la regla 66 (signo)
-
-    constante  ir al estado 95
-    signo      ir al estado 96
+    COMA            shift, and go to state 92
+    CERRARCORCHETE  shift, and go to state 105
 
 
-estado 86
+State 86
 
    46 expresion: OPUNARIO expresion .
    48          | expresion . SIGNO expresion
    49          | expresion . OPBINARIO expresion
    54          | expresion . OPTERNARIO_1 expresion OPTERNARIO_2 expresion
 
-    OPTERNARIO_1  desplazar e ir al estado 90
+    OPTERNARIO_1  shift, and go to state 90
 
-    $default  reduce usando la regla 46 (expresion)
+    $default  reduce using rule 46 (expresion)
 
 
-estado 87
+State 87
 
    37 lista_exp_cadena: lista_exp_cadena COMA . exp_cad
 
-    IDENTIFICADOR       desplazar e ir al estado 51
-    SIGNO               desplazar e ir al estado 52
-    CONSTANTE_BOOLEANA  desplazar e ir al estado 53
-    CADENA              desplazar e ir al estado 54
-    CONSTANTE_CARACTER  desplazar e ir al estado 55
-    PARIZQ              desplazar e ir al estado 56
-    ABRIRCORCHETE       desplazar e ir al estado 57
-    OPUNARIO            desplazar e ir al estado 58
+    IDENTIFICADOR       shift, and go to state 51
+    SIGNO               shift, and go to state 52
+    CONSTANTE_BOOLEANA  shift, and go to state 53
+    CADENA              shift, and go to state 54
+    CONSTANTE_CARACTER  shift, and go to state 55
+    PARIZQ              shift, and go to state 56
+    ABRIRCORCHETE       shift, and go to state 57
+    OPUNARIO            shift, and go to state 58
 
-    SIGNO               [reduce usando la regla 66 (signo)]
-    CONSTANTE_BOOLEANA  [reduce usando la regla 66 (signo)]
-    CONSTANTE_CARACTER  [reduce usando la regla 66 (signo)]
-    $default            reduce usando la regla 66 (signo)
+    $default  reduce using rule 66 (signo)
 
-    exp_cad    ir al estado 108
-    expresion  ir al estado 61
-    funcion    ir al estado 62
-    constante  ir al estado 63
-    lista      ir al estado 64
-    signo      ir al estado 65
+    exp_cad    go to state 106
+    expresion  go to state 61
+    funcion    go to state 62
+    constante  go to state 63
+    lista      go to state 64
+    signo      go to state 65
 
 
-estado 88
+State 88
 
    32 sentencia_salida: SALIDA lista_exp_cadena FINLINEA .
 
-    $default  reduce usando la regla 32 (sentencia_salida)
+    $default  reduce using rule 32 (sentencia_salida)
 
 
-estado 89
+State 89
 
    49 expresion: expresion OPBINARIO . expresion
 
-    IDENTIFICADOR       desplazar e ir al estado 51
-    SIGNO               desplazar e ir al estado 52
-    CONSTANTE_BOOLEANA  desplazar e ir al estado 53
-    CONSTANTE_CARACTER  desplazar e ir al estado 55
-    PARIZQ              desplazar e ir al estado 56
-    ABRIRCORCHETE       desplazar e ir al estado 57
-    OPUNARIO            desplazar e ir al estado 58
+    IDENTIFICADOR       shift, and go to state 51
+    SIGNO               shift, and go to state 52
+    CONSTANTE_BOOLEANA  shift, and go to state 53
+    CONSTANTE_CARACTER  shift, and go to state 55
+    PARIZQ              shift, and go to state 56
+    ABRIRCORCHETE       shift, and go to state 57
+    OPUNARIO            shift, and go to state 58
 
-    SIGNO               [reduce usando la regla 66 (signo)]
-    CONSTANTE_BOOLEANA  [reduce usando la regla 66 (signo)]
-    CONSTANTE_CARACTER  [reduce usando la regla 66 (signo)]
-    $default            reduce usando la regla 66 (signo)
+    $default  reduce using rule 66 (signo)
 
-    expresion  ir al estado 109
-    funcion    ir al estado 62
-    constante  ir al estado 63
-    lista      ir al estado 64
-    signo      ir al estado 65
+    expresion  go to state 107
+    funcion    go to state 62
+    constante  go to state 63
+    lista      go to state 64
+    signo      go to state 65
 
 
-estado 90
+State 90
 
    54 expresion: expresion OPTERNARIO_1 . expresion OPTERNARIO_2 expresion
 
-    IDENTIFICADOR       desplazar e ir al estado 51
-    SIGNO               desplazar e ir al estado 52
-    CONSTANTE_BOOLEANA  desplazar e ir al estado 53
-    CONSTANTE_CARACTER  desplazar e ir al estado 55
-    PARIZQ              desplazar e ir al estado 56
-    ABRIRCORCHETE       desplazar e ir al estado 57
-    OPUNARIO            desplazar e ir al estado 58
+    IDENTIFICADOR       shift, and go to state 51
+    SIGNO               shift, and go to state 52
+    CONSTANTE_BOOLEANA  shift, and go to state 53
+    CONSTANTE_CARACTER  shift, and go to state 55
+    PARIZQ              shift, and go to state 56
+    ABRIRCORCHETE       shift, and go to state 57
+    OPUNARIO            shift, and go to state 58
 
-    SIGNO               [reduce usando la regla 66 (signo)]
-    CONSTANTE_BOOLEANA  [reduce usando la regla 66 (signo)]
-    CONSTANTE_CARACTER  [reduce usando la regla 66 (signo)]
-    $default            reduce usando la regla 66 (signo)
+    $default  reduce using rule 66 (signo)
 
-    expresion  ir al estado 110
-    funcion    ir al estado 62
-    constante  ir al estado 63
-    lista      ir al estado 64
-    signo      ir al estado 65
+    expresion  go to state 108
+    funcion    go to state 62
+    constante  go to state 63
+    lista      go to state 64
+    signo      go to state 65
 
 
-estado 91
+State 91
 
    48 expresion: expresion SIGNO . expresion
 
-    IDENTIFICADOR       desplazar e ir al estado 51
-    SIGNO               desplazar e ir al estado 52
-    CONSTANTE_BOOLEANA  desplazar e ir al estado 53
-    CONSTANTE_CARACTER  desplazar e ir al estado 55
-    PARIZQ              desplazar e ir al estado 56
-    ABRIRCORCHETE       desplazar e ir al estado 57
-    OPUNARIO            desplazar e ir al estado 58
+    IDENTIFICADOR       shift, and go to state 51
+    SIGNO               shift, and go to state 52
+    CONSTANTE_BOOLEANA  shift, and go to state 53
+    CONSTANTE_CARACTER  shift, and go to state 55
+    PARIZQ              shift, and go to state 56
+    ABRIRCORCHETE       shift, and go to state 57
+    OPUNARIO            shift, and go to state 58
 
-    SIGNO               [reduce usando la regla 66 (signo)]
-    CONSTANTE_BOOLEANA  [reduce usando la regla 66 (signo)]
-    CONSTANTE_CARACTER  [reduce usando la regla 66 (signo)]
-    $default            reduce usando la regla 66 (signo)
+    $default  reduce using rule 66 (signo)
 
-    expresion  ir al estado 111
-    funcion    ir al estado 62
-    constante  ir al estado 63
-    lista      ir al estado 64
-    signo      ir al estado 65
+    expresion  go to state 109
+    funcion    go to state 62
+    constante  go to state 63
+    lista      go to state 64
+    signo      go to state 65
 
 
-estado 92
+State 92
 
-   61 lista: lista COMA . signo constante
+   61 lista: lista COMA . constante
 
-    SIGNO  desplazar e ir al estado 83
+    SIGNO               shift, and go to state 83
+    CONSTANTE_BOOLEANA  shift, and go to state 53
+    CONSTANTE_CARACTER  shift, and go to state 55
 
-    SIGNO     [reduce usando la regla 66 (signo)]
-    $default  reduce usando la regla 66 (signo)
+    $default  reduce using rule 66 (signo)
 
-    signo  ir al estado 112
+    constante  go to state 110
+    signo      go to state 65
 
 
-estado 93
+State 93
 
    56 constante: signo ENTERO .
 
-    $default  reduce usando la regla 56 (constante)
+    $default  reduce using rule 56 (constante)
 
 
-estado 94
+State 94
 
    57 constante: signo REAL .
 
-    $default  reduce usando la regla 57 (constante)
+    $default  reduce using rule 57 (constante)
 
 
-estado 95
-
-   62 lista: signo constante .
-
-    $default  reduce usando la regla 62 (lista)
-
-
-estado 96
-
-   56 constante: signo . ENTERO
-   57          | signo . REAL
-
-    ENTERO  desplazar e ir al estado 93
-    REAL    desplazar e ir al estado 94
-
-
-estado 97
+State 95
 
    33 sentencia_return: RETURN expresion FINLINEA .
 
-    $default  reduce usando la regla 33 (sentencia_return)
+    $default  reduce using rule 33 (sentencia_return)
 
 
-estado 98
+State 96
 
    15 cabecera_subprog: tipo IDENTIFICADOR PARIZQ . lista_parametros PARDER
 
-    TIPO      desplazar e ir al estado 9
-    LISTA_DE  desplazar e ir al estado 10
+    TIPO      shift, and go to state 9
+    LISTA_DE  shift, and go to state 10
 
-    lista_parametros  ir al estado 113
-    tipo              ir al estado 114
+    lista_parametros  go to state 111
+    tipo              go to state 112
 
 
-estado 99
+State 97
 
    27 sentencia_asignacion: IDENTIFICADOR ASIGNACION exp_cad FINLINEA .
 
-    $default  reduce usando la regla 27 (sentencia_asignacion)
+    $default  reduce using rule 27 (sentencia_asignacion)
 
 
-estado 100
+State 98
 
    55 funcion: IDENTIFICADOR PARIZQ lista_expresiones PARDER .
 
-    $default  reduce usando la regla 55 (funcion)
+    $default  reduce using rule 55 (funcion)
 
 
-estado 101
+State 99
 
    43 lista_expresiones: lista_expresiones COMA . expresion
 
-    IDENTIFICADOR       desplazar e ir al estado 51
-    SIGNO               desplazar e ir al estado 52
-    CONSTANTE_BOOLEANA  desplazar e ir al estado 53
-    CONSTANTE_CARACTER  desplazar e ir al estado 55
-    PARIZQ              desplazar e ir al estado 56
-    ABRIRCORCHETE       desplazar e ir al estado 57
-    OPUNARIO            desplazar e ir al estado 58
+    IDENTIFICADOR       shift, and go to state 51
+    SIGNO               shift, and go to state 52
+    CONSTANTE_BOOLEANA  shift, and go to state 53
+    CONSTANTE_CARACTER  shift, and go to state 55
+    PARIZQ              shift, and go to state 56
+    ABRIRCORCHETE       shift, and go to state 57
+    OPUNARIO            shift, and go to state 58
 
-    SIGNO               [reduce usando la regla 66 (signo)]
-    CONSTANTE_BOOLEANA  [reduce usando la regla 66 (signo)]
-    CONSTANTE_CARACTER  [reduce usando la regla 66 (signo)]
-    $default            reduce usando la regla 66 (signo)
+    $default  reduce using rule 66 (signo)
 
-    expresion  ir al estado 115
-    funcion    ir al estado 62
-    constante  ir al estado 63
-    lista      ir al estado 64
-    signo      ir al estado 65
+    expresion  go to state 113
+    funcion    go to state 62
+    constante  go to state 63
+    lista      go to state 64
+    signo      go to state 65
 
 
-estado 102
+State 100
 
    34 sentencia_for: BUCLE IDENTIFICADOR DOSPUNTOSIGUAL expresion . HASTA expresion PASO expresion sentencia
    48 expresion: expresion . SIGNO expresion
    49          | expresion . OPBINARIO expresion
    54          | expresion . OPTERNARIO_1 expresion OPTERNARIO_2 expresion
 
-    OPBINARIO     desplazar e ir al estado 89
-    OPTERNARIO_1  desplazar e ir al estado 90
-    SIGNO         desplazar e ir al estado 91
-    HASTA         desplazar e ir al estado 116
+    OPBINARIO     shift, and go to state 89
+    OPTERNARIO_1  shift, and go to state 90
+    SIGNO         shift, and go to state 91
+    HASTA         shift, and go to state 114
 
 
-estado 103
+State 101
 
    28 sentencia_if: CONDICION PARIZQ expresion PARDER . sentencia SUBCONDICION sentencia
    29             | CONDICION PARIZQ expresion PARDER . sentencia
 
-    IDENTIFICADOR  desplazar e ir al estado 21
-    BUCLE          desplazar e ir al estado 22
-    CONDICION      desplazar e ir al estado 23
-    CICLO          desplazar e ir al estado 24
-    ENTRADA        desplazar e ir al estado 25
-    SALIDA         desplazar e ir al estado 26
-    RETURN         desplazar e ir al estado 27
-    INIBLOQUE      desplazar e ir al estado 3
+    IDENTIFICADOR  shift, and go to state 21
+    BUCLE          shift, and go to state 22
+    CONDICION      shift, and go to state 23
+    CICLO          shift, and go to state 24
+    ENTRADA        shift, and go to state 25
+    SALIDA         shift, and go to state 26
+    RETURN         shift, and go to state 27
+    INIBLOQUE      shift, and go to state 3
 
-    bloque                ir al estado 28
-    sentencia             ir al estado 117
-    sentencia_asignacion  ir al estado 33
-    sentencia_if          ir al estado 34
-    sentencia_while       ir al estado 35
-    sentencia_entrada     ir al estado 36
-    sentencia_salida      ir al estado 37
-    sentencia_return      ir al estado 38
-    sentencia_for         ir al estado 39
-    funcion               ir al estado 40
+    bloque                go to state 28
+    sentencia             go to state 115
+    sentencia_asignacion  go to state 33
+    sentencia_if          go to state 34
+    sentencia_while       go to state 35
+    sentencia_entrada     go to state 36
+    sentencia_salida      go to state 37
+    sentencia_return      go to state 38
+    sentencia_for         go to state 39
+    funcion               go to state 40
 
 
-estado 104
+State 102
 
    30 sentencia_while: CICLO PARIZQ expresion PARDER . sentencia
 
-    IDENTIFICADOR  desplazar e ir al estado 21
-    BUCLE          desplazar e ir al estado 22
-    CONDICION      desplazar e ir al estado 23
-    CICLO          desplazar e ir al estado 24
-    ENTRADA        desplazar e ir al estado 25
-    SALIDA         desplazar e ir al estado 26
-    RETURN         desplazar e ir al estado 27
-    INIBLOQUE      desplazar e ir al estado 3
+    IDENTIFICADOR  shift, and go to state 21
+    BUCLE          shift, and go to state 22
+    CONDICION      shift, and go to state 23
+    CICLO          shift, and go to state 24
+    ENTRADA        shift, and go to state 25
+    SALIDA         shift, and go to state 26
+    RETURN         shift, and go to state 27
+    INIBLOQUE      shift, and go to state 3
 
-    bloque                ir al estado 28
-    sentencia             ir al estado 118
-    sentencia_asignacion  ir al estado 33
-    sentencia_if          ir al estado 34
-    sentencia_while       ir al estado 35
-    sentencia_entrada     ir al estado 36
-    sentencia_salida      ir al estado 37
-    sentencia_return      ir al estado 38
-    sentencia_for         ir al estado 39
-    funcion               ir al estado 40
+    bloque                go to state 28
+    sentencia             go to state 116
+    sentencia_asignacion  go to state 33
+    sentencia_if          go to state 34
+    sentencia_while       go to state 35
+    sentencia_entrada     go to state 36
+    sentencia_salida      go to state 37
+    sentencia_return      go to state 38
+    sentencia_for         go to state 39
+    funcion               go to state 40
 
 
-estado 105
+State 103
 
    41 lista_variables: lista_variables COMA IDENTIFICADOR .
 
-    $default  reduce usando la regla 41 (lista_variables)
+    $default  reduce using rule 41 (lista_variables)
 
 
-estado 106
+State 104
 
    45 expresion: PARIZQ expresion PARDER .
 
-    $default  reduce usando la regla 45 (expresion)
+    $default  reduce using rule 45 (expresion)
 
 
-estado 107
+State 105
 
    60 lista: ABRIRCORCHETE lista CERRARCORCHETE .
 
-    $default  reduce usando la regla 60 (lista)
+    $default  reduce using rule 60 (lista)
 
 
-estado 108
+State 106
 
    37 lista_exp_cadena: lista_exp_cadena COMA exp_cad .
 
-    $default  reduce usando la regla 37 (lista_exp_cadena)
+    $default  reduce using rule 37 (lista_exp_cadena)
 
 
-estado 109
+State 107
 
    48 expresion: expresion . SIGNO expresion
    49          | expresion . OPBINARIO expresion
    49          | expresion OPBINARIO expresion .
    54          | expresion . OPTERNARIO_1 expresion OPTERNARIO_2 expresion
 
-    OPTERNARIO_1  desplazar e ir al estado 90
-    SIGNO         desplazar e ir al estado 91
+    OPTERNARIO_1  shift, and go to state 90
+    SIGNO         shift, and go to state 91
 
-    $default  reduce usando la regla 49 (expresion)
+    $default  reduce using rule 49 (expresion)
 
 
-estado 110
+State 108
 
    48 expresion: expresion . SIGNO expresion
    49          | expresion . OPBINARIO expresion
    54          | expresion . OPTERNARIO_1 expresion OPTERNARIO_2 expresion
    54          | expresion OPTERNARIO_1 expresion . OPTERNARIO_2 expresion
 
-    OPBINARIO     desplazar e ir al estado 89
-    OPTERNARIO_1  desplazar e ir al estado 90
-    OPTERNARIO_2  desplazar e ir al estado 119
-    SIGNO         desplazar e ir al estado 91
+    OPBINARIO     shift, and go to state 89
+    OPTERNARIO_1  shift, and go to state 90
+    OPTERNARIO_2  shift, and go to state 117
+    SIGNO         shift, and go to state 91
 
 
-estado 111
+State 109
 
    48 expresion: expresion . SIGNO expresion
    48          | expresion SIGNO expresion .
    49          | expresion . OPBINARIO expresion
    54          | expresion . OPTERNARIO_1 expresion OPTERNARIO_2 expresion
 
-    OPTERNARIO_1  desplazar e ir al estado 90
+    OPTERNARIO_1  shift, and go to state 90
 
-    $default  reduce usando la regla 48 (expresion)
-
-
-estado 112
-
-   61 lista: lista COMA signo . constante
-
-    SIGNO               desplazar e ir al estado 83
-    CONSTANTE_BOOLEANA  desplazar e ir al estado 53
-    CONSTANTE_CARACTER  desplazar e ir al estado 55
-
-    $default  reduce usando la regla 66 (signo)
-
-    constante  ir al estado 120
-    signo      ir al estado 96
+    $default  reduce using rule 48 (expresion)
 
 
-estado 113
+State 110
+
+   61 lista: lista COMA constante .
+
+    $default  reduce using rule 61 (lista)
+
+
+State 111
 
    15 cabecera_subprog: tipo IDENTIFICADOR PARIZQ lista_parametros . PARDER
    35 lista_parametros: lista_parametros . COMA tipo IDENTIFICADOR
 
-    PARDER  desplazar e ir al estado 121
-    COMA    desplazar e ir al estado 122
+    PARDER  shift, and go to state 118
+    COMA    shift, and go to state 119
 
 
-estado 114
+State 112
 
    36 lista_parametros: tipo . IDENTIFICADOR
 
-    IDENTIFICADOR  desplazar e ir al estado 123
+    IDENTIFICADOR  shift, and go to state 120
 
 
-estado 115
+State 113
 
    43 lista_expresiones: lista_expresiones COMA expresion .
    48 expresion: expresion . SIGNO expresion
    49          | expresion . OPBINARIO expresion
    54          | expresion . OPTERNARIO_1 expresion OPTERNARIO_2 expresion
 
-    OPBINARIO     desplazar e ir al estado 89
-    OPTERNARIO_1  desplazar e ir al estado 90
-    SIGNO         desplazar e ir al estado 91
+    OPBINARIO     shift, and go to state 89
+    OPTERNARIO_1  shift, and go to state 90
+    SIGNO         shift, and go to state 91
 
-    $default  reduce usando la regla 43 (lista_expresiones)
+    $default  reduce using rule 43 (lista_expresiones)
 
 
-estado 116
+State 114
 
    34 sentencia_for: BUCLE IDENTIFICADOR DOSPUNTOSIGUAL expresion HASTA . expresion PASO expresion sentencia
 
-    IDENTIFICADOR       desplazar e ir al estado 51
-    SIGNO               desplazar e ir al estado 52
-    CONSTANTE_BOOLEANA  desplazar e ir al estado 53
-    CONSTANTE_CARACTER  desplazar e ir al estado 55
-    PARIZQ              desplazar e ir al estado 56
-    ABRIRCORCHETE       desplazar e ir al estado 57
-    OPUNARIO            desplazar e ir al estado 58
+    IDENTIFICADOR       shift, and go to state 51
+    SIGNO               shift, and go to state 52
+    CONSTANTE_BOOLEANA  shift, and go to state 53
+    CONSTANTE_CARACTER  shift, and go to state 55
+    PARIZQ              shift, and go to state 56
+    ABRIRCORCHETE       shift, and go to state 57
+    OPUNARIO            shift, and go to state 58
 
-    SIGNO               [reduce usando la regla 66 (signo)]
-    CONSTANTE_BOOLEANA  [reduce usando la regla 66 (signo)]
-    CONSTANTE_CARACTER  [reduce usando la regla 66 (signo)]
-    $default            reduce usando la regla 66 (signo)
+    $default  reduce using rule 66 (signo)
 
-    expresion  ir al estado 124
-    funcion    ir al estado 62
-    constante  ir al estado 63
-    lista      ir al estado 64
-    signo      ir al estado 65
+    expresion  go to state 121
+    funcion    go to state 62
+    constante  go to state 63
+    lista      go to state 64
+    signo      go to state 65
 
 
-estado 117
+State 115
 
    28 sentencia_if: CONDICION PARIZQ expresion PARDER sentencia . SUBCONDICION sentencia
    29             | CONDICION PARIZQ expresion PARDER sentencia .
 
-    SUBCONDICION  desplazar e ir al estado 125
+    SUBCONDICION  shift, and go to state 122
 
-    SUBCONDICION  [reduce usando la regla 29 (sentencia_if)]
-    $default      reduce usando la regla 29 (sentencia_if)
+    $default  reduce using rule 29 (sentencia_if)
 
 
-estado 118
+State 116
 
    30 sentencia_while: CICLO PARIZQ expresion PARDER sentencia .
 
-    $default  reduce usando la regla 30 (sentencia_while)
+    $default  reduce using rule 30 (sentencia_while)
 
 
-estado 119
+State 117
 
    54 expresion: expresion OPTERNARIO_1 expresion OPTERNARIO_2 . expresion
 
-    IDENTIFICADOR       desplazar e ir al estado 51
-    SIGNO               desplazar e ir al estado 52
-    CONSTANTE_BOOLEANA  desplazar e ir al estado 53
-    CONSTANTE_CARACTER  desplazar e ir al estado 55
-    PARIZQ              desplazar e ir al estado 56
-    ABRIRCORCHETE       desplazar e ir al estado 57
-    OPUNARIO            desplazar e ir al estado 58
+    IDENTIFICADOR       shift, and go to state 51
+    SIGNO               shift, and go to state 52
+    CONSTANTE_BOOLEANA  shift, and go to state 53
+    CONSTANTE_CARACTER  shift, and go to state 55
+    PARIZQ              shift, and go to state 56
+    ABRIRCORCHETE       shift, and go to state 57
+    OPUNARIO            shift, and go to state 58
 
-    SIGNO               [reduce usando la regla 66 (signo)]
-    CONSTANTE_BOOLEANA  [reduce usando la regla 66 (signo)]
-    CONSTANTE_CARACTER  [reduce usando la regla 66 (signo)]
-    $default            reduce usando la regla 66 (signo)
+    $default  reduce using rule 66 (signo)
 
-    expresion  ir al estado 126
-    funcion    ir al estado 62
-    constante  ir al estado 63
-    lista      ir al estado 64
-    signo      ir al estado 65
+    expresion  go to state 123
+    funcion    go to state 62
+    constante  go to state 63
+    lista      go to state 64
+    signo      go to state 65
 
 
-estado 120
-
-   61 lista: lista COMA signo constante .
-
-    $default  reduce usando la regla 61 (lista)
-
-
-estado 121
+State 118
 
    15 cabecera_subprog: tipo IDENTIFICADOR PARIZQ lista_parametros PARDER .
 
-    $default  reduce usando la regla 15 (cabecera_subprog)
+    $default  reduce using rule 15 (cabecera_subprog)
 
 
-estado 122
+State 119
 
    35 lista_parametros: lista_parametros COMA . tipo IDENTIFICADOR
 
-    TIPO      desplazar e ir al estado 9
-    LISTA_DE  desplazar e ir al estado 10
+    TIPO      shift, and go to state 9
+    LISTA_DE  shift, and go to state 10
 
-    tipo  ir al estado 127
+    tipo  go to state 124
 
 
-estado 123
+State 120
 
    36 lista_parametros: tipo IDENTIFICADOR .
 
-    $default  reduce usando la regla 36 (lista_parametros)
+    $default  reduce using rule 36 (lista_parametros)
 
 
-estado 124
+State 121
 
    34 sentencia_for: BUCLE IDENTIFICADOR DOSPUNTOSIGUAL expresion HASTA expresion . PASO expresion sentencia
    48 expresion: expresion . SIGNO expresion
    49          | expresion . OPBINARIO expresion
    54          | expresion . OPTERNARIO_1 expresion OPTERNARIO_2 expresion
 
-    OPBINARIO     desplazar e ir al estado 89
-    OPTERNARIO_1  desplazar e ir al estado 90
-    SIGNO         desplazar e ir al estado 91
-    PASO          desplazar e ir al estado 128
+    OPBINARIO     shift, and go to state 89
+    OPTERNARIO_1  shift, and go to state 90
+    SIGNO         shift, and go to state 91
+    PASO          shift, and go to state 125
 
 
-estado 125
+State 122
 
    28 sentencia_if: CONDICION PARIZQ expresion PARDER sentencia SUBCONDICION . sentencia
 
-    IDENTIFICADOR  desplazar e ir al estado 21
-    BUCLE          desplazar e ir al estado 22
-    CONDICION      desplazar e ir al estado 23
-    CICLO          desplazar e ir al estado 24
-    ENTRADA        desplazar e ir al estado 25
-    SALIDA         desplazar e ir al estado 26
-    RETURN         desplazar e ir al estado 27
-    INIBLOQUE      desplazar e ir al estado 3
+    IDENTIFICADOR  shift, and go to state 21
+    BUCLE          shift, and go to state 22
+    CONDICION      shift, and go to state 23
+    CICLO          shift, and go to state 24
+    ENTRADA        shift, and go to state 25
+    SALIDA         shift, and go to state 26
+    RETURN         shift, and go to state 27
+    INIBLOQUE      shift, and go to state 3
 
-    bloque                ir al estado 28
-    sentencia             ir al estado 129
-    sentencia_asignacion  ir al estado 33
-    sentencia_if          ir al estado 34
-    sentencia_while       ir al estado 35
-    sentencia_entrada     ir al estado 36
-    sentencia_salida      ir al estado 37
-    sentencia_return      ir al estado 38
-    sentencia_for         ir al estado 39
-    funcion               ir al estado 40
+    bloque                go to state 28
+    sentencia             go to state 126
+    sentencia_asignacion  go to state 33
+    sentencia_if          go to state 34
+    sentencia_while       go to state 35
+    sentencia_entrada     go to state 36
+    sentencia_salida      go to state 37
+    sentencia_return      go to state 38
+    sentencia_for         go to state 39
+    funcion               go to state 40
 
 
-estado 126
+State 123
 
    48 expresion: expresion . SIGNO expresion
    49          | expresion . OPBINARIO expresion
    54          | expresion . OPTERNARIO_1 expresion OPTERNARIO_2 expresion
    54          | expresion OPTERNARIO_1 expresion OPTERNARIO_2 expresion .
 
-    $default  reduce usando la regla 54 (expresion)
+    $default  reduce using rule 54 (expresion)
 
 
-estado 127
+State 124
 
    35 lista_parametros: lista_parametros COMA tipo . IDENTIFICADOR
 
-    IDENTIFICADOR  desplazar e ir al estado 130
+    IDENTIFICADOR  shift, and go to state 127
 
 
-estado 128
+State 125
 
    34 sentencia_for: BUCLE IDENTIFICADOR DOSPUNTOSIGUAL expresion HASTA expresion PASO . expresion sentencia
 
-    IDENTIFICADOR       desplazar e ir al estado 51
-    SIGNO               desplazar e ir al estado 52
-    CONSTANTE_BOOLEANA  desplazar e ir al estado 53
-    CONSTANTE_CARACTER  desplazar e ir al estado 55
-    PARIZQ              desplazar e ir al estado 56
-    ABRIRCORCHETE       desplazar e ir al estado 57
-    OPUNARIO            desplazar e ir al estado 58
+    IDENTIFICADOR       shift, and go to state 51
+    SIGNO               shift, and go to state 52
+    CONSTANTE_BOOLEANA  shift, and go to state 53
+    CONSTANTE_CARACTER  shift, and go to state 55
+    PARIZQ              shift, and go to state 56
+    ABRIRCORCHETE       shift, and go to state 57
+    OPUNARIO            shift, and go to state 58
 
-    SIGNO               [reduce usando la regla 66 (signo)]
-    CONSTANTE_BOOLEANA  [reduce usando la regla 66 (signo)]
-    CONSTANTE_CARACTER  [reduce usando la regla 66 (signo)]
-    $default            reduce usando la regla 66 (signo)
+    $default  reduce using rule 66 (signo)
 
-    expresion  ir al estado 131
-    funcion    ir al estado 62
-    constante  ir al estado 63
-    lista      ir al estado 64
-    signo      ir al estado 65
+    expresion  go to state 128
+    funcion    go to state 62
+    constante  go to state 63
+    lista      go to state 64
+    signo      go to state 65
 
 
-estado 129
+State 126
 
    28 sentencia_if: CONDICION PARIZQ expresion PARDER sentencia SUBCONDICION sentencia .
 
-    $default  reduce usando la regla 28 (sentencia_if)
+    $default  reduce using rule 28 (sentencia_if)
 
 
-estado 130
+State 127
 
    35 lista_parametros: lista_parametros COMA tipo IDENTIFICADOR .
 
-    $default  reduce usando la regla 35 (lista_parametros)
+    $default  reduce using rule 35 (lista_parametros)
 
 
-estado 131
+State 128
 
    34 sentencia_for: BUCLE IDENTIFICADOR DOSPUNTOSIGUAL expresion HASTA expresion PASO expresion . sentencia
    48 expresion: expresion . SIGNO expresion
    49          | expresion . OPBINARIO expresion
    54          | expresion . OPTERNARIO_1 expresion OPTERNARIO_2 expresion
 
-    IDENTIFICADOR  desplazar e ir al estado 21
-    OPBINARIO      desplazar e ir al estado 89
-    OPTERNARIO_1   desplazar e ir al estado 90
-    SIGNO          desplazar e ir al estado 91
-    BUCLE          desplazar e ir al estado 22
-    CONDICION      desplazar e ir al estado 23
-    CICLO          desplazar e ir al estado 24
-    ENTRADA        desplazar e ir al estado 25
-    SALIDA         desplazar e ir al estado 26
-    RETURN         desplazar e ir al estado 27
-    INIBLOQUE      desplazar e ir al estado 3
+    IDENTIFICADOR  shift, and go to state 21
+    OPBINARIO      shift, and go to state 89
+    OPTERNARIO_1   shift, and go to state 90
+    SIGNO          shift, and go to state 91
+    BUCLE          shift, and go to state 22
+    CONDICION      shift, and go to state 23
+    CICLO          shift, and go to state 24
+    ENTRADA        shift, and go to state 25
+    SALIDA         shift, and go to state 26
+    RETURN         shift, and go to state 27
+    INIBLOQUE      shift, and go to state 3
 
-    bloque                ir al estado 28
-    sentencia             ir al estado 132
-    sentencia_asignacion  ir al estado 33
-    sentencia_if          ir al estado 34
-    sentencia_while       ir al estado 35
-    sentencia_entrada     ir al estado 36
-    sentencia_salida      ir al estado 37
-    sentencia_return      ir al estado 38
-    sentencia_for         ir al estado 39
-    funcion               ir al estado 40
+    bloque                go to state 28
+    sentencia             go to state 129
+    sentencia_asignacion  go to state 33
+    sentencia_if          go to state 34
+    sentencia_while       go to state 35
+    sentencia_entrada     go to state 36
+    sentencia_salida      go to state 37
+    sentencia_return      go to state 38
+    sentencia_for         go to state 39
+    funcion               go to state 40
 
 
-estado 132
+State 129
 
    34 sentencia_for: BUCLE IDENTIFICADOR DOSPUNTOSIGUAL expresion HASTA expresion PASO expresion sentencia .
 
-    $default  reduce usando la regla 34 (sentencia_for)
+    $default  reduce using rule 34 (sentencia_for)
