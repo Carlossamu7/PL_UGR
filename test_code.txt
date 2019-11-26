@@ -77,7 +77,10 @@ PRINCIPAL{
         i = 2 ;
     }
 
-
+    PARA ve :=  0  HASTA 10  PASO 1 {
+        vr = lr ++ ve @ ve ;
+        vr = lr @ ve;
+    }
 
     a = 3;
 }
