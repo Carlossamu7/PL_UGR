@@ -63,6 +63,10 @@
 %nonassoc OPTERNARIO_1
 %nonassoc OPTERNARIO_2
 
+/* Creo que así se arregla el conflicto */
+%right PARDER 
+%right SUBCONDICION
+
 /*  COIN
 %left OR
 %left AND
@@ -135,7 +139,7 @@ sentencia						: bloque
 sentencia_asignacion			: IDENTIFICADOR ASIGNACION exp_cad FINLINEA ;
 
 sentencia_if					: CONDICION PARIZQ expresion PARDER sentencia
-								  SUBCONDICION sentencia 
+									SUBCONDICION sentencia
 								| CONDICION PARIZQ expresion PARDER sentencia ;
 
 sentencia_while					: CICLO PARIZQ expresion PARDER sentencia ;
@@ -165,7 +169,7 @@ lista_expresiones				: lista_expresiones COMA expresion
 
 expresion						: PARIZQ expresion PARDER
 								| OPUNARIO expresion
-								| SIGNO expresion %prec SIGNO /* Le damos mayor precedencia al +/- unario */
+								| SIGNO expresion
 								| expresion SIGNO expresion
 								| expresion OPBINARIO expresion
 								| IDENTIFICADOR
@@ -182,8 +186,8 @@ constante						: signo ENTERO
 								| CONSTANTE_BOOLEANA ;
 
 lista							: ABRIRCORCHETE lista CERRARCORCHETE
-								| lista COMA signo constante
-								| signo constante ;						
+								| lista COMA constante
+								| constante ;						
 
 tipo							: TIPO
 								| LISTA_DE TIPO ;
