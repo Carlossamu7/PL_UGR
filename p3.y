@@ -50,13 +50,12 @@
 %token LISTA_DE
 %token OPUNARIOPOST
 
+%nonassoc OPTERNARIO_2
+%nonassoc OPTERNARIO_1
 
 %left OPBINARIO
 %left SIGNO
 %left OPUNARIO
-
-%nonassoc OPTERNARIO_1
-%nonassoc OPTERNARIO_2
 
 //%right PARDER 
 //%right SUBCONDICION
