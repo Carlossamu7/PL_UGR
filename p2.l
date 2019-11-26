@@ -73,6 +73,9 @@ otros			.
 "!"						return OPUNARIO;
 "#"						return OPUNARIO;
 "?"						return OPUNARIO;
+"$"						return OPUNARIO;
+">>"					return OPUNARIOPOST;
+"<<"					return OPUNARIOPOST;
 "++"					return OPTERNARIO_1;
 "@"						return OPTERNARIO_2;
 ":="					return DOSPUNTOSIGUAL;
