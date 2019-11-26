@@ -3,8 +3,7 @@
 	#include <stdio.h>
 	#include <string.h>
 
-	#define YYDEBUG 1
-	int yydebug = 0;	
+	int yydebug = 1;	
 
 	int yylex();  // Para evitar warning al compilar
 	void yyerror(const char * msg);
@@ -29,7 +28,6 @@
 %token REAL
 %token TIPO
 %token BUCLE
-%token DESDE
 %token HASTA
 %token PASO
 %token CONDICION
