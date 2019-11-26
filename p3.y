@@ -48,6 +48,7 @@
 %token CERRARCORCHETE
 %token OPUNARIO
 %token LISTA_DE
+%token OPUNARIOPOST
 
 
 %left OPBINARIO
@@ -116,7 +117,8 @@ sentencia						: bloque
 								| sentencia_entrada
 								| sentencia_salida
 								| sentencia_return
-								| sentencia_for 
+								| sentencia_for
+								| sentencia_iterar 
 								| funcion FINLINEA ;
 
 sentencia_asignacion			: IDENTIFICADOR ASIGNACION exp_cad FINLINEA ;
@@ -134,6 +136,8 @@ sentencia_salida				: SALIDA lista_exp_cadena FINLINEA ;
 sentencia_return				: RETURN expresion FINLINEA ;
 
 sentencia_for					: BUCLE IDENTIFICADOR DOSPUNTOSIGUAL expresion HASTA expresion PASO expresion sentencia ;
+
+sentencia_iterar				: IDENTIFICADOR OPUNARIOPOST FINLINEA ;
 
 lista_parametros				: lista_parametros COMA tipo IDENTIFICADOR 
 								| tipo IDENTIFICADOR ;
@@ -159,6 +163,7 @@ expresion						: PARIZQ expresion PARDER
 								| lista
 								| constante
 								| funcion
+								| expresion OPTERNARIO_2 expresion
 								| expresion OPTERNARIO_1 expresion OPTERNARIO_2 expresion ;
 
 funcion							: IDENTIFICADOR PARIZQ lista_expresiones PARDER ;
