@@ -185,9 +185,11 @@ constante						: signo ENTERO
 								| CONSTANTE_CARACTER
 								| CONSTANTE_BOOLEANA ;
 
-lista							: ABRIRCORCHETE lista CERRARCORCHETE
-								| lista COMA constante
-								| constante ;						
+lista							: ABRIRCORCHETE lista2 ;
+
+lista2							: constante COMA lista2
+								| constante CERRARCORCHETE ;
+												
 
 tipo							: TIPO
 								| LISTA_DE TIPO ;
