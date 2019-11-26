@@ -118,7 +118,8 @@ sentencia						: bloque
 								| sentencia_return
 								| sentencia_for
 								| sentencia_iterar 
-								| funcion FINLINEA ;
+								| funcion FINLINEA 
+								| error ;
 
 sentencia_asignacion			: IDENTIFICADOR ASIGNACION exp_cad FINLINEA ;
 
@@ -163,7 +164,8 @@ expresion						: PARIZQ expresion PARDER
 								| constante
 								| funcion
 								| expresion OPTERNARIO_2 expresion
-								| expresion OPTERNARIO_1 expresion OPTERNARIO_2 expresion ;
+								| expresion OPTERNARIO_1 expresion OPTERNARIO_2 expresion 
+								| error ;
 
 funcion							: IDENTIFICADOR PARIZQ lista_expresiones PARDER ;
 
@@ -176,7 +178,6 @@ lista							: ABRIRCORCHETE lista2 ;
 
 lista2							: exp_cad COMA lista2
 								| exp_cad CERRARCORCHETE ;
-												
 
 tipo							: TIPO
 								| LISTA_DE TIPO ;
