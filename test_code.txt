@@ -79,8 +79,13 @@ PRINCIPAL{
 
     PARA ve :=  0  HASTA 10  PASO 1 {
         vr = lr ++ ve @ ve ;
-        vr = lr @ ve;
+        vr = lr @ ve ;
     }
+
+    lr>> ;
+    lr<< ;
+    a = ?(lr@c) ;
+    b = #(lr++3@1) ;
 
     a = 3;
 }
