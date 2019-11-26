@@ -11,12 +11,7 @@
 	//unsigned int linea_actual = 1; // La otra opción es usar 'yyleno' e invocar a flex con la opcion -l
 %}
 
-/*	COIN
-%define parse.error verbose 
-*/
-
 %error-verbose	/* Hace que bison (yacc) te de detalles sobre los errores */
-
 
 %token CABECERA
 %token IDENTIFICADOR
@@ -55,7 +50,6 @@
 %token LISTA_DE
 
 
-/* En el guión de prácticas pone que todos son left menos los unarios, ++ y -- */
 %left OPBINARIO
 %left SIGNO
 %left OPUNARIO
@@ -63,20 +57,9 @@
 %nonassoc OPTERNARIO_1
 %nonassoc OPTERNARIO_2
 
-/* Creo que así se arregla el conflicto */
-%right PARDER 
-%right SUBCONDICION
+//%right PARDER 
+//%right SUBCONDICION
 
-/*  COIN
-%left OR
-%left AND
-%left XOR
-%left OPIG
-%left OPREL
-%left MASMENOS
-%left OPMUL
-%right NOT
-*/
 
 %start programa
 
@@ -180,23 +163,19 @@ expresion						: PARIZQ expresion PARDER
 
 funcion							: IDENTIFICADOR PARIZQ lista_expresiones PARDER ;
 
-constante						: signo ENTERO
-								| signo REAL
+constante						: ENTERO
+								| REAL
 								| CONSTANTE_CARACTER
 								| CONSTANTE_BOOLEANA ;
 
 lista							: ABRIRCORCHETE lista2 ;
 
-lista2							: constante COMA lista2
-								| constante CERRARCORCHETE ;
+lista2							: exp_cad COMA lista2
+								| exp_cad CERRARCORCHETE ;
 												
 
 tipo							: TIPO
 								| LISTA_DE TIPO ;
-
-signo							: SIGNO
-								| /* vacío */ ;
-
 
 %%
 
