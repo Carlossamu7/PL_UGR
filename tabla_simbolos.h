@@ -33,3 +33,4 @@
 #define CERRARCORCHETE		289
 #define OPUNARIO			290
 #define LISTA_DE			291
+#define OPUNARIOPOST		292
