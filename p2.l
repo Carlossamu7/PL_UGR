@@ -71,9 +71,9 @@ otros			.
 "/"						return OPMULTIPLICATIVOS;
 "%"						return OPMULTIPLICATIVOS;
 "!"						return OPUNARIO;
-"#"						return OPUNARIO;
-"?"						return OPUNARIO;
-"$"						return OPUNARIO;
+"#"						return OPUNARIOLISTAS;
+"?"						return OPUNARIOLISTAS;
+"$"						return OPDOLAR;
 "**"					return OPCONCATENAR;
 "--"					return OPDECREMENTO;
 ">>"					return OPUNARIOPOST;
