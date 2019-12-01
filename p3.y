@@ -15,24 +15,21 @@
 
 %token CABECERA
 %token IDENTIFICADOR
+%token OPCONCATENAR
+%token OPPORCENTAJE
 %token OPORLOGICO
 %token OPANDLOGICO
-%token OPORBITS
 %token OPEXCLUSIVEOR
-%token OPANDBITS
 %token OPIGUALDAD
 %token OPRELACION
 %token SIGNO
 %token OPMULTIPLICATIVOS
 %token OPUNARIO
-%token OPDECREMENTOPRE
-%token OPINCREMENTOPRE
-%token OPDECREMENTOPOS
-%token OPINCREMENTOPOS
+%token OPDECREMENTO
+%token OPINCREMENTO
 %token ABRIRCORCHETE
 %token CERRARCORCHETE
-%token OPTERNARIO_1
-%token OPTERNARIO_2
+%token OPARROBA
 %token ENTERO
 %token REAL
 %token TIPO
@@ -61,23 +58,20 @@
 %token LISTA_DE
 %token OPUNARIOPOST
 
-%nonassoc OPTERNARIO_2
-%nonassoc OPTERNARIO_1
+%nonassoc OPARROBA
+%nonassoc OPINCREMENTO
 
+%left OPCONCATENAR
+%left OPPORCENTAJE
 %left OPORLOGICO
 %left OPANDLOGICO
-%left OPORBITS
 %left OPEXCLUSIVEOR
-%left OPANDBITS
 %left OPIGUALDAD
 %left OPRELACION
 %left SIGNO
 %left OPMULTIPLICATIVOS
 %right OPUNARIO
-%right OPDECREMENTOPRE
-%right OPINCREMENTOPRE
-%left OPDECREMENTOPOS
-%left OPINCREMENTOPOS
+%left OPDECREMENTO
 %left ABRIRCORCHETE
 %left CERRARCORCHETE
 
@@ -182,13 +176,21 @@ expresion						: PARIZQ expresion PARDER
 								| OPUNARIO expresion
 								| SIGNO expresion
 								| expresion SIGNO expresion
-								| expresion OPBINARIO expresion
+								| expresion OPORLOGICO expresion
+								| expresion OPANDLOGICO expresion
+								| expresion OPEXCLUSIVEOR expresion
+								| expresion OPIGUALDAD expresion
+								| expresion OPRELACION expresion
+								| expresion OPMULTIPLICATIVOS expresion
+								| expresion OPDECREMENTO expresion
+								| expresion OPPORCENTAJE expresion
+								| expresion OPCONCATENAR expresion
 								| IDENTIFICADOR
 								| lista
 								| constante
 								| funcion
-								| expresion OPTERNARIO_2 expresion
-								| expresion OPTERNARIO_1 expresion OPTERNARIO_2 expresion 
+								| expresion OPARROBA expresion
+								| expresion OPINCREMENTO expresion OPARROBA expresion 
 								| error ;
 
 funcion							: IDENTIFICADOR PARIZQ lista_expresiones PARDER ;
