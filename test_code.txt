@@ -84,8 +84,12 @@ PRINCIPAL{
 
     lr>> ;
     lr<< ;
+    $(lr--4) ;
     a = ?(lr@c) ;
     b = #(lr++3@1) ;
-
-    a = 3;
+    c = lr%(#lr/2) ** lb ;
+    lr = lr+2;
+    lr = 2-lr;
+    lr = lr*2;
+    lr = 2*lr;
 }
