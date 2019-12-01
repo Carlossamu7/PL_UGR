@@ -78,6 +78,7 @@
 %left ABRIRCORCHETE
 %left CERRARCORCHETE
 
+
 //%right PARDER 
 //%right SUBCONDICION
 
@@ -159,7 +160,7 @@ sentencia_return				: RETURN expresion FINLINEA ;
 
 sentencia_for					: BUCLE IDENTIFICADOR DOSPUNTOSIGUAL expresion HASTA expresion PASO expresion sentencia ;
 
-sentencia_iterar				: expresion OPUNARIOPOST FINLINEA ;
+sentencia_iterar				: IDENTIFICADOR OPUNARIOPOST FINLINEA ;
 
 setencia_reset_cursor			: OPDOLAR expresion FINLINEA ;
 
