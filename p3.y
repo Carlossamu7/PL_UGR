@@ -25,8 +25,10 @@
 %token SIGNO
 %token OPMULTIPLICATIVOS
 %token OPUNARIO
+%token OPUNARIOLISTAS
 %token OPDECREMENTO
 %token OPINCREMENTO
+%token OPDOLAR
 %token ABRIRCORCHETE
 %token CERRARCORCHETE
 %token OPARROBA
@@ -71,6 +73,7 @@
 %left SIGNO
 %left OPMULTIPLICATIVOS
 %right OPUNARIO
+%right OPUNARIOLISTAS
 %left OPDECREMENTO
 %left ABRIRCORCHETE
 %left CERRARCORCHETE
@@ -136,6 +139,7 @@ sentencia						: bloque
 								| sentencia_return
 								| sentencia_for
 								| sentencia_iterar 
+								| setencia_reset_cursor
 								| funcion FINLINEA 
 								| error ;
 
@@ -155,7 +159,9 @@ sentencia_return				: RETURN expresion FINLINEA ;
 
 sentencia_for					: BUCLE IDENTIFICADOR DOSPUNTOSIGUAL expresion HASTA expresion PASO expresion sentencia ;
 
-sentencia_iterar				: IDENTIFICADOR OPUNARIOPOST FINLINEA ;
+sentencia_iterar				: expresion OPUNARIOPOST FINLINEA ;
+
+setencia_reset_cursor			: OPDOLAR expresion FINLINEA ;
 
 lista_parametros				: lista_parametros COMA tipo IDENTIFICADOR 
 								| tipo IDENTIFICADOR ;
@@ -174,6 +180,7 @@ lista_expresiones				: lista_expresiones COMA expresion
 
 expresion						: PARIZQ expresion PARDER
 								| OPUNARIO expresion
+								| OPUNARIOLISTAS expresion
 								| SIGNO expresion
 								| expresion SIGNO expresion
 								| expresion OPORLOGICO expresion
