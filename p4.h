@@ -137,21 +137,21 @@ bool compruebaVar(char* nombre){
 		return encontrada;
 }
 
-tipoDato getTipoDato(char* nombre){
+entradaTS getSimboloIdentificador(char* nombre){
 	int i;
 	bool encontrada=false;
-	tipoDato ret;
+	entradaTS ret;
 	
 	for(i=TOPE-1; i>=0 && !encontrada; --i){
 		if( (TS[i].entrada == variable || TS[i].entrada == funcion ) && strcmp(TS[i].nombre, nombre) == 0){
 			encontrada = true;
-			ret=TS[i].tipoDato;
+			ret=TS[i];
 		}
 	}
 	return ret;	
 }
 
-tipoDato getTipoArg(char* nombreFun, int numPar){
+entradaTS getSimboloArgumento(char* nombreFun, int numPar){
 	int i, indiceFun;
 	bool encontrada=false;
 		
@@ -163,10 +163,12 @@ tipoDato getTipoArg(char* nombreFun, int numPar){
 	}
 	
 	if(numPar > TS[indiceFun].parametros){
-		return -1;
+		entradaTS ret;
+		ret.parametros=-1;
+		return ret;
 	}
 	
-	return TS[indiceFun-TS[indiceFun].parametros+numPar-1].tipoDato;	
+	return TS[indiceFun-TS[indiceFun].parametros+numPar-1];	
 }
 
 
@@ -178,12 +180,112 @@ int buscarFuncion (char* Nomb) {
 	return -1;
 }
 
-bool comprobarParametros(char* nombre, tipoDato dato, int nParam) {
+bool comprobarParametros(char* nombre, dtipo dato, int nParam) {
 	bool esIgual = false;
 	int index = buscarFuncion(nombre);
 	if(TS[index-nParam].tipoDato == dato)
 		esIgual = true;
 	return esIgual;
+}
+
+void insertarVariable(char* nom, int numPar, int longitud){
+	if(compruebaMismoNombreDeclar(nom, numPar)){
+		printf("\nError semantico en la linea %d: la variable %s ya esta declarada en este bloque\n", yylineno, nom);
+	}else{ 
+		entradaTS aux;
+		aux.entrada = variable;
+		aux.nombre = nom;
+		aux.tipoDato = desconocido;
+		aux.longitud = longitud;
+		insertar(aux);
+	}
+}
+
+char* toString(dtipo td){
+	if(td == entero) 	return "entero";		
+	if(td == booleano) 	return "booleano";	
+	if(td == real) 		return "real";
+	if(td == caracter)	return "caracter";
+	if(td == lista)		return "lista";
+}
+
+
+void comprobarEsBueno(char* nom, dtipo dat) {
+	if(compruebaVar(nom) == 0) 
+		printf("\nError semantico en la linea %d: la variable %s no esta declarada\n", yylineno, nom);
+	else {
+		aux=getSimboloIdentificador(nom);
+		if(aux.tipoDato != dat) {			
+			printf("\nError semantico en la linea %d: se intento asignar a la variable %s el tipo %s\n", yylineno, nom, toString(dat));
+		}
+	}
+}
+
+void insertarParametros(entradaTS* argumentos, int numArg){
+	for (int i = 0; i < numArg; i++)
+		insertar(argumentos);
+}
+
+
+agregarParametros(char * Nomb, int numArgumentos){
+	int index;
+	for(int i = numArgumentos; i>0; --i) {
+		if(i!=numArgumentos)
+			fputs(",",file);
+		index = buscarFuncion(Nomb);
+		char * Nombre = TS[index-i].Nombre;
+		char * midato = tipoDeDato(TS[index-i].dato);
+		char * sent;
+		sent =(char *) malloc(200);;
+		sprintf(sent,"%s %s",midato,Nombre);
+		fputs(sent,file);
+	}	
+}
+
+
+aniadeSubprog(char * Nombre,int dato,int numArgumentos){
+	char * sent;
+	sent =(char *) malloc(200);
+	char * midato = tipoDeDato(dato);
+	sprintf(sent,"%s %s (",midato,Nombre);
+	fputs(sent,file);
+	agregarParametros(Nombre,numArgumentos);
+	fputs(")",file);
+}
+agregarVariable(int dato){
+	int i;
+	bool fin=false;
+	bool coma=false;
+	char * sent;
+	sent =(char *) malloc(200);
+	sprintf(sent,"%s ",tipoDeDato(dato));
+	for(i=0; i < TOPE && fin==false; i++){
+		if(TS[TOPE-1-i].entrada == 3 && TS[TOPE-1-i].dato == 6){
+			if(coma)	sprintf(sent,"%s,",sent);
+			sprintf(sent,"%s %s",sent,TS[TOPE-1-i].Nombre);
+			coma = true;
+		}else{
+			fin=true;
+		}
+	}
+	sprintf(sent,"%s;\n",sent);
+	fputs(("%s",sent),file);
+
+}
+
+agregarAsignacion(char * Nombre,char * valor) {
+	char * sent;
+	sent =(char *) malloc(200);
+	sprintf(sent,"%s = %s;\n",Nombre,valor);
+	fputs(("%s",sent),file);
+}
+
+char raizTipo(int dato) {
+	if(dato==1)	return 'd';
+	else if(dato==2)	return 'f';
+	else if(dato==3)	return 'c';
+	else if(dato==4)	return 'b';
+	else return 'a';
 }
 
 

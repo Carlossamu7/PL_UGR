@@ -2,6 +2,15 @@
 	#include <stdlib.h>
 	#include <stdio.h>
 	#include <string.h>
+	/** Aqui incluimos el fichero generado por el ’lex’
+	 *	que implementa la funcion ’yylex’
+	 **/
+
+	#ifdef DOSWINDOWS /* Variable de entorno que indica la plataforma */
+	#include "lexyy.c"
+	#else
+	#include "lex.yy.c"
+	#endif
 	#include "p4.h"
 
 	int yydebug = 1;	
@@ -9,6 +18,9 @@
 	int yylex();  // Para evitar warning al compilar
 	void yyerror(const char * msg);
 
+	unsigned int contBloques = 0;
+	//int numPar = 0;
+	//char* nombreFun;
 	//unsigned int linea_actual = 1; // La otra opción es usar 'yyleno' e invocar a flex con la opcion -l
 %}
 
@@ -90,16 +102,16 @@
 
 programa						: CABECERA bloque ;
 
-bloque							: INIBLOQUE
+bloque							: INIBLOQUE {insertarMarca(); contBloques++;}
 					 			  declar_variables_locales
 					 			  declar_subprogs
 							 	  sentencias
-							 	  FINBLOQUE ;
+							 	  FINBLOQUE {contBloques--; imprimirTS(); limpiarMarca();};
 
 declar_subprogs					: declar_subprogs declar_subprog
 								| /* vacío */ ;
 
-declar_subprog					: cabecera_subprog bloque ;
+declar_subprog					: cabecera_subprog bloque {insertarMarca(); /* ARREGLAR */ insertarParametros(); contBloques++;}
 
 declar_variables_locales		: INIVARIABLES
 						 	 		variables_locales
@@ -109,8 +121,8 @@ declar_variables_locales		: INIVARIABLES
 variables_locales				: variables_locales cuerpo_declar_variables
 								| cuerpo_declar_variables ;
 
-cuerpo_declar_variables			: tipo lista_identificadores FINLINEA 
-								| tipo sentencia_asignacion 
+cuerpo_declar_variables			: tipo lista_identificadores FINLINEA //{$2.tipoDato = $1.tipoDato;}
+								| tipo sentencia_asignacion //{$2.tipoDato = $1.tipoDato;}
 								| error; 
 								/**
 								 * 	error es una palabra reservada de yacc 
@@ -124,10 +136,10 @@ cuerpo_declar_variables			: tipo lista_identificadores FINLINEA
 								 *	completo y perdemos esa información
 								*/
 
-lista_identificadores			: lista_identificadores COMA IDENTIFICADOR
-								| IDENTIFICADOR ;
+lista_identificadores			: lista_identificadores COMA IDENTIFICADOR {$3.tipoDato = $0.tipoDato;}
+								| IDENTIFICADOR {$1.tipoDato = $0.tipoDato;} ;
 
-cabecera_subprog				: tipo IDENTIFICADOR PARIZQ lista_parametros PARDER ;
+cabecera_subprog				: tipo IDENTIFICADOR PARIZQ lista_parametros PARDER {$2.tipoDato = $1.tipoDato;} ;
 
 sentencias						: sentencias sentencia
 								| sentencia ;
@@ -218,16 +230,6 @@ tipo							: TIPO
 								| LISTA_DE TIPO ;
 
 %%
-
-/** Aqui incluimos el fichero generado por el ’lex’
- *	que implementa la funcion ’yylex’
- **/
-
-#ifdef DOSWINDOWS /* Variable de entorno que indica la plataforma */
-#include "lexyy.c"
-#else
-#include "lex.yy.c"
-#endif
 
 /* Lo que teniamos antes
 #include "lex.yy.c"
