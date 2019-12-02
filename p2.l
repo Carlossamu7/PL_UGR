@@ -25,11 +25,26 @@ otros			.
 %%
 
 "PRINCIPAL"				return CABECERA;
-"ENTERO"				return TIPO;
-"REAL"					return TIPO;
-"BOOLEANO"				return TIPO;
-"CARACTER"				return TIPO;
-"LISTA DE" 				return LISTA_DE;
+"ENTERO"				{	 
+						yylval.tipoDato = entero;
+						return TIPO;
+						}
+"REAL"					{	
+						yylval.tipoDato = real;
+						return TIPO;
+						}
+"BOOLEANO"				{	
+						yylval.tipoDato = booleano;
+						return TIPO;
+						}
+"CARACTER"				{	
+						yylval.tipoDato = caracter;
+						return TIPO;
+						}
+"LISTA DE" 				{
+						yylval.tipoDato = lista;
+						return TIPO;
+						}
 "PARA" 					return BUCLE;
 "HASTA"					return HASTA;
 "PASO"					return PASO;
@@ -41,12 +56,33 @@ otros			.
 "DEVOLVER"				return RETURN;
 "VAR"					return INIVARIABLES;
 "FINVAR"				return FINVARIABLES;
-"VERDADERO"				return CONSTANTE_BOOLEANA;
-"FALSO"					return CONSTANTE_BOOLEANA;
-{caracter}				return CONSTANTE_CARACTER;
-{cadena}				return CADENA;
-{entero}				return ENTERO;	
-{real}					return REAL;
+"VERDADERO"				{
+						yylval.tipoDato = booleano;
+						return CONSTANTE_BOOLEANA;
+						}
+"FALSO"					{
+						yylval.tipoDato = booleano;
+						return CONSTANTE_BOOLEANA;
+						}
+{caracter}				{
+						yylval.tipoDato = caracter;
+						yylval.valor = strdup(yytext);
+						return CONSTANTE_CARACTER;
+						}
+{cadena}				{
+						yylval.valor = strdup(yytext);
+						return CADENA;
+						}
+{entero}				{
+						yylval.tipoDato = entero;
+						yylval.valor = strdup(yytext);
+						return ENTERO;
+						}	
+{real}					{
+						yylval.tipoDato = real;
+						yylval.valor = strdup(yytext);
+						return REAL;
+						}
 ","						return COMA;
 ";"						return FINLINEA;
 "("						return PARIZQ;
@@ -59,29 +95,77 @@ otros			.
 "||"					return OPORLOGICO;
 "&&"					return OPANDLOGICO;
 "^"						return OPEXCLUSIVEOR;
-"=="					return OPIGUALDAD;
-"!="					return OPIGUALDAD;
-"<"						return OPRELACION;
-">"						return OPRELACION;
-"<="					return OPRELACION;
-">="					return OPRELACION;
-"+"						return SIGNO;
-"-"						return SIGNO;
-"*"						return OPMULTIPLICATIVOS;
-"/"						return OPMULTIPLICATIVOS;
-"%"						return OPMULTIPLICATIVOS;
+"=="					{
+						yylval.valor = strdup(yytext);
+						return OPIGUALDAD;
+						}
+"!="					{
+						yylval.valor = strdup(yytext);
+						return OPIGUALDAD;
+						}
+"<"						{
+						yylval.valor = strdup(yytext);
+						return OPRELACION;
+						}
+">"						{
+						yylval.valor = strdup(yytext);
+						return OPRELACION;
+						}
+"<="					{
+						yylval.valor = strdup(yytext);
+						return OPRELACION;
+						}
+">="					{
+						yylval.valor = strdup(yytext);
+						return OPRELACION;
+						}
+"+"						{
+						yylval.valor = strdup(yytext);
+						return SIGNO;
+						}
+"-"						{
+						yylval.valor = strdup(yytext);
+						return SIGNO;
+						}
+"*"						{
+						yylval.valor = strdup(yytext);
+						return OPMULTIPLICATIVOS;
+						}
+"/"						{
+						yylval.valor = strdup(yytext);
+						return OPMULTIPLICATIVOS;
+						}
+"%"						{
+						yylval.valor = strdup(yytext);
+						return OPMULTIPLICATIVOS;
+						}
 "!"						return OPUNARIO;
-"#"						return OPUNARIOLISTAS;
-"?"						return OPUNARIOLISTAS;
+"#"						{
+						yylval.valor = strdup(yytext);
+						return OPUNARIOLISTAS;
+						}
+"?"						{
+						yylval.valor = strdup(yytext);
+						return OPUNARIOLISTAS;
+						}
 "$"						return OPDOLAR;
 "**"					return OPCONCATENAR;
 "--"					return OPDECREMENTO;
-">>"					return OPUNARIOPOST;
-"<<"					return OPUNARIOPOST;
+">>"					{
+						yylval.valor = strdup(yytext);
+						return OPUNARIOPOST;
+						}
+"<<"					{
+						yylval.valor = strdup(yytext);
+						return OPUNARIOPOST;
+						}
 "++"					return OPINCREMENTO;
 "@"						return OPARROBA;
 ":="					return DOSPUNTOSIGUAL;
-{identificador} 		return IDENTIFICADOR;
+{identificador} 		{
+						yylval.nombre=strdup(yytext);
+						return IDENTIFICADOR;
+						}
 
 [\n]					/*printf("\n")*/;
 {blanco}				;

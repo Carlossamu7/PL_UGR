@@ -3,6 +3,13 @@ typedef int bool;
 #define false 0
 #define YYSTYPE atributos_snt //Para redefinir el yylval para que no sea un entero, sino nuestro símbolo
 							  //Los $ son de tipo atributo_snt
+#define MAX_TS 1000
+
+entradaTS TS[MAX_TS];	/*Pila de la tabla de símbolos*/
+long int TOPE = 0;
+unsigned int Subprog ;     /*Indicador de comienzo de bloque de un subprog*/
+FILE * file;
+char * argumento;
 
 typedef enum {marca, funcion, variable, parametro_formal} tipoEntrada ;
 
@@ -13,27 +20,40 @@ typedef struct {
 	char*			nombre ;
 	dtipo 			tipoDato ;
 	unsigned int 	parametros ;
+	unsigned int	longitud ;
 } entradaTS ;
 
-entradaTS TS[1000];
-long int TOPE = 0;
-FILE * file;
-char * argumento;
+typedef struct {
+		char*	valor ;			/*Nombre del lexema*/
+		dtipo 	tipoDato ;		/*Tipo del símbolo*/
+		char*	nombre;
+} atributos ;
+
+
+#define YYSTYPE atributos  /*A partir de ahora, cada símbolo tiene*/
+							/*una estructura de tipo atributos*/
+
+/*Lista de funciones y procedimientos para manejo de la TS*/
+
+
+/*Fin de funciones y procedimientos para manejo de la TS*/
+
 
 void insertar (entradaTS s){
    if (TOPE == 1000) {
-      printf("\nError: tamanio maximo alcanzado\n");
-      exit(-1);
+		printf("\nError: tamanio maximo alcanzado\n");
+		exit(-1);
    } else {
-	  TS[TOPE].nombre=s.nombre;
-	  TS[TOPE].tipoDato=s.tipoDato;
-	  TS[TOPE].parametros=s.parametros;
-	  TS[TOPE].entrada=s.entrada;
-      ++TOPE;
+		TS[TOPE].nombre=s.nombre;
+		TS[TOPE].tipoDato=s.tipoDato;
+		TS[TOPE].parametros=s.parametros;
+		TS[TOPE].entrada=s.entrada;
+		TS[TOPE].longitud=s.longitud;
+		++TOPE;
    }
 }
 
-void limpiarMarca (){
+void limpiarMarca(){
    bool encontrada = false;
    int i;
    for (i=TOPE-1; i>0 && !encontrada; --i) {
