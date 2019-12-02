@@ -2,6 +2,7 @@
 	#include <stdlib.h>
 	#include <stdio.h>
 	#include <string.h>
+	#include "p4.h"
 
 	int yydebug = 1;	
 
