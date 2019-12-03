@@ -19,7 +19,7 @@
 	void yyerror(const char * msg);
 
 	unsigned int contBloques = 0;
-	//int numPar = 0;
+	// unsigned int numPar = 0;
 	//char* nombreFun;
 	//unsigned int linea_actual = 1; // La otra opción es usar 'yyleno' e invocar a flex con la opcion -l
 %}
@@ -102,16 +102,20 @@
 
 programa						: CABECERA bloque ;
 
-bloque							: INIBLOQUE {insertarMarca(); contBloques++;}
+bloque							: INIBLOQUE {	insertarMarca();
+												if($0.parametros > 0) insertarArgumentos($0.nombre, $0.parametros); 
+												contBloques++; }
 					 			  declar_variables_locales
 					 			  declar_subprogs
 							 	  sentencias
-							 	  FINBLOQUE {contBloques--; imprimirTS(); limpiarMarca();};
+							 	  FINBLOQUE {	contBloques--; 
+												imprimirTS(); 
+												limpiarMarca(); };
 
 declar_subprogs					: declar_subprogs declar_subprog
 								| /* vacío */ ;
 
-declar_subprog					: cabecera_subprog bloque {insertarMarca(); /* ARREGLAR */ insertarParametros(); contBloques++;}
+declar_subprog					: cabecera_subprog bloque ;
 
 declar_variables_locales		: INIVARIABLES
 						 	 		variables_locales
@@ -121,9 +125,9 @@ declar_variables_locales		: INIVARIABLES
 variables_locales				: variables_locales cuerpo_declar_variables
 								| cuerpo_declar_variables ;
 
-cuerpo_declar_variables			: tipo lista_identificadores FINLINEA //{$2.tipoDato = $1.tipoDato;}
-								| tipo sentencia_asignacion //{$2.tipoDato = $1.tipoDato;}
-								| error; 
+cuerpo_declar_variables			: tipo lista_identificadores FINLINEA
+								| tipo sentencia_asignacion 
+								| error ; 
 								/**
 								 * 	error es una palabra reservada de yacc 
 								 * 	y hace que si se llega a ella, se llama
@@ -136,10 +140,22 @@ cuerpo_declar_variables			: tipo lista_identificadores FINLINEA //{$2.tipoDato =
 								 *	completo y perdemos esa información
 								*/
 
-lista_identificadores			: lista_identificadores COMA IDENTIFICADOR {$3.tipoDato = $0.tipoDato;}
-								| IDENTIFICADOR {$1.tipoDato = $0.tipoDato;} ;
+lista_identificadores			: lista_identificadores COMA IDENTIFICADOR {	$3.tipoDato = $0.tipoDato;
+																				$3.entrada = variable;
+																				if(!variableExisteBloque($3)) insertar($3);
+																				else mensajeErrorBloque($3);}
+								| IDENTIFICADOR {	$1.tipoDato = $0.tipoDato;
+													$1.entrada = variable;
+													if(!variableExisteBloque($1)) insertar($1);
+													else mensajeErrorBloque($1);} ;
 
-cabecera_subprog				: tipo IDENTIFICADOR PARIZQ lista_parametros PARDER {$2.tipoDato = $1.tipoDato;} ;
+cabecera_subprog				: tipo IDENTIFICADOR PARIZQ lista_parametros PARDER {	$2.tipoDato = $1.tipoDato; 
+																						$$.nombre = $2.nombre; 
+																						$$.parametros = $4.parametros;	
+																						$2.parametros = $4.parametros;
+																						$2.entrada = funcion;
+																						if(!variableExisteBloque($2)) insertar($2);
+																						else mensajeErrorBloque($2);} ;
 
 sentencias						: sentencias sentencia
 								| sentencia ;
@@ -177,8 +193,14 @@ sentencia_iterar				: IDENTIFICADOR OPUNARIOPOST FINLINEA ;
 
 setencia_reset_cursor			: OPDOLAR expresion FINLINEA ;
 
-lista_parametros				: lista_parametros COMA tipo IDENTIFICADOR 
-								| tipo IDENTIFICADOR ;
+lista_parametros				: lista_parametros COMA tipo IDENTIFICADOR {	$$.parametros++; 
+																				$4.tipoDato = $3.tipoDato;
+																				$4.entrada = parametro_formal;
+																				insertar($4);}
+								| tipo IDENTIFICADOR {	$$.parametros++; 
+														$2.tipoDato = $1.tipoDato; 
+														$2.entrada = parametro_formal;
+														insertar($2);} ;
 
 lista_exp_cadena				: lista_exp_cadena COMA exp_cad
 								| exp_cad ;

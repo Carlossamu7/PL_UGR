@@ -1,8 +1,6 @@
 typedef int bool;
 #define true 1
 #define false 0
-#define YYSTYPE atributos_snt //Para redefinir el yylval para que no sea un entero, sino nuestro símbolo
-							  //Los $ son de tipo atributo_snt
 #define MAX_TS 1000
 
 entradaTS TS[MAX_TS];	/*Pila de la tabla de símbolos*/
@@ -19,18 +17,12 @@ typedef struct {
 	tipoEntrada 	entrada ;
 	char*			nombre ;
 	dtipo 			tipoDato ;
-	unsigned int 	parametros ;
-	unsigned int	longitud ;
+	unsigned int 	parametros = 0 ;
+	unsigned int	longitud = 0 ;
 } entradaTS ;
 
-typedef struct {
-		char*	valor ;			/*Nombre del lexema*/
-		dtipo 	tipoDato ;		/*Tipo del símbolo*/
-		char*	nombre;
-} atributos ;
 
-
-#define YYSTYPE atributos  /*A partir de ahora, cada símbolo tiene*/
+#define YYSTYPE entradaTS  /*A partir de ahora, cada símbolo tiene*/
 							/*una estructura de tipo atributos*/
 
 /*Lista de funciones y procedimientos para manejo de la TS*/
@@ -52,6 +44,22 @@ void insertar (entradaTS s){
 		++TOPE;
    }
 }
+
+/*
+void insertar (tipoEntrada entrada, char* nombre, dtipo tipoDato, unsigned int parametros, unsigned int longitud){
+   if (TOPE == 1000) {
+		printf("\nError: tamanio maximo alcanzado\n");
+		exit(-1);
+   } else {
+		TS[TOPE].nombre=nombre;
+		TS[TOPE].tipoDato=tipoDato;
+		TS[TOPE].parametros=parametros;
+		TS[TOPE].entrada=entrada;
+		TS[TOPE].longitud=longitud;
+		++TOPE;
+   }
+}
+*/
 
 void limpiarMarca(){
    bool encontrada = false;
@@ -125,16 +133,28 @@ void imprimirTS(){
 	}	
 }
 
+//Comprueba si la variable se ha declarado anteriormente en el mismo bloque
+bool variableExisteBloque(entradaTS ts){
+	bool encontrada = false;
+	
+	for(int i=TOPE-1; i>=0 && !encontrada; --i){
+		if( (TS[i].entrada == variable || TS[i].entrada == funcion) && strcmp(TS[i].nombre, ts.nombre) == 0)
+			encontrada = true;		
+		if(TS[i].entrada==marca)
+			return encontrada;
+	}
+	return encontrada;
+}
+
 //Comprueba si la variable se ha declarado anteriormente
-bool compruebaVar(char* nombre){
-		int i;
-		bool encontrada=false;
-		
-		for(i=TOPE-1; i>=0 && !encontrada; --i){
-			if( (TS[i].entrada == variable || TS[i].entrada == funcion) && strcmp(TS[i].nombre, nombre) == 0)
-				encontrada = true;				
-		}
-		return encontrada;
+bool variableExiste(entradaTS ts){
+	bool encontrada = false;
+	
+	for(int i=TOPE-1; i>=0 && !encontrada; --i){
+		if( (TS[i].entrada == variable || TS[i].entrada == funcion) && strcmp(TS[i].nombre, ts.nombre) == 0)
+			encontrada = true;
+	}
+	return encontrada;
 }
 
 entradaTS getSimboloIdentificador(char* nombre){
@@ -209,6 +229,16 @@ char* toString(dtipo td){
 	if(td == lista)		return "lista";
 }
 
+char* toString(tipoEntrada te){
+	if(te == marca) 			return "marca";		
+	if(te == funcion) 			return "funcion";	
+	if(te == variable) 			return "variable";
+	if(te == parametro_formal)	return "parametro_formal";
+}
+
+void mensajeErrorBloque(entradaTS ts){
+	printf("\nError semantico en la linea %d: la %s %s ya esta declarada en este bloque\n", yylineno, toString(ts.entrada), ts.nombre);
+}
 
 void comprobarEsBueno(char* nom, dtipo dat) {
 	if(compruebaVar(nom) == 0) 
@@ -222,11 +252,24 @@ void comprobarEsBueno(char* nom, dtipo dat) {
 }
 
 void insertarParametros(entradaTS* argumentos, int numArg){
-	for (int i = 0; i < numArg; i++)
+	for (int i = 0; i < numArg; ++i)
 		insertar(argumentos);
 }
 
 
+void insertarArgumentos(char* nom, int numArgumentos){
+	int index = buscarFuncion(nom);
+	for(int i = numArgumentos; i>0; --i) {
+		entradaTS aux;
+		aux.nombre = TS[index-i].nombre;
+		aux.tipoDato = TS[index-i].tipoDato;
+		aux.entrada = variable;
+		insertar(aux);
+	}	
+}
+
+
+/*
 agregarParametros(char * Nomb, int numArgumentos){
 	int index;
 	for(int i = numArgumentos; i>0; --i) {
@@ -287,5 +330,6 @@ char raizTipo(int dato) {
 	else if(dato==4)	return 'b';
 	else return 'a';
 }
+*/
 
 
