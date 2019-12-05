@@ -16,6 +16,7 @@ typedef enum {entero, real, caracter, booleano, lista, desconocido} dtipo ;
 typedef struct {
 	tipoEntrada 	entrada ;
 	char*			nombre ;
+	char* 			valor;
 	dtipo 			tipoDato ;
 	unsigned int 	parametros = 0 ;
 	unsigned int	longitud = 0 ;
@@ -61,7 +62,8 @@ void insertar (tipoEntrada entrada, char* nombre, dtipo tipoDato, unsigned int p
 }
 */
 
-void limpiarMarca(){
+// Posiciona el tope de la pila en la última marca, eliminando así todo el bloque
+void eliminarBloque(){
    bool encontrada = false;
    int i;
    for (i=TOPE-1; i>0 && !encontrada; --i) {
@@ -74,22 +76,25 @@ void limpiarMarca(){
 	  limpiarTodo();
 }
 
-void limpiarTodo(){
+// Posiciona el tope en 0 vaciando así toda la pila
+void vaciar(){
 	TOPE=0;
 }
 
+// Introduce una entrada en la pila de tipo marca de inicio de bloque
 void insertarMarca(){
    TS[TOPE].entrada = marca;
    ++TOPE;
 }
 
-
+// Elimina el último elemento de la pila
 void sacar(){
    if (TOPE > 0) {
       --TOPE;
    }
 }
 
+// Imprime el contenido de la pila 
 void imprimirTS(){
 	int i;
 	
@@ -133,7 +138,7 @@ void imprimirTS(){
 	}	
 }
 
-//Comprueba si la variable se ha declarado anteriormente en el mismo bloque
+// Comprueba si la variable se ha declarado anteriormente en el mismo bloque
 bool variableExisteBloque(entradaTS ts){
 	bool encontrada = false;
 	
@@ -146,7 +151,7 @@ bool variableExisteBloque(entradaTS ts){
 	return encontrada;
 }
 
-//Comprueba si la variable se ha declarado anteriormente
+// Comprueba si la variable se ha declarado anteriormente
 bool variableExiste(entradaTS ts){
 	bool encontrada = false;
 	
@@ -157,6 +162,20 @@ bool variableExiste(entradaTS ts){
 	return encontrada;
 }
 
+// Comprueba si hay otro parámetro con el mismo nombre en la misma función
+bool parametroExiste(entradaTS ts){
+	int i = TOPE-1;
+
+	while( TS[i].entrada == parametro_formal ){
+		if( strcmp(TS[i].nombre, ts.nombre) == 0 )
+			return true;
+		--i;
+	}
+
+	return false;
+}
+
+// Devuelve la ultima entrada de la pila asociada a la función o variable con nombre "nombre"
 entradaTS getSimboloIdentificador(char* nombre){
 	int i;
 	bool encontrada=false;
@@ -171,6 +190,7 @@ entradaTS getSimboloIdentificador(char* nombre){
 	return ret;	
 }
 
+// Devuelve la entrada de la pila asociada al argumento número "numPar" de la funcion con nombre "nombreFun"
 entradaTS getSimboloArgumento(char* nombreFun, int numPar){
 	int i, indiceFun;
 	bool encontrada=false;
@@ -190,6 +210,28 @@ entradaTS getSimboloArgumento(char* nombreFun, int numPar){
 	
 	return TS[indiceFun-TS[indiceFun].parametros+numPar-1];	
 }
+
+void concatenarStrings(char* destination, const char* source1, const char* source2){
+	if( destination == null)
+		destination = (char *) malloc(200);
+	sprintf(destination, "%s%s", source1, source2);
+}
+
+void concatenarStrings(char* destination, const char* source1, const char* source2, const char* source3){
+	if( destination == null)
+		destination = (char *) malloc(200);
+	sprintf(destination, "%s%s%s", source1, source2, source3);
+}
+
+void concatenarStrings(char* destination, const char* s1, const char* s2, const char* s3, const char* s4, const char* s5){
+	if( destination == null)
+		destination = (char *) malloc(200);
+	sprintf(destination, "%s%s%s%s%s", s1, s2, s3, s4, s5);
+}
+
+
+
+
 
 
 int buscarFuncion (char* Nomb) {
@@ -236,9 +278,65 @@ char* toString(tipoEntrada te){
 	if(te == parametro_formal)	return "parametro_formal";
 }
 
-void mensajeErrorBloque(entradaTS ts){
-	printf("\nError semantico en la linea %d: la %s %s ya esta declarada en este bloque\n", yylineno, toString(ts.entrada), ts.nombre);
+void mensajeErrorDeclaradaBloque(entradaTS ts){
+	printf("\nError semantico en la linea %d: La %s %s ya esta declarada en este bloque\n", yylineno, toString(ts.entrada), ts.nombre);
 }
+
+void mensajeErrorNoDeclarada(entradaTS ts){
+	printf("\nError semantico en la linea %d: La %s %s no ha sido declarada\n", yylineno, toString(ts.entrada), ts.nombre);
+}
+
+void mensajeErrorParametro(entradaTS ts){
+	printf("\nError semantico en la linea %d: Hay mas de un parametro con el mismo nombre \"%s\"\n", yylineno, ts.nombre);
+}
+
+void mensajeErrorNoVariable(entradaTS ts){
+	printf("\nError semantico en la linea %d: La %s %s no es una variable\n", yylineno, toString(ts.entrada), ts.nombre);
+}
+
+void mensajeErrorAsignacion(entradaTS ts1, entradaTS ts2){
+	printf("\nError semantico en la linea %d: Los tipos de la asignacion %s y %s no coinciden\n", 
+										yylineno, 		toString(ts1.tipoDato), toString(ts2.tipoDato));
+}
+
+void mensajeErrorComparacion(entradaTS ts1, entradaTS ts2){
+	printf("\nError semantico en la linea %d: No se pueden comparar los tipos %s y %s\n", 
+										yylineno, 		toString(ts1.tipoDato), toString(ts2.tipoDato));
+}
+
+void mensajeErrorTipo(entradaTS ts, dtipo esperado){
+	if( ts.tipoDato == variable )
+		printf("\nError semantico en la linea %d: La variable %s no es de tipo %s\n", yylineno, ts.nombre, toString(esperado));
+	else if( ts.tipoDato == funcion )
+		printf("\nError semantico en la linea %d: La funcion %s no devuelve valores de tipo %s\n", yylineno, ts.nombre, toString(esperado));
+	else printf("\nError semantico en la linea %d: La expresion %s no es de tipo %s\n", yylineno, ts.valor  toString(esperado));
+}
+
+void mensajeErrorTipo(entradaTS ts, dtipo esperado1, dtipo esperado2){
+	if( ts.tipoDato == variable )
+		printf("\nError semantico en la linea %d: La variable %s no es de tipo %s o %s\n", yylineno, ts.nombre, toString(esperado1), toString(esperado2));
+	else if( ts.tipoDato == funcion )
+		printf("\nError semantico en la linea %d: La funcion %s no devuelve valores de tipo %s o %s\n", yylineno, ts.nombre, toString(esperado1), toString(esperado2));
+	else printf("\nError semantico en la linea %d: La expresion %s no es de tipo %s o %s\n", yylineno, ts.valor  toString(esperado1), toString(esperado2));
+}
+
+void mensajeErrorSeEsperabaFuncion(entradaTS ts){
+	printf("\nError semantico en la linea %d: Se ha encontrado %s y se esperaba una funcion\n", yylineno, toString(ts.entrada));
+}
+
+void mensajeErrorNumParametros(entradaTS ts1, entradaTS ts2){
+	printf("\nError semantico en la linea %d: La %s %s esperaba %d argumentos y se han encontrado %d\n", 
+			yylineno, toString(ts1.entrada), ts1.nombre, ts1.parametros, ts2.parametros);
+}
+
+mensajeErrorTipoEntrada($1, funcion)
+
+/*
+void mensajeErrorTipoExpresion(entradaTS ts, dtipo esperado){
+	printf("\nError semantico en la linea %d: La expresion %s no es de tipo %s\n", yylineno, ts.valor  toString(esperado));
+}
+*/
+
 
 void comprobarEsBueno(char* nom, dtipo dat) {
 	if(compruebaVar(nom) == 0) 

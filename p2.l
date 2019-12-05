@@ -83,18 +83,54 @@ otros			.
 						yylval.valor = strdup(yytext);
 						return REAL;
 						}
-","						return COMA;
-";"						return FINLINEA;
-"("						return PARIZQ;
-")"						return PARDER; 
-"{"						return INIBLOQUE;
-"}"						return FINBLOQUE;
-"["						return ABRIRCORCHETE;
-"]"						return CERRARCORCHETE;
-"="						return ASIGNACION;	
-"||"					return OPORLOGICO;
-"&&"					return OPANDLOGICO;
-"^"						return OPEXCLUSIVEOR;
+","						{
+						yylval.valor = strdup(yytext);
+						return COMA;
+						}
+";"						{
+						yylval.valor = strdup(yytext);
+						return FINLINEA;
+						}
+"("						{
+						yylval.valor = strdup(yytext);
+						return PARIZQ;
+						}
+")"						{
+						yylval.valor = strdup(yytext);
+						return PARDER; 
+						}
+"{"						{
+						yylval.valor = strdup(yytext);
+						return INIBLOQUE;
+						}
+"}"						{
+						yylval.valor = strdup(yytext);
+						return FINBLOQUE;
+						}
+"["						{
+						yylval.valor = strdup(yytext);
+						return ABRIRCORCHETE;
+						}
+"]"						{
+						yylval.valor = strdup(yytext);
+						return CERRARCORCHETE;
+						}
+"="						{
+						yylval.valor = strdup(yytext);
+						return ASIGNACION;	
+						}
+"||"					{
+						yylval.valor = strdup(yytext);
+						return OPORLOGICO;
+						}
+"&&"					{
+						yylval.valor = strdup(yytext);
+						return OPANDLOGICO;
+						}
+"^"						{
+						yylval.valor = strdup(yytext);
+						return OPEXCLUSIVEOR;
+						}
 "=="					{
 						yylval.valor = strdup(yytext);
 						return OPIGUALDAD;
@@ -139,7 +175,10 @@ otros			.
 						yylval.valor = strdup(yytext);
 						return OPMULTIPLICATIVOS;
 						}
-"!"						return OPUNARIO;
+"!"						{
+						yylval.valor = strdup(yytext);
+						return OPUNARIO;
+						}
 "#"						{
 						yylval.valor = strdup(yytext);
 						return OPUNARIOLISTAS;
@@ -148,9 +187,18 @@ otros			.
 						yylval.valor = strdup(yytext);
 						return OPUNARIOLISTAS;
 						}
-"$"						return OPDOLAR;
-"**"					return OPCONCATENAR;
-"--"					return OPDECREMENTO;
+"$"						{
+						yylval.valor = strdup(yytext);
+						return OPDOLAR;
+						}
+"**"					{
+						yylval.valor = strdup(yytext);
+						return OPCONCATENAR;
+						}
+"--"					{
+						yylval.valor = strdup(yytext);
+						return OPDECREMENTO;
+						}
 ">>"					{
 						yylval.valor = strdup(yytext);
 						return OPUNARIOPOST;
@@ -159,9 +207,18 @@ otros			.
 						yylval.valor = strdup(yytext);
 						return OPUNARIOPOST;
 						}
-"++"					return OPINCREMENTO;
-"@"						return OPARROBA;
-":="					return DOSPUNTOSIGUAL;
+"++"					{
+						yylval.valor = strdup(yytext);
+						return OPINCREMENTO;
+						}
+"@"						{
+						yylval.valor = strdup(yytext);
+						return OPARROBA;
+						}
+":="					{
+						yylval.valor = strdup(yytext);
+						return DOSPUNTOSIGUAL;
+						}
 {identificador} 		{
 						yylval.nombre=strdup(yytext);
 						return IDENTIFICADOR;

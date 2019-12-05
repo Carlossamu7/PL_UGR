@@ -110,7 +110,7 @@ bloque							: INIBLOQUE {	insertarMarca();
 							 	  sentencias
 							 	  FINBLOQUE {	contBloques--; 
 												imprimirTS(); 
-												limpiarMarca(); };
+												eliminarBloque(); };
 
 declar_subprogs					: declar_subprogs declar_subprog
 								| /* vacío */ ;
@@ -143,11 +143,11 @@ cuerpo_declar_variables			: tipo lista_identificadores FINLINEA
 lista_identificadores			: lista_identificadores COMA IDENTIFICADOR {	$3.tipoDato = $0.tipoDato;
 																				$3.entrada = variable;
 																				if(!variableExisteBloque($3)) insertar($3);
-																				else mensajeErrorBloque($3);}
+																				else mensajeErrorDeclaradaBloque($3);	}
 								| IDENTIFICADOR {	$1.tipoDato = $0.tipoDato;
 													$1.entrada = variable;
 													if(!variableExisteBloque($1)) insertar($1);
-													else mensajeErrorBloque($1);} ;
+													else mensajeErrorDeclaradaBloque($1);} ;
 
 cabecera_subprog				: tipo IDENTIFICADOR PARIZQ lista_parametros PARDER {	$2.tipoDato = $1.tipoDato; 
 																						$$.nombre = $2.nombre; 
@@ -155,7 +155,7 @@ cabecera_subprog				: tipo IDENTIFICADOR PARIZQ lista_parametros PARDER {	$2.tip
 																						$2.parametros = $4.parametros;
 																						$2.entrada = funcion;
 																						if(!variableExisteBloque($2)) insertar($2);
-																						else mensajeErrorBloque($2);} ;
+																						else mensajeErrorDeclaradaBloque($2);} ;
 
 sentencias						: sentencias sentencia
 								| sentencia ;
@@ -173,83 +173,148 @@ sentencia						: bloque
 								| funcion FINLINEA 
 								| error ;
 
-sentencia_asignacion			: IDENTIFICADOR ASIGNACION exp_cad FINLINEA ;
+sentencia_asignacion			: IDENTIFICADOR ASIGNACION exp_cad FINLINEA {	if( $1.entrada =! funcion ) mensajeErrorNoVariable($1);
+																				else if( $1.tipoDato != $3.tipoDato ) mensajeErrorAsignacion($1,$3);	};
 
 sentencia_if					: CONDICION PARIZQ expresion PARDER sentencia
-									SUBCONDICION sentencia
-								| CONDICION PARIZQ expresion PARDER sentencia ;
+									SUBCONDICION sentencia {	if( $3.tipoDato != booleano ) mensajeErrorTipo($3, booleano);	}
+								| CONDICION PARIZQ expresion PARDER sentencia {	if( $3.tipoDato != booleano ) mensajeErrorTipo($3, booleano);	};
 
-sentencia_while					: CICLO PARIZQ expresion PARDER sentencia ;
+sentencia_while					: CICLO PARIZQ expresion PARDER sentencia {	if( $3.tipoDato != booleano ) mensajeErrorTipo($3, booleano);	};
 
-sentencia_entrada				: ENTRADA lista_variables FINLINEA ;
+sentencia_entrada				: ENTRADA lista_variables FINLINEA {	if ( !variableExiste(/* TODO: Rip */) );	};
 
-sentencia_salida				: SALIDA lista_exp_cadena FINLINEA ;
+sentencia_salida				: SALIDA lista_exp_cadena FINLINEA {	if ( !variableExiste(/* TODO: Rip */) );	};
 
-sentencia_return				: RETURN expresion FINLINEA ;
+sentencia_return				: RETURN expresion FINLINEA {	
+																if( $2.entrada == variable || $2.entrada == funcion )
+																	if( !variableExiste($2) ) 
+																		mensajeErrorNoDeclarada();	
+															};
 
-sentencia_for					: BUCLE IDENTIFICADOR DOSPUNTOSIGUAL expresion HASTA expresion PASO expresion sentencia ;
+sentencia_for					: BUCLE IDENTIFICADOR DOSPUNTOSIGUAL expresion HASTA expresion PASO expresion sentencia 
+									{	
+										if( !variableExiste($2) ) mensajeErrorNoDeclarada($2);
+										else if( $2.tipoDato != entero ) mensajeErrorTipo($2, entero);
+										if( $4.tipoDato != entero ) mensajeErrorTipo($4, entero);
+										if( $6.tipoDato != entero ) mensajeErrorTipo($6, entero);
+										if( $8.tipoDato != entero ) mensajeErrorTipo($8, entero);
+									};
 
-sentencia_iterar				: IDENTIFICADOR OPUNARIOPOST FINLINEA ;
+sentencia_iterar				: IDENTIFICADOR OPUNARIOPOST FINLINEA {	if( $1.tipoDato != lista ) mensajeErrorTipo($1, lista);	};
 
-setencia_reset_cursor			: OPDOLAR expresion FINLINEA ;
+setencia_reset_cursor			: OPDOLAR IDENTIFICADOR FINLINEA {	if( $2.tipoDato != lista ) mensajeErrorTipo($1, lista);	};
 
 lista_parametros				: lista_parametros COMA tipo IDENTIFICADOR {	$$.parametros++; 
 																				$4.tipoDato = $3.tipoDato;
 																				$4.entrada = parametro_formal;
-																				insertar($4);}
+																				if( !parametroExiste($4) ) insertar($4);
+																				else mensajeErrorParametro($4);			}
 								| tipo IDENTIFICADOR {	$$.parametros++; 
 														$2.tipoDato = $1.tipoDato; 
 														$2.entrada = parametro_formal;
-														insertar($2);} ;
+														if( !parametroExiste($4) ) insertar($2);
+														else mensajeErrorParametro($2);			} ;
 
 lista_exp_cadena				: lista_exp_cadena COMA exp_cad
 								| exp_cad ;
 
-exp_cad							: expresion
-								| CADENA ;
+exp_cad							: expresion	{	$$.tipoDato = $1.tipoDato;	}
+								| CADENA {	$$.tipoDato = caracter;	} ;	/*TODO: Cadena es tipo caracter? */
 
 lista_variables					: lista_variables COMA IDENTIFICADOR
 								| IDENTIFICADOR ;
 
-lista_expresiones				: lista_expresiones COMA expresion
-								| expresion ;
+lista_expresiones				: lista_expresiones COMA expresion	{	$$.parametros++;	}
+								| expresion {	$$.parametros++;	} ;
 
-expresion						: PARIZQ expresion PARDER
-								| OPUNARIO expresion
-								| OPUNARIOLISTAS expresion
-								| SIGNO expresion
-								| expresion SIGNO expresion
-								| expresion OPORLOGICO expresion
-								| expresion OPANDLOGICO expresion
-								| expresion OPEXCLUSIVEOR expresion
-								| expresion OPIGUALDAD expresion
-								| expresion OPRELACION expresion
-								| expresion OPMULTIPLICATIVOS expresion
-								| expresion OPDECREMENTO expresion
-								| expresion OPPORCENTAJE expresion
-								| expresion OPCONCATENAR expresion
-								| IDENTIFICADOR
-								| lista
-								| constante
-								| funcion
-								| expresion OPARROBA expresion
-								| expresion OPINCREMENTO expresion OPARROBA expresion 
+expresion						: PARIZQ expresion PARDER	{	$$ = $2;	} /*TODO: Se pueden igualar structs a pelo?*/
+								| OPUNARIO expresion	{	if( $2.tipoDato != booleano ) mensajeErrorTipo($2, booleano);
+															$$.tipoDato = $2.tipoDato;
+															concatenarStrings($$.valor, $1.valor, $2.valor); }
+								| OPUNARIOLISTAS expresion	{	if( $2.tipoDato != lista ) mensajeErrorTipo($2, lista);
+																$$.tipoDato = $2.tipoDato;
+																concatenarStrings($$.valor, $1.valor, $2.valor);	}
+								| SIGNO expresion	{	if( $2.tipoDato != entero && $2.tipoDato != real ) mensajeErrorTipo($2, entero, real);
+														$$.tipoDato = $2.tipoDato;
+														concatenarStrings($$.valor, $1.valor, $2.valor);	}
+								| expresion SIGNO expresion	{	if( $1.tipoDato != entero && $1.tipoDato != real ) mensajeErrorTipo($1, entero, real);
+																if( $3.tipoDato != entero && $3.tipoDato != real ) mensajeErrorTipo($3, entero, real);
+																if( $1.tipoDato == real || $2.tipoDato == real ) $$.tipoDato = real;
+																concatenarStrings($$.valor, $1.valor, $2.valor. $3.valor);
+																/*TODO: Y si es una lista? A parte, no sabemos el tipo de dato de los elementos
+																 * 	dentro de la lista, deberiamos crear otra variable en el struct entradaTS? */		
+															}
+								| expresion OPORLOGICO expresion	{	if( $1.tipoDato != booleano ) mensajeErrorTipo($1, booleano);
+																		if( $3.tipoDato != booleano ) mensajeErrorTipo($3, booleano);
+																		$$.tipoDato = $1.tipoDato;
+																		concatenarStrings($$.valor, $1.valor, $2.valor, $3.valor);	}
+								| expresion OPANDLOGICO expresion	{	if( $1.tipoDato != booleano ) mensajeErrorTipo($1, booleano);
+																		if( $3.tipoDato != booleano ) mensajeErrorTipo($3, booleano);
+																		$$.tipoDato = $1.tipoDato;
+																		concatenarStrings($$.valor, $1.valor, $2.valor, $3.valor);	}
+								| expresion OPEXCLUSIVEOR expresion	{	if( $1.tipoDato != booleano ) mensajeErrorTipo($1, booleano);
+																		if( $3.tipoDato != booleano ) mensajeErrorTipo($3, booleano);
+																		$$.tipoDato = $1.tipoDato;
+																		concatenarStrings($$.valor, $1.valor, $2.valor, $3.valor);	}
+								| expresion OPIGUALDAD expresion	{	if( $1.tipoDato != $3.tipoDato ) mensajeErrorComparacion($1, $3);
+																		$$.tipoDato = booleano;
+																		concatenarStrings($$.valor, $1.valor, $2.valor, $3.valor);	}
+								| expresion OPRELACION expresion	{	if( $1.tipoDato != $3.tipoDato ) mensajeErrorComparacion($1, $3);
+																		$$.tipoDato = booleano;
+																		concatenarStrings($$.valor, $1.valor, $2.valor, $3.valor);	}
+								| expresion OPMULTIPLICATIVOS expresion	{	if( $1.tipoDato != entero && $1.tipoDato != real ) mensajeErrorTipo($1, entero, real);
+																			if( $3.tipoDato != entero && $3.tipoDato != real ) mensajeErrorTipo($3, entero, real);
+																			if( $1.tipoDato == real || $2.tipoDato == real ) $$.tipoDato = real;
+																			concatenarStrings($$.valor, $1.valor, $2.valor, $3.valor);	}
+								| expresion OPDECREMENTO expresion	{	if( $1.tipoDato != lista ) mensajeErrorTipo($1, lista);
+																		if( $3.tipoDato != entero ) mensajeErrorTipo($3, entero);
+																		$$.tipoDato = lista;
+																		concatenarStrings($$.valor, $1.valor, $2.valor, $3.valor);	}
+								| expresion OPPORCENTAJE expresion	{	if( $1.tipoDato != lista ) mensajeErrorTipo($1, lista);
+																		if( $3.tipoDato != entero ) mensajeErrorTipo($3, entero);
+																		$$.tipoDato = lista;
+																		concatenarStrings($$.valor, $1.valor, $2.valor, $3.valor);	}
+								| expresion OPCONCATENAR expresion	{	if( $1.tipoDato != lista ) mensajeErrorTipo($1, lista);
+																		if( $3.tipoDato != lista ) mensajeErrorTipo($3, lista);
+																		$$.tipoDato = lista;
+																		concatenarStrings($$.valor, $1.valor, $2.valor, $3.valor);	}
+								| expresion OPARROBA expresion	{	if( $1.tipoDato != lista ) mensajeErrorTipo($1, lista);
+																	if( $3.tipoDato != entero ) mensajeErrorTipo($3, entero);
+																	$$.tipoDato = /*TODO: Devolver tipo dato de dentro de la lista*/;
+																	concatenarStrings($$.valor, $1.valor, $2.valor, $3.valor);	}
+								| expresion OPINCREMENTO expresion OPARROBA expresion	{	if( $1.tipoDato != lista ) mensajeErrorTipo($1, lista);
+																							if( $3.tipoDato != /*TODO:TipoDatoDentroLista*/ ) mensajeErrorTipo($3, /*TODO*/);
+																							if( $5.tipoDato != entero ) mensajeErrorTipo($3, entero);
+																							$$.tipoDato = lista;
+																							concatenarStrings($$.valor, $1.valor, $2.valor, $3.valor, $4.valor, $5.valor);	}
+								| IDENTIFICADOR	{	if( !variableExiste($1) ) mensajeErrorNoDeclarada($1);
+													$$.entrada = variable;
+													$$.tipoDato = $1.tipoDato	}
+								| lista	{	$$.tipoDato = lista;	}
+								| constante	{	$$.tipoDato = $1.tipoDato;	}
+								| funcion	{	$$.tipoDato = $1.tipoDato;	}
 								| error ;
 
-funcion							: IDENTIFICADOR PARIZQ lista_expresiones PARDER ;
+funcion							: IDENTIFICADOR PARIZQ lista_expresiones PARDER	
+									{	if( !variableExiste($1) ) mensajeErrorNoDeclarada($1);
+										else if( getSimboloIdentificador($1).entrada != funcion ) mensajeErrorSeEsperabaFuncion($1);
+										else if( $3.parametros != getSimboloIdentificador($1).parametros ) mensajeErrorNumParametros($1,$3)	};
+									/*TODO: Como comprobamos que cada parametro es del tipo esperado?*/
 
-constante						: ENTERO
-								| REAL
-								| CONSTANTE_CARACTER
-								| CONSTANTE_BOOLEANA ;
+constante						: ENTERO	{	$$.tipoDato = entero;	}
+								| REAL	{	$$.tipoDato = real;	}
+								| CONSTANTE_CARACTER	{	$$.tipoDato = caracter;	}
+								| CONSTANTE_BOOLEANA 	{	$$.tipoDato = booleano;	} ;
 
 lista							: ABRIRCORCHETE lista2 ;
 
 lista2							: exp_cad COMA lista2
 								| exp_cad CERRARCORCHETE ;
 
-tipo							: TIPO
-								| LISTA_DE TIPO ;
+tipo							: TIPO	{	$$.tipoDato = $1.tipoDato;	}
+								| LISTA_DE TIPO	{	$$.tipoDato = $1.tipoDato;	
+													/*TODO:TipoDatoDentroLista*/};
 
 %%
 
