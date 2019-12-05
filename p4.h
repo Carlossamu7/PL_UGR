@@ -1,4 +1,15 @@
-typedef int bool;
+//typedef int bool;
+// Innecesarios creo, pero luego los borro
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+#ifdef DOSWINDOWS /* Variable de entorno que indica la plataforma */
+	#include "lexyy.c"
+#else
+	#include "lex.yy.c"
+#endif
+
 #define true 1
 #define false 0
 #define MAX_TS 1000
@@ -18,6 +29,7 @@ typedef struct {
 	char*			nombre ;
 	char* 			valor;
 	dtipo 			tipoDato ;
+	dtipo			tipoInternoLista ;
 	unsigned int 	parametros = 0 ;
 	unsigned int	longitud = 0 ;
 } entradaTS ;
@@ -32,6 +44,7 @@ typedef struct {
 /*Fin de funciones y procedimientos para manejo de la TS*/
 
 
+// Inserta una entrada en la pila
 void insertar (entradaTS s){
    if (TOPE == 1000) {
 		printf("\nError: tamanio maximo alcanzado\n");
@@ -44,6 +57,18 @@ void insertar (entradaTS s){
 		TS[TOPE].longitud=s.longitud;
 		++TOPE;
    }
+}
+
+// Inserta los "numArgumentos" parametros formales de la funcion "nom" como variables
+void insertarArgumentos(char* nom, int numArgumentos){
+	int index = buscarFuncion(nom);
+	for(int i = numArgumentos; i>0; --i) {
+		entradaTS aux;
+		aux.nombre = TS[index-i].nombre;
+		aux.tipoDato = TS[index-i].tipoDato;
+		aux.entrada = variable;
+		insertar(aux);
+	}	
 }
 
 /*
@@ -73,7 +98,7 @@ void eliminarBloque(){
       }
    }
    if(encontrada == false)
-	  limpiarTodo();
+	  vaciar();
 }
 
 // Posiciona el tope en 0 vaciando así toda la pila
@@ -211,56 +236,30 @@ entradaTS getSimboloArgumento(char* nombreFun, int numPar){
 	return TS[indiceFun-TS[indiceFun].parametros+numPar-1];	
 }
 
+/****************************		FUNCIONES AUXILIARES		**************************/
+
 void concatenarStrings(char* destination, const char* source1, const char* source2){
-	if( destination == null)
+	if( destination == NULL)
 		destination = (char *) malloc(200);
 	sprintf(destination, "%s%s", source1, source2);
 }
 
 void concatenarStrings(char* destination, const char* source1, const char* source2, const char* source3){
-	if( destination == null)
+	if( destination == NULL)
 		destination = (char *) malloc(200);
 	sprintf(destination, "%s%s%s", source1, source2, source3);
 }
 
+void concatenarStrings(char* destination, const char* s1, const char* s2, const char* s3, const char* s4){
+	if( destination == NULL)
+		destination = (char *) malloc(200);
+	sprintf(destination, "%s%s%s%s", s1, s2, s3, s4);
+}
+
 void concatenarStrings(char* destination, const char* s1, const char* s2, const char* s3, const char* s4, const char* s5){
-	if( destination == null)
+	if( destination == NULL)
 		destination = (char *) malloc(200);
 	sprintf(destination, "%s%s%s%s%s", s1, s2, s3, s4, s5);
-}
-
-
-
-
-
-
-int buscarFuncion (char* Nomb) {
-	for (int i = TOPE-1; i > 0; --i){
-		if(strcmp(TS[i].nombre,Nomb))
-			return i+1;
-	}
-	return -1;
-}
-
-bool comprobarParametros(char* nombre, dtipo dato, int nParam) {
-	bool esIgual = false;
-	int index = buscarFuncion(nombre);
-	if(TS[index-nParam].tipoDato == dato)
-		esIgual = true;
-	return esIgual;
-}
-
-void insertarVariable(char* nom, int numPar, int longitud){
-	if(compruebaMismoNombreDeclar(nom, numPar)){
-		printf("\nError semantico en la linea %d: la variable %s ya esta declarada en este bloque\n", yylineno, nom);
-	}else{ 
-		entradaTS aux;
-		aux.entrada = variable;
-		aux.nombre = nom;
-		aux.tipoDato = desconocido;
-		aux.longitud = longitud;
-		insertar(aux);
-	}
 }
 
 char* toString(dtipo td){
@@ -329,13 +328,50 @@ void mensajeErrorNumParametros(entradaTS ts1, entradaTS ts2){
 			yylineno, toString(ts1.entrada), ts1.nombre, ts1.parametros, ts2.parametros);
 }
 
-mensajeErrorTipoEntrada($1, funcion)
 
-/*
-void mensajeErrorTipoExpresion(entradaTS ts, dtipo esperado){
-	printf("\nError semantico en la linea %d: La expresion %s no es de tipo %s\n", yylineno, ts.valor  toString(esperado));
+
+
+
+
+
+
+
+
+
+
+
+
+
+int buscarFuncion (char* Nomb) {
+	for (int i = TOPE-1; i > 0; --i){
+		if(strcmp(TS[i].nombre,Nomb))
+			return i+1;
+	}
+	return -1;
 }
-*/
+
+bool comprobarParametros(char* nombre, dtipo dato, int nParam) {
+	bool esIgual = false;
+	int index = buscarFuncion(nombre);
+	if(TS[index-nParam].tipoDato == dato)
+		esIgual = true;
+	return esIgual;
+}
+
+void insertarVariable(char* nom, int numPar, int longitud){
+	if(compruebaMismoNombreDeclar(nom, numPar)){
+		printf("\nError semantico en la linea %d: la variable %s ya esta declarada en este bloque\n", yylineno, nom);
+	}else{ 
+		entradaTS aux;
+		aux.entrada = variable;
+		aux.nombre = nom;
+		aux.tipoDato = desconocido;
+		aux.longitud = longitud;
+		insertar(aux);
+	}
+}
+
+
 
 
 void comprobarEsBueno(char* nom, dtipo dat) {
@@ -355,16 +391,7 @@ void insertarParametros(entradaTS* argumentos, int numArg){
 }
 
 
-void insertarArgumentos(char* nom, int numArgumentos){
-	int index = buscarFuncion(nom);
-	for(int i = numArgumentos; i>0; --i) {
-		entradaTS aux;
-		aux.nombre = TS[index-i].nombre;
-		aux.tipoDato = TS[index-i].tipoDato;
-		aux.entrada = variable;
-		insertar(aux);
-	}	
-}
+
 
 
 /*
