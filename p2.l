@@ -224,7 +224,7 @@ otros			.
 						return IDENTIFICADOR;
 						}
 
-[\n]					/*printf("\n")*/;
+[\n]					/*printf("\n")*/++numLinea;
 {blanco}				;
 {otros}					printf("\n(Linea %d) Error lexico: token %s\n", yylineno, yytext);
 
