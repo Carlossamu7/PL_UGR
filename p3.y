@@ -352,7 +352,7 @@ lista							: ABRIRCORCHETE lista2 {	$$.tipoInternoLista = $1.tipoDato;
 															$$.tipoDato = lista;
 															concatenarStrings2($$.valor, $1.valor, $2.valor);	};
 
-lista2							: lista2 COMA exp_cad 	{	if( $1.tipoInternoLista != $3.tipoDato ) 
+lista2							: exp_cad COMA lista2 	{	if( $1.tipoInternoLista != $3.tipoDato ) 
 																mensajeErrorTipo1($3, $1.tipoInternoLista); 
 															$$.tipoInternoLista = $1.tipoInternoLista;
 															$$.tipoDato = lista;
