@@ -228,7 +228,8 @@ entradaTS getSimboloIdentificador(char* nombre){
 	entradaTS ret;
 	
 	for(i=TOPE-1; i>=0 && !encontrada; --i){
-		if( (TS[i].entrada == variable || TS[i].entrada == funcion ) && strcmp(TS[i].nombre, nombre) == 0){
+		if( (TS[i].entrada == variable || TS[i].entrada == funcion ) && TS[i].nombre != 0
+				&& nombre != 0&& strcmp(TS[i].nombre, nombre) == 0){
 			encontrada = true;
 			ret=TS[i];
 		}

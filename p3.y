@@ -168,7 +168,8 @@ sentencia						: bloque
 
 sentencia_asignacion			: IDENTIFICADOR ASIGNACION exp_cad FINLINEA {	if( variableExiste($1) ){
 																					if( $1.entrada == funcion ) mensajeErrorNoVariable($1);
-																					else if( $1.tipoDato != $3.tipoDato ) 																							mensajeErrorAsignacion($1, $3);
+																					else if( $1.tipoDato != $3.tipoDato )
+																						mensajeErrorAsignacion($1, $3);
 																				} else mensajeErrorNoDeclarada($1);	};
 
 sentencia_if					: CONDICION PARIZQ expresion PARDER sentencia
@@ -328,7 +329,11 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 											concatenarStrings1($$.valor, $1.valor);	}
 								| constante	{	$$.tipoDato = $1.tipoDato;
 												concatenarStrings1($$.valor, $1.valor);	}
-								| funcion	{	$$.tipoDato = $1.tipoDato;
+								| funcion	{	if( !variableExiste($1) ) mensajeErrorNoDeclarada($1);
+												entradaTS aux = getSimboloIdentificador($1.nombre);
+												$$.entrada = funcion;
+												$$.tipoDato = aux.tipoDato;
+												$$.tipoInternoLista = aux.tipoInternoLista;
 												concatenarStrings1($$.valor, $1.valor);	}
 								| error ;
 
