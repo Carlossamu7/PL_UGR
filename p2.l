@@ -43,7 +43,7 @@ otros			.
 						}
 "LISTA DE" 				{
 						yylval.tipoDato = lista;
-						return TIPO;
+						return LISTA_DE;
 						}
 "PARA" 					return BUCLE;
 "HASTA"					return HASTA;
