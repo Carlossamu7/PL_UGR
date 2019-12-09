@@ -21,7 +21,7 @@ PRINCIPAL{
                 REAL xf, x2 ;
             FINVAR
 
-            REAL funcionC (BOOLEANO c1, BOOLEANO c2){
+            REAL funcionC (BOOLEANO c1, ENTERO c2){
                 VAR
                     REAL x1 ;
                 FINVAR
@@ -34,7 +34,7 @@ PRINCIPAL{
                 DEVOLVER x1 ;
             }
 
-            xf= functionC (VERDADERO, 10);
+            xf= funcionC (VERDADERO, 10);
             x2= xf*(funcionC(FALSO,1*2)-funcionC(VERDADERO,23))/10.0;
             MIENTRAS (x2*funcionC(FALSO,1)-xf<10.0)
                 x2= x2*xf ;
@@ -74,11 +74,11 @@ PRINCIPAL{
 
             DEVOLVER d1 ;
         }
-        i = 2 ;
+        vr=2.0;
     }
 
     PARA ve :=  0  HASTA 10  PASO 1 {
-        vr = lr ++ ve @ ve ;
+        lr = lr ++ vr @ ve ;
         vr = lr @ ve ;
     }
 

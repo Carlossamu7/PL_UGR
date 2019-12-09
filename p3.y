@@ -94,11 +94,14 @@ programa						: CABECERA bloque ;
 
 bloque							: INIBLOQUE {	insertarMarca();
 												if($0.parametros > 0) insertarArgumentos($0.nombre, $0.parametros); 
-												contBloques++; }
+												contBloques++; 
+												//printf("INICIO BLOQUE\n");	
+											}
 					 			  declar_variables_locales
 					 			  declar_subprogs
 							 	  sentencias
-							 	  FINBLOQUE {	contBloques--; 
+							 	  FINBLOQUE {	//printf("FIN BLOQUE\n");
+									   			contBloques--; 
 												imprimirTS(); 
 												eliminarBloque(); };
 
@@ -168,8 +171,11 @@ sentencia						: bloque
 
 sentencia_asignacion			: IDENTIFICADOR ASIGNACION exp_cad FINLINEA {	if( variableExiste($1) ){
 																					if( $1.entrada == funcion ) mensajeErrorNoVariable($1);
-																					else if( $1.tipoDato != $3.tipoDato )
+																					else {
+																						entradaTS aux = getSimboloIdentificador($1.nombre);
+																						if( aux.tipoDato != $3.tipoDato )
 																						mensajeErrorAsignacion($1, $3);
+																					}
 																				} else mensajeErrorNoDeclarada($1);	};
 
 sentencia_if					: CONDICION PARIZQ expresion PARDER sentencia

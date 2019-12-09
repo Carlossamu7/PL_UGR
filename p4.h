@@ -42,7 +42,9 @@ void insertar (entradaTS s){
 		exit(-1);
    } else {
 		TS[TOPE].nombre=s.nombre;
+		TS[TOPE].valor=s.valor;
 		TS[TOPE].tipoDato=s.tipoDato;
+		TS[TOPE].tipoInternoLista=s.tipoInternoLista;
 		TS[TOPE].parametros=s.parametros;
 		TS[TOPE].entrada=s.entrada;
 		++TOPE;
@@ -54,7 +56,7 @@ int buscarFuncion (char* nom) {
 
 	for (int i = TOPE-1; i > 0; --i){
 		if(debug) printf("i=%d\tTS[i].nombre:%s\tTS[i].entrada:%s\n", i, TS[i].nombre, toStringEntrada(TS[i].entrada));
-		if(TS[i].nombre != 0){
+		if(TS[i].nombre != 0 && nom != 0){
 			if(debug) printf("strcmp(TS[i].nombre, nom)==0:%d\tTS[i].entrada == funcion:%d\n", strcmp(TS[i].nombre, nom)==0, TS[i].entrada == funcion);
 
 			if(strcmp(TS[i].nombre, nom)==0 && TS[i].entrada == funcion)
@@ -186,15 +188,20 @@ void imprimirTS(){
 
 // Comprueba si la variable se ha declarado anteriormente en el mismo bloque
 bool variableExisteBloque(entradaTS ts){
-	bool encontrada = false;
-	
-	for(int i=TOPE-1; i>=0 && !encontrada; --i){
-		if( (TS[i].entrada == variable || TS[i].entrada == funcion) && strcmp(TS[i].nombre, ts.nombre) == 0)
-			encontrada = true;		
-		if(TS[i].entrada==marca)
-			return encontrada;
+	if( ts.nombre != 0 ){
+		bool encontrada = false;
+		
+		for(int i=TOPE-1; i>=0 && !encontrada; --i){
+			if( TS[i].nombre != 0 ){
+				if( (TS[i].entrada == variable || TS[i].entrada == funcion) && strcmp(TS[i].nombre, ts.nombre) == 0)
+					encontrada = true;		
+				if(TS[i].entrada==marca)
+					return encontrada;
+			}
+		}
+		return encontrada;
 	}
-	return encontrada;
+	return false;
 }
 
 // Comprueba si la variable se ha declarado anteriormente
@@ -202,8 +209,10 @@ bool variableExiste(entradaTS ts){
 	bool encontrada = false;
 	
 	for(int i=TOPE-1; i>=0 && !encontrada; --i){
-		if( (TS[i].entrada == variable || TS[i].entrada == funcion) && strcmp(TS[i].nombre, ts.nombre) == 0)
-			encontrada = true;
+		if( TS[i].nombre != 0 && ts.nombre != 0 ){
+			if( (TS[i].entrada == variable || TS[i].entrada == funcion) && strcmp(TS[i].nombre, ts.nombre) == 0)
+				encontrada = true;
+		}
 	}
 	return encontrada;
 }
@@ -213,8 +222,10 @@ bool parametroExiste(entradaTS ts){
 	int i = TOPE-1;
 
 	while( TS[i].entrada == parametro_formal ){
-		if( strcmp(TS[i].nombre, ts.nombre) == 0 )
-			return true;
+		if( TS[i].nombre != 0 && ts.nombre != 0 ){
+			if( strcmp(TS[i].nombre, ts.nombre) == 0 )
+				return true;
+		}
 		--i;
 	}
 
@@ -229,7 +240,7 @@ entradaTS getSimboloIdentificador(char* nombre){
 	
 	for(i=TOPE-1; i>=0 && !encontrada; --i){
 		if( (TS[i].entrada == variable || TS[i].entrada == funcion ) && TS[i].nombre != 0
-				&& nombre != 0&& strcmp(TS[i].nombre, nombre) == 0){
+				&& nombre != 0 && strcmp(TS[i].nombre, nombre) == 0){
 			encontrada = true;
 			ret=TS[i];
 		}
@@ -243,10 +254,12 @@ entradaTS getSimboloArgumento(char* nombreFun, int numPar){
 	bool encontrada=false;
 		
 	for(i=TOPE-1; i>=0 && !encontrada; --i){
-		if( TS[i].entrada == funcion && strcmp(TS[i].nombre, nombreFun) == 0){
-			encontrada = true;
-			indiceFun=i;
-		}	
+		if( TS[i].nombre != 0 && nombreFun != 0 ){
+			if( TS[i].entrada == funcion && strcmp(TS[i].nombre, nombreFun) == 0){
+				encontrada = true;
+				indiceFun=i;
+			}
+		}
 	}
 	
 	if(numPar > TS[indiceFun].parametros){
@@ -324,7 +337,8 @@ void imprimirTS(){
 						toStringTipo(TS[i].tipoDato) ,TS[i].parametros );
 			else printf("%s%s\t%s\t%s\n", tabs, toStringEntrada(TS[i].entrada), TS[i].nombre, toStringTipo(TS[i].tipoDato));
 		}
-	}	
+	}
+	printf("**********************************************************************************\n\n\n");
 }
 
 void mensajeErrorDeclaradaBloque(entradaTS ts){
