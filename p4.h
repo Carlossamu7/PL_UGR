@@ -74,7 +74,10 @@ void insertarArgumentos(char* nom, int numArgumentos){
 	for(int i = numArgumentos; i > 0; --i) {
 		entradaTS aux;
 		aux.nombre = TS[index-i].nombre;
+		aux.valor = TS[index-i].valor;
 		aux.tipoDato = TS[index-i].tipoDato;
+		aux.tipoInternoLista = TS[index-i].tipoInternoLista;
+		aux.parametros = TS[index-i].parametros;
 		aux.entrada = variable;
 		insertar(aux);
 	}	

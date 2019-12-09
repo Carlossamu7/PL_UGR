@@ -69,7 +69,8 @@ otros			.
 						yylval.valor = strdup(yytext);
 						return CONSTANTE_CARACTER;
 						}
-{cadena}				{
+{cadena}				{						
+						yylval.tipoDato = caracter;
 						yylval.valor = strdup(yytext);
 						return CADENA;
 						}

@@ -99,7 +99,7 @@ bloque							: INIBLOQUE {	insertarMarca();
 					 			  declar_subprogs
 							 	  sentencias
 							 	  FINBLOQUE {	contBloques--; 
-												//imprimirTS(); 
+												imprimirTS(); 
 												eliminarBloque(); };
 
 declar_subprogs					: declar_subprogs declar_subprog
@@ -318,9 +318,10 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 												$$.tipoInternoLista = $1.tipoInternoLista;
 												concatenarStrings5($$.valor, $1.valor, $2.valor, $3.valor, $4.valor, $5.valor);	}
 								| IDENTIFICADOR	{	if( !variableExiste($1) ) mensajeErrorNoDeclarada($1);
+													entradaTS aux = getSimboloIdentificador($1.nombre);
 													$$.entrada = variable;
-													$$.tipoDato = $1.tipoDato;
-													$$.tipoInternoLista = $1.tipoInternoLista;
+													$$.tipoDato = aux.tipoDato;
+													$$.tipoInternoLista = aux.tipoInternoLista;
 													concatenarStrings1($$.valor, $1.nombre);	}
 								| lista	{	$$.tipoDato = lista;
 											$$.tipoInternoLista = $1.tipoInternoLista;
