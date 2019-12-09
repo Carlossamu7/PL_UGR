@@ -23,7 +23,7 @@ unsigned int Subprog ;     /*Indicador de comienzo de bloque de un subprog*/
 FILE * file;
 char * argumento;
 
-int debug=0;
+int debug=1;
 
 
 #define YYSTYPE entradaTS  /*A partir de ahora, cada símbolo tiene*/
@@ -416,6 +416,11 @@ void mensajeErrorNumParametros(entradaTS ts1, entradaTS ts2){
 			numLinea, toStringEntrada(ts1.entrada), ts1.nombre, ts1.parametros, ts2.parametros);
 }
 
+
+void comprobacionTipo(char* nombre, dtipo tipo){
+	entradaTS aux = getSimboloIdentificador(nombre);
+	if( aux.tipoDato != tipo ) mensajeErrorTipo1(aux, tipo);
+}
 
 
 

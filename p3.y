@@ -193,17 +193,24 @@ sentencia_return				: RETURN expresion FINLINEA ;
 sentencia_for					: BUCLE IDENTIFICADOR DOSPUNTOSIGUAL expresion HASTA expresion PASO expresion sentencia 
 									{	
 										if( !variableExiste($2) ) mensajeErrorNoDeclarada($2);
-										else if( $2.tipoDato != entero ) mensajeErrorTipo1($2, entero);
+										else{
+											entradaTS aux = getSimboloIdentificador($2.nombre);
+											if( aux.tipoDato != entero ) mensajeErrorTipo1(aux, entero);
+										}
 										if( $4.tipoDato != entero ) mensajeErrorTipo1($4, entero);
 										if( $6.tipoDato != entero ) mensajeErrorTipo1($6, entero);
 										if( $8.tipoDato != entero ) mensajeErrorTipo1($8, entero);
 									};
 
 sentencia_iterar				: IDENTIFICADOR OPUNARIOPOST FINLINEA {	if( !variableExiste($1) ) mensajeErrorNoDeclarada($1);
-																		else if( $1.tipoDato != lista ) mensajeErrorTipo1($1, lista);	};
-
+																		else{
+																			entradaTS aux = getSimboloIdentificador($1.nombre);
+																			if( aux.tipoDato != lista ) mensajeErrorTipo1(aux, lista); }	};
+																		
 sentencia_reset_cursor			: OPDOLAR IDENTIFICADOR FINLINEA {	if( !variableExiste($2) ) mensajeErrorNoDeclarada($2); 
-																	else if( $2.tipoDato != lista ) mensajeErrorTipo1($1, lista);	};
+																	else{
+																			entradaTS aux = getSimboloIdentificador($2.nombre);
+																			if( aux.tipoDato != lista ) mensajeErrorTipo1(aux, lista); }	};
 
 lista_parametros				: lista_parametros COMA tipo IDENTIFICADOR {	$$.parametros++; 
 																				$4.tipoDato = $3.tipoDato;
