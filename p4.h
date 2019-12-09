@@ -1,5 +1,7 @@
 typedef int bool;
 
+int debug=1;
+
 #define true 1
 #define false 0
 #define MAX_TS 1000
@@ -22,8 +24,6 @@ int TOPE = 0;
 unsigned int Subprog ;     /*Indicador de comienzo de bloque de un subprog*/
 FILE * file;
 char * argumento;
-
-int debug=0;
 
 
 #define YYSTYPE entradaTS  /*A partir de ahora, cada símbolo tiene*/
@@ -52,13 +52,14 @@ void insertar (entradaTS s){
 }
 
 int buscarFuncion (char* nom) {
+	if(debug) printf("buscarFuncion( %s )\n", nom );
 	if( nom != 0 ){
-		if(debug) printf("buscarFuncion. nom:%s\ttope%d", nom, TOPE);
+		//if(debug) printf("buscarFuncion. nom:%s\ttope%d", nom, TOPE);
 
 		for (int i = TOPE-1; i > 0; --i){
-			if(debug) printf("i=%d\tTS[i].nombre:%s\tTS[i].entrada:%s\n", i, TS[i].nombre, toStringEntrada(TS[i].entrada));
+			//if(debug) printf("i=%d\tTS[i].nombre:%s\tTS[i].entrada:%s\n", i, TS[i].nombre, toStringEntrada(TS[i].entrada));
 			if(TS[i].nombre != 0 ){
-				if(debug) printf("strcmp(TS[i].nombre, nom)==0:%d\tTS[i].entrada == funcion:%d\n", strcmp(TS[i].nombre, nom)==0, TS[i].entrada == funcion);
+				//if(debug) printf("strcmp(TS[i].nombre, nom)==0:%d\tTS[i].entrada == funcion:%d\n", strcmp(TS[i].nombre, nom)==0, TS[i].entrada == funcion);
 
 				if(strcmp(TS[i].nombre, nom)==0 && TS[i].entrada == funcion)
 					return i;
@@ -71,21 +72,23 @@ int buscarFuncion (char* nom) {
 
 // Inserta los "numArgumentos" parametros formales de la funcion "nom" como variables
 void insertarArgumentos(char* nom, int numArgumentos){
-	if(debug) printf("insertarArgumentos. nom:%s\tnumArgumentos:%d\n", nom, numArgumentos);
+	if(debug) printf("insertarArgumentos( %s , %d )\n", nom, numArgumentos);
 
 	int index = buscarFuncion(nom);
-	if(debug) printf("%d", index);
+	if(debug) printf("Indice de la funcion %s: %d\n", nom, index);
 
-	for(int i = numArgumentos; i > 0; --i) {
-		entradaTS aux;
-		aux.nombre = TS[index-i].nombre;
-		aux.valor = TS[index-i].valor;
-		aux.tipoDato = TS[index-i].tipoDato;
-		aux.tipoInternoLista = TS[index-i].tipoInternoLista;
-		aux.parametros = TS[index-i].parametros;
-		aux.entrada = variable;
-		insertar(aux);
-	}	
+	if( index > 0 ){
+		for(int i = numArgumentos; i > 0; --i) {
+			entradaTS aux;
+			aux.nombre = TS[index-i].nombre;
+			aux.valor = TS[index-i].valor;
+			aux.tipoDato = TS[index-i].tipoDato;
+			aux.tipoInternoLista = TS[index-i].tipoInternoLista;
+			aux.parametros = TS[index-i].parametros;
+			aux.entrada = variable;
+			insertar(aux);
+		}
+	}
 }
 
 /*
@@ -106,12 +109,13 @@ void insertar (tipoEntrada entrada, char* nombre, dtipo tipoDato, unsigned int p
 
 // Posiciona el tope en 0 vaciando así toda la pila
 void vaciar(){
+	if(debug) printf("vaciar()\n");
 	TOPE=0;
 }
 
 // Posiciona el tope de la pila en la última marca, eliminando así todo el bloque
 void eliminarBloque(){
-	if(debug) printf("Elimino bloque\n");
+	if(debug) printf("eliminarBloque()\n");
 
    bool encontrada = false;
    int i;
@@ -128,14 +132,20 @@ void eliminarBloque(){
 
 // Introduce una entrada en la pila de tipo marca de inicio de bloque
 void insertarMarca(){
-	if(debug) printf("Inserto marca\n");
+	if(debug) printf("insertarMarca()\n");
 
-   TS[TOPE].entrada = marca;
-   ++TOPE;
+	 if (TOPE == 1000) {
+		printf("\nError: tamanio maximo alcanzado\n");
+		exit(-1);
+	} else {
+		TS[TOPE].entrada = marca;
+		++TOPE;
+	}
 }
 
 // Elimina el último elemento de la pila
 void sacar(){
+	if(debug) printf("sacar()\n");
    if (TOPE > 0) {
       --TOPE;
    }
@@ -191,6 +201,7 @@ void imprimirTS(){
 
 // Comprueba si la variable se ha declarado anteriormente en el mismo bloque
 bool variableExisteBloque(entradaTS ts){
+	if(debug) printf("variableExisteBloque( %s )\n", ts.nombre);
 	if( ts.nombre != 0 ){
 		bool encontrada = false;
 		
@@ -207,6 +218,7 @@ bool variableExisteBloque(entradaTS ts){
 
 // Comprueba si la variable se ha declarado anteriormente
 bool variableExiste(entradaTS ts){
+	if(debug) printf("variableExiste( %s )\n", ts.nombre);
 	if( ts.nombre != 0 ){
 		bool encontrada = false;
 		
@@ -221,6 +233,7 @@ bool variableExiste(entradaTS ts){
 
 // Comprueba si hay otro parámetro con el mismo nombre en la misma función
 bool parametroExiste(entradaTS ts){
+	if(debug) printf("parametroExiste( %s )\n", ts.nombre);
 	if( ts.nombre != 0 ){
 		int i = TOPE-1;
 
@@ -236,22 +249,27 @@ bool parametroExiste(entradaTS ts){
 
 // Devuelve la ultima entrada de la pila asociada a la función o variable con nombre "nombre"
 entradaTS getSimboloIdentificador(char* nombre){
-	int i;
-	bool encontrada=false;
+	if(debug) printf("getSimboloIdentificador( %s )\n", nombre);
 	entradaTS ret;
-	
-	for(i=TOPE-1; i>=0 && !encontrada; --i){
-		if( (TS[i].entrada == variable || TS[i].entrada == funcion ) && TS[i].nombre != 0
-				&& nombre != 0 && strcmp(TS[i].nombre, nombre) == 0){
-			encontrada = true;
-			ret=TS[i];
+	if( nombre != 0 ){
+		int i;
+		bool encontrada=false;
+		
+		for(i=TOPE-1; i>=0 && !encontrada; --i){
+			if( (TS[i].entrada == variable || TS[i].entrada == funcion ) && TS[i].nombre != 0
+					&& strcmp(TS[i].nombre, nombre) == 0){
+				encontrada = true;
+				ret=TS[i];
+			}
 		}
+		return ret;	
 	}
-	return ret;	
+	return ret;
 }
 
 // Devuelve la entrada de la pila asociada al argumento número "numPar" de la funcion con nombre "nombreFun"
 entradaTS getSimboloArgumento(char* nombreFun, int numPar){
+	if(debug) printf("getSimboloArgumento( %s , %d )\n", nombreFun, numPar);
 	entradaTS ret;
 	ret.parametros=-1;
 
