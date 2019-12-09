@@ -1,6 +1,6 @@
 typedef int bool;
 
-int debug=1;
+int debug=0;
 
 #define true 1
 #define false 0
@@ -433,14 +433,6 @@ void mensajeErrorNumParametros(entradaTS ts1, entradaTS ts2){
 	printf("Error semantico en la linea %d: La %s %s esperaba %d argumentos y se han encontrado %d\n", 
 			numLinea, toStringEntrada(ts1.entrada), ts1.nombre, ts1.parametros, ts2.parametros);
 }
-
-
-void comprobacionTipo(char* nombre, dtipo tipo){
-	entradaTS aux = getSimboloIdentificador(nombre);
-	if( aux.tipoDato != tipo ) mensajeErrorTipo1(aux, tipo);
-}
-
-
 
 
 bool comprobarParametros(char* nombre, dtipo dato, int nParam) {

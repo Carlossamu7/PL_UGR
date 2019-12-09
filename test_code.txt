@@ -1,7 +1,7 @@
 PRINCIPAL{
     VAR
         ENTERO ve ;
-        REAL vr ;
+        REAL vr;
         CARACTER vc ;
         BOOLEANO vb ;
 
@@ -84,10 +84,12 @@ PRINCIPAL{
 
     lr>> ;
     lr<< ;
-    $(lr--4) ;
-    a = ?(lr@c) ;
-    b = #(lr++3@1) ;
-    c = lr%(#lr/2) ** lb ;
+    $lr ;
+    vr = ?(lr--2) ;
+    ve = #(le++3@1) ;
+	ve = #lr ;
+	lr = lr%2 ;
+    lr = le%(#le/2) ** lb ;
     lr = lr+2;
     lr = 2-lr;
     lr = lr*2;

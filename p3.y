@@ -246,8 +246,8 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 															$$.tipoInternoLista = $2.tipoInternoLista;
 															concatenarStrings2($$.valor, $1.valor, $2.valor); }
 								| OPUNARIOLISTAS expresion	{	if( $2.tipoDato != lista ) mensajeErrorTipo1($2, lista);
-																$$.tipoDato = $2.tipoDato;
-																$$.tipoInternoLista = $2.tipoInternoLista;
+																$$.tipoDato = $2.tipoInternoLista;;
+																$$.tipoInternoLista = desconocido;
 																concatenarStrings2($$.valor, $1.valor, $2.valor);	}
 								| SIGNO expresion	{	if( $2.tipoDato != entero && $2.tipoDato != real && 
 															$2.tipoInternoLista != entero && $2.tipoInternoLista != real )
