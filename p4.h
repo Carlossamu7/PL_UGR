@@ -4,9 +4,9 @@ typedef int bool;
 #define false 0
 #define MAX_TS 1000
 
-typedef enum {marca, funcion, variable, parametro_formal} tipoEntrada ;
+typedef enum {variable, marca, funcion, parametro_formal} tipoEntrada ;
 
-typedef enum {entero, real, caracter, booleano, lista, desconocido} dtipo ;
+typedef enum {desconocido, entero, real, caracter, booleano, lista} dtipo ;
 
 typedef struct {
 	tipoEntrada 	entrada ;
@@ -324,73 +324,73 @@ void imprimirTS(){
 }
 
 void mensajeErrorDeclaradaBloque(entradaTS ts){
-	printf("\nError semantico en la linea %d: La %s %s ya esta declarada en este bloque\n", numLinea, toStringEntrada(ts.entrada), ts.nombre);
+	printf("Error semantico en la linea %d: La %s %s ya esta declarada en este bloque\n", numLinea, toStringEntrada(ts.entrada), ts.nombre);
 }
 
 void mensajeErrorNoDeclarada(entradaTS ts){
-	printf("\nError semantico en la linea %d: La %s %s no ha sido declarada\n", numLinea, toStringEntrada(ts.entrada), ts.nombre);
+	printf("Error semantico en la linea %d: La %s %s no ha sido declarada\n", numLinea, toStringEntrada(ts.entrada), ts.nombre);
 }
 
 void mensajeErrorParametro(entradaTS ts){
-	printf("\nError semantico en la linea %d: Hay mas de un parametro con el mismo nombre \"%s\"\n", numLinea, ts.nombre);
+	printf("Error semantico en la linea %d: Hay mas de un parametro con el mismo nombre \"%s\"\n", numLinea, ts.nombre);
 }
 
 void mensajeErrorNoVariable(entradaTS ts){
-	printf("\nError semantico en la linea %d: La %s %s no es una variable\n", numLinea, toStringEntrada(ts.entrada), ts.nombre);
+	printf("Error semantico en la linea %d: La %s %s no es una variable\n", numLinea, toStringEntrada(ts.entrada), ts.nombre);
 }
 
 void mensajeErrorAsignacion(entradaTS ts1, entradaTS ts2){
-	printf("\nError semantico en la linea %d: Los tipos de la asignacion %s y %s no coinciden\n", numLinea, toStringTipo(ts1.tipoDato),
+	printf("Error semantico en la linea %d: Los tipos de la asignacion %s y %s no coinciden\n", numLinea, toStringTipo(ts1.tipoDato),
 				toStringTipo(ts2.tipoDato));
 }
 
 void mensajeErrorTiposInternosNoCoinciden(entradaTS ts1, entradaTS ts2){
-	printf("\nError semantico en la linea %d: Los tipos %s y %s no coinciden\n", numLinea, toStringTipo(ts1.tipoInternoLista),
+	printf("Error semantico en la linea %d: Los tipos %s y %s no coinciden\n", numLinea, toStringTipo(ts1.tipoInternoLista),
 				toStringTipo(ts2.tipoInternoLista));
 }
 
 void mensajeErrorComparacion(entradaTS ts1, entradaTS ts2){
-	printf("\nError semantico en la linea %d: No se pueden comparar los tipos %s y %s\n", 
+	printf("Error semantico en la linea %d: No se pueden comparar los tipos %s y %s\n", 
 										numLinea, 		toStringTipo(ts1.tipoDato), toStringTipo(ts2.tipoDato));
 }
 
 void mensajeErrorTipo1(entradaTS ts, dtipo esperado){
 	if( ts.entrada == variable )
-		printf("\nError semantico en la linea %d: La variable %s no es de tipo %s\n", numLinea, ts.nombre, toStringTipo(esperado));
+		printf("Error semantico en la linea %d: La variable %s no es de tipo %s\n", numLinea, ts.nombre, toStringTipo(esperado));
 	else if( ts.entrada == funcion )
-		printf("\nError semantico en la linea %d: La funcion %s no devuelve valores de tipo %s\n", numLinea, ts.nombre,
+		printf("Error semantico en la linea %d: La funcion %s no devuelve valores de tipo %s\n", numLinea, ts.nombre,
 					toStringTipo(esperado));
-	else printf("\nError semantico en la linea %d: La expresion %s no es de tipo %s\n", numLinea, ts.valor, toStringTipo(esperado));
+	else printf("Error semantico en la linea %d: La expresion %s no es de tipo %s\n", numLinea, ts.valor, toStringTipo(esperado));
 }
 
 void mensajeErrorTipo2(entradaTS ts, dtipo esperado1, dtipo esperado2){
 	if( ts.entrada == variable )
-		printf("\nError semantico en la linea %d: La variable %s no es de tipo %s o %s\n", numLinea, ts.nombre, toStringTipo(esperado1),
+		printf("Error semantico en la linea %d: La variable %s no es de tipo %s o %s\n", numLinea, ts.nombre, toStringTipo(esperado1),
 					toStringTipo(esperado2));
 	else if( ts.entrada == funcion )
-		printf("\nError semantico en la linea %d: La funcion %s no devuelve valores de tipo %s o %s\n", numLinea, ts.nombre, 
+		printf("Error semantico en la linea %d: La funcion %s no devuelve valores de tipo %s o %s\n", numLinea, ts.nombre, 
 					toStringTipo(esperado1), toStringTipo(esperado2));
-	else printf("\nError semantico en la linea %d: La expresion %s no es de tipo %s o %s\n", numLinea, ts.valor,  toStringTipo(esperado1),
+	else printf("Error semantico en la linea %d: La expresion %s no es de tipo %s o %s\n", numLinea, ts.valor,  toStringTipo(esperado1),
 					toStringTipo(esperado2));
 }
 
 void mensajeErrorSeEsperabaFuncion(entradaTS ts){
-	printf("\nError semantico en la linea %d: Se ha encontrado %s y se esperaba una funcion\n", numLinea, toStringEntrada(ts.entrada));
+	printf("Error semantico en la linea %d: Se ha encontrado %s y se esperaba una funcion\n", numLinea, toStringEntrada(ts.entrada));
 }
 
 void mensajeErrorNoTipo(entradaTS ts){
 	if( ts.entrada == variable )
-		printf("\nError semantico en la linea %d: No se esperaba que el tipo de la variable %s fuese %s\n", numLinea, ts.nombre,
+		printf("Error semantico en la linea %d: No se esperaba que el tipo de la variable %s fuese %s\n", numLinea, ts.nombre,
 					toStringTipo(ts.tipoDato));
 	else if( ts.entrada == funcion )
-		printf("\nError semantico en la linea %d: No se esperaba que la funcion %s devolviese valores de tipo %s\n", numLinea, ts.nombre,
+		printf("Error semantico en la linea %d: No se esperaba que la funcion %s devolviese valores de tipo %s\n", numLinea, ts.nombre,
 					toStringTipo(ts.tipoDato));
-	else printf("\nError semantico en la linea %d: No se esperaba que la expresion %s fuese de tipo %s\n", numLinea, ts.valor, 
+	else printf("Error semantico en la linea %d: No se esperaba que la expresion %s fuese de tipo %s\n", numLinea, ts.valor, 
 					toStringTipo(ts.tipoDato));
 }
 
 void mensajeErrorNumParametros(entradaTS ts1, entradaTS ts2){
-	printf("\nError semantico en la linea %d: La %s %s esperaba %d argumentos y se han encontrado %d\n", 
+	printf("Error semantico en la linea %d: La %s %s esperaba %d argumentos y se han encontrado %d\n", 
 			numLinea, toStringEntrada(ts1.entrada), ts1.nombre, ts1.parametros, ts2.parametros);
 }
 

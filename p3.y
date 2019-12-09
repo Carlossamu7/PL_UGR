@@ -99,7 +99,7 @@ bloque							: INIBLOQUE {	insertarMarca();
 					 			  declar_subprogs
 							 	  sentencias
 							 	  FINBLOQUE {	contBloques--; 
-												imprimirTS(); 
+												//imprimirTS(); 
 												eliminarBloque(); };
 
 declar_subprogs					: declar_subprogs declar_subprog
