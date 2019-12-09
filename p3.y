@@ -355,7 +355,7 @@ funcion							: IDENTIFICADOR PARIZQ lista_expresiones PARDER
 										else if( getSimboloIdentificador($1.nombre).entrada != funcion ) mensajeErrorSeEsperabaFuncion($1);
 										else if( $3.parametros != getSimboloIdentificador($1.nombre).parametros )	
 												mensajeErrorNumParametros($1,$3);
-										concatenarStrings4($$.valor, $1.valor, $2.valor, $3.valor, $4.valor);	};
+										concatenarStrings4($$.valor, $1.nombre, $2.valor, $3.valor, $4.valor);	};
 									/*TODO: Como comprobamos que cada parametro es del tipo esperado?*/
 
 constante						: ENTERO	{	$$.tipoDato = entero;
