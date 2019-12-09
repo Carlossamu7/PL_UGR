@@ -52,16 +52,19 @@ void insertar (entradaTS s){
 }
 
 int buscarFuncion (char* nom) {
-	if(debug) printf("buscarFuncion. nom:%s\ttope%d", nom, TOPE);
+	if( nom != 0 ){
+		if(debug) printf("buscarFuncion. nom:%s\ttope%d", nom, TOPE);
 
-	for (int i = TOPE-1; i > 0; --i){
-		if(debug) printf("i=%d\tTS[i].nombre:%s\tTS[i].entrada:%s\n", i, TS[i].nombre, toStringEntrada(TS[i].entrada));
-		if(TS[i].nombre != 0 && nom != 0){
-			if(debug) printf("strcmp(TS[i].nombre, nom)==0:%d\tTS[i].entrada == funcion:%d\n", strcmp(TS[i].nombre, nom)==0, TS[i].entrada == funcion);
+		for (int i = TOPE-1; i > 0; --i){
+			if(debug) printf("i=%d\tTS[i].nombre:%s\tTS[i].entrada:%s\n", i, TS[i].nombre, toStringEntrada(TS[i].entrada));
+			if(TS[i].nombre != 0 ){
+				if(debug) printf("strcmp(TS[i].nombre, nom)==0:%d\tTS[i].entrada == funcion:%d\n", strcmp(TS[i].nombre, nom)==0, TS[i].entrada == funcion);
 
-			if(strcmp(TS[i].nombre, nom)==0 && TS[i].entrada == funcion)
-				return i;
+				if(strcmp(TS[i].nombre, nom)==0 && TS[i].entrada == funcion)
+					return i;
+			}
 		}
+		return -1;
 	}
 	return -1;
 }
@@ -192,12 +195,10 @@ bool variableExisteBloque(entradaTS ts){
 		bool encontrada = false;
 		
 		for(int i=TOPE-1; i>=0 && !encontrada; --i){
-			if( TS[i].nombre != 0 ){
-				if( (TS[i].entrada == variable || TS[i].entrada == funcion) && strcmp(TS[i].nombre, ts.nombre) == 0)
+				if( (TS[i].entrada == variable || TS[i].entrada == funcion) && TS[i].nombre != 0 && strcmp(TS[i].nombre, ts.nombre) == 0)
 					encontrada = true;		
 				if(TS[i].entrada==marca)
 					return encontrada;
-			}
 		}
 		return encontrada;
 	}
@@ -206,29 +207,30 @@ bool variableExisteBloque(entradaTS ts){
 
 // Comprueba si la variable se ha declarado anteriormente
 bool variableExiste(entradaTS ts){
-	bool encontrada = false;
-	
-	for(int i=TOPE-1; i>=0 && !encontrada; --i){
-		if( TS[i].nombre != 0 && ts.nombre != 0 ){
-			if( (TS[i].entrada == variable || TS[i].entrada == funcion) && strcmp(TS[i].nombre, ts.nombre) == 0)
+	if( ts.nombre != 0 ){
+		bool encontrada = false;
+		
+		for(int i=TOPE-1; i>=0 && !encontrada; --i){
+			if( (TS[i].entrada == variable || TS[i].entrada == funcion) && TS[i].nombre != 0 && strcmp(TS[i].nombre, ts.nombre) == 0 )
 				encontrada = true;
 		}
+		return encontrada;
 	}
-	return encontrada;
+	return false;
 }
 
 // Comprueba si hay otro parámetro con el mismo nombre en la misma función
 bool parametroExiste(entradaTS ts){
-	int i = TOPE-1;
+	if( ts.nombre != 0 ){
+		int i = TOPE-1;
 
-	while( TS[i].entrada == parametro_formal ){
-		if( TS[i].nombre != 0 && ts.nombre != 0 ){
-			if( strcmp(TS[i].nombre, ts.nombre) == 0 )
+		while( TS[i].entrada == parametro_formal ){
+			if( TS[i].nombre != 0 && strcmp(TS[i].nombre, ts.nombre) == 0 )
 				return true;
+			--i;
 		}
-		--i;
+		return false;
 	}
-
 	return false;
 }
 
@@ -250,25 +252,27 @@ entradaTS getSimboloIdentificador(char* nombre){
 
 // Devuelve la entrada de la pila asociada al argumento número "numPar" de la funcion con nombre "nombreFun"
 entradaTS getSimboloArgumento(char* nombreFun, int numPar){
-	int i, indiceFun;
-	bool encontrada=false;
-		
-	for(i=TOPE-1; i>=0 && !encontrada; --i){
-		if( TS[i].nombre != 0 && nombreFun != 0 ){
-			if( TS[i].entrada == funcion && strcmp(TS[i].nombre, nombreFun) == 0){
+	entradaTS ret;
+	ret.parametros=-1;
+
+	if( nombreFun != 0 ){
+		int indiceFun = -1;
+		bool encontrada=false;
+			
+		for(int i=TOPE-1; i>=0 && !encontrada; --i){
+			if( TS[i].entrada == funcion && TS[i].nombre != 0 && strcmp(TS[i].nombre, nombreFun) == 0){
 				encontrada = true;
 				indiceFun=i;
 			}
 		}
+		
+		if( indiceFun >0 && numPar > TS[indiceFun].parametros){
+			return ret;
+		}
+		
+		return TS[indiceFun-TS[indiceFun].parametros+numPar-1];
 	}
-	
-	if(numPar > TS[indiceFun].parametros){
-		entradaTS ret;
-		ret.parametros=-1;
-		return ret;
-	}
-	
-	return TS[indiceFun-TS[indiceFun].parametros+numPar-1];	
+	return ret;
 }
 
 /****************************		FUNCIONES AUXILIARES		**************************/
