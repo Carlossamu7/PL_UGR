@@ -18,7 +18,7 @@ typedef struct {
 } entradaTS ;
 
 entradaTS TS[MAX_TS];	/*Pila de la tabla de símbolos*/
-long int TOPE = 0;
+int TOPE = 0;
 unsigned int Subprog ;     /*Indicador de comienzo de bloque de un subprog*/
 FILE * file;
 char * argumento;
@@ -409,6 +409,12 @@ bool comprobarParametros(char* nombre, dtipo dato, int nParam) {
 	return esIgual;
 }
 
+char *strdup(const char *src) {
+    char *dst = malloc(strlen (src) + 1);  // Space for length plus nul
+    if (dst == NULL) return NULL;          // No memory
+    strcpy(dst, src);                      // Copy the characters
+    return dst;                            // Return the new string
+}
 
 /*
 void insertarVariable(char* nom, int numPar, int longitud){
