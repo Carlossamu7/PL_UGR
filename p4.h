@@ -266,6 +266,7 @@ char* toStringTipo(dtipo td){
 	if(td == real) 		return "real";
 	if(td == caracter)	return "caracter";
 	if(td == lista)		return "lista";
+	return "";
 }
 
 char* toStringEntrada(tipoEntrada te){
@@ -273,6 +274,7 @@ char* toStringEntrada(tipoEntrada te){
 	if(te == funcion) 			return "funcion";	
 	if(te == variable) 			return "variable";
 	if(te == parametro_formal)	return "parametro_formal";
+	return "";
 }
 
 void mensajeErrorDeclaradaBloque(entradaTS ts){
@@ -307,19 +309,19 @@ void mensajeErrorComparacion(entradaTS ts1, entradaTS ts2){
 }
 
 void mensajeErrorTipo1(entradaTS ts, dtipo esperado){
-	if( ts.tipoDato == variable )
+	if( ts.entrada == variable )
 		printf("\nError semantico en la linea %d: La variable %s no es de tipo %s\n", numLinea, ts.nombre, toStringTipo(esperado));
-	else if( ts.tipoDato == funcion )
+	else if( ts.entrada == funcion )
 		printf("\nError semantico en la linea %d: La funcion %s no devuelve valores de tipo %s\n", numLinea, ts.nombre,
 					toStringTipo(esperado));
 	else printf("\nError semantico en la linea %d: La expresion %s no es de tipo %s\n", numLinea, ts.valor, toStringTipo(esperado));
 }
 
 void mensajeErrorTipo2(entradaTS ts, dtipo esperado1, dtipo esperado2){
-	if( ts.tipoDato == variable )
+	if( ts.entrada == variable )
 		printf("\nError semantico en la linea %d: La variable %s no es de tipo %s o %s\n", numLinea, ts.nombre, toStringTipo(esperado1),
 					toStringTipo(esperado2));
-	else if( ts.tipoDato == funcion )
+	else if( ts.entrada == funcion )
 		printf("\nError semantico en la linea %d: La funcion %s no devuelve valores de tipo %s o %s\n", numLinea, ts.nombre, 
 					toStringTipo(esperado1), toStringTipo(esperado2));
 	else printf("\nError semantico en la linea %d: La expresion %s no es de tipo %s o %s\n", numLinea, ts.valor,  toStringTipo(esperado1),
@@ -331,10 +333,10 @@ void mensajeErrorSeEsperabaFuncion(entradaTS ts){
 }
 
 void mensajeErrorNoTipo(entradaTS ts){
-	if( ts.tipoDato == variable )
+	if( ts.entrada == variable )
 		printf("\nError semantico en la linea %d: No se esperaba que el tipo de la variable %s fuese %s\n", numLinea, ts.nombre,
 					toStringTipo(ts.tipoDato));
-	else if( ts.tipoDato == funcion )
+	else if( ts.entrada == funcion )
 		printf("\nError semantico en la linea %d: No se esperaba que la funcion %s devolviese valores de tipo %s\n", numLinea, ts.nombre,
 					toStringTipo(ts.tipoDato));
 	else printf("\nError semantico en la linea %d: No se esperaba que la expresion %s fuese de tipo %s\n", numLinea, ts.valor, 
