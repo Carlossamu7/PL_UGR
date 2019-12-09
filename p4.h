@@ -23,7 +23,7 @@ unsigned int Subprog ;     /*Indicador de comienzo de bloque de un subprog*/
 FILE * file;
 char * argumento;
 
-int debug=1;
+int debug=0;
 
 
 #define YYSTYPE entradaTS  /*A partir de ahora, cada símbolo tiene*/
@@ -50,16 +50,27 @@ void insertar (entradaTS s){
 }
 
 int buscarFuncion (char* nom) {
+	if(debug) printf("buscarFuncion. nom:%s\ttope%d", nom, TOPE);
+
 	for (int i = TOPE-1; i > 0; --i){
-		if(strcmp(TS[i].nombre, nom) && TS[i].entrada == funcion)
-			return i;
+		if(debug) printf("i=%d\tTS[i].nombre:%s\tTS[i].entrada:%s\n", i, TS[i].nombre, toStringEntrada(TS[i].entrada));
+		if(TS[i].nombre != 0){
+			if(debug) printf("strcmp(TS[i].nombre, nom)==0:%d\tTS[i].entrada == funcion:%d\n", strcmp(TS[i].nombre, nom)==0, TS[i].entrada == funcion);
+
+			if(strcmp(TS[i].nombre, nom)==0 && TS[i].entrada == funcion)
+				return i;
+		}
 	}
 	return -1;
 }
 
 // Inserta los "numArgumentos" parametros formales de la funcion "nom" como variables
 void insertarArgumentos(char* nom, int numArgumentos){
+	if(debug) printf("insertarArgumentos. nom:%s\tnumArgumentos:%d\n", nom, numArgumentos);
+
 	int index = buscarFuncion(nom);
+	if(debug) printf("%d", index);
+
 	for(int i = numArgumentos; i > 0; --i) {
 		entradaTS aux;
 		aux.nombre = TS[index-i].nombre;

@@ -10,7 +10,7 @@ main.o: main.c
 	gcc -c main.c -Wall -g
 
 y.tab.c: p3.y lex.yy.c
-	bison -o y.tab.c p3.y -v -l
+	bison -o y.tab.c p3.y -v
 
 lex.yy.c: p2.l
 	flex p2.l 
