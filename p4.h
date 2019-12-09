@@ -23,13 +23,20 @@ unsigned int Subprog ;     /*Indicador de comienzo de bloque de un subprog*/
 FILE * file;
 char * argumento;
 
+int debug=1;
+
 
 #define YYSTYPE entradaTS  /*A partir de ahora, cada símbolo tiene*/
 							/*una estructura de tipo atributos*/
 
 
+char* toStringEntrada();
+char* toStringTipo();
+
 // Inserta una entrada en la pila
 void insertar (entradaTS s){
+	if(debug) printf("Inserto la %s %s\n", toStringEntrada(s.entrada), s.nombre);
+
    if (TOPE == 1000) {
 		printf("\nError: tamanio maximo alcanzado\n");
 		exit(-1);
@@ -85,6 +92,8 @@ void vaciar(){
 
 // Posiciona el tope de la pila en la última marca, eliminando así todo el bloque
 void eliminarBloque(){
+	if(debug) printf("Elimino bloque\n");
+
    bool encontrada = false;
    int i;
    for (i=TOPE-1; i>0 && !encontrada; --i) {
@@ -100,6 +109,8 @@ void eliminarBloque(){
 
 // Introduce una entrada en la pila de tipo marca de inicio de bloque
 void insertarMarca(){
+	if(debug) printf("Inserto marca\n");
+
    TS[TOPE].entrada = marca;
    ++TOPE;
 }
@@ -111,6 +122,9 @@ void sacar(){
    }
 }
 
+
+
+/*
 // Imprime el contenido de la pila 
 void imprimirTS(){
 	int i;
@@ -154,6 +168,7 @@ void imprimirTS(){
 		}
 	}	
 }
+*/
 
 // Comprueba si la variable se ha declarado anteriormente en el mismo bloque
 bool variableExisteBloque(entradaTS ts){
@@ -275,6 +290,26 @@ char* toStringEntrada(tipoEntrada te){
 	if(te == variable) 			return "variable";
 	if(te == parametro_formal)	return "parametro_formal";
 	return "";
+}
+
+// Imprime el contenido de la pila 
+void imprimirTS(){
+	int i;
+	char tabs[50] = "\0";
+	
+	for(i=0; i < TOPE ; ++i){
+		if(TS[i].entrada == marca)
+			printf("\nINICIO BLOQUE\n");
+		else{
+			if( TS[i].parametros > 0 && TS[i].tipoInternoLista != desconocido )
+				printf("%s%s\t%s\t%s\t%s\t%d\n", tabs, toStringEntrada(TS[i].entrada), TS[i].nombre, 
+						toStringTipo(TS[i].tipoDato), toStringTipo(TS[i].tipoInternoLista) ,TS[i].parametros );
+			else if( TS[i].parametros > 0 )
+				printf("%s%s\t%s\t%s\t%d\n", tabs, toStringEntrada(TS[i].entrada), TS[i].nombre, 
+						toStringTipo(TS[i].tipoDato) ,TS[i].parametros );
+			else printf("%s%s\t%s\t%s\n", tabs, toStringEntrada(TS[i].entrada), TS[i].nombre, toStringTipo(TS[i].tipoDato));
+		}
+	}	
 }
 
 void mensajeErrorDeclaradaBloque(entradaTS ts){
