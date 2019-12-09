@@ -221,7 +221,7 @@ otros			.
 						return DOSPUNTOSIGUAL;
 						}
 {identificador} 		{
-						yylval.nombre=strdup(yytext);
+						yylval.nombre = strdup(yytext);
 						return IDENTIFICADOR;
 						}
 
