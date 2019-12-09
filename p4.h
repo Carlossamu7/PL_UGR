@@ -435,6 +435,11 @@ void mensajeErrorNumParametros(entradaTS ts1, entradaTS ts2){
 }
 
 
+void comprobacionTipo(char* nombre, dtipo tipo){
+	entradaTS aux = getSimboloIdentificador(nombre);
+	if( aux.tipoDato != tipo ) mensajeErrorTipo1(aux, tipo);
+}
+
 
 
 
