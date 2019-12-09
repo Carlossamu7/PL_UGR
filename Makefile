@@ -1,13 +1,13 @@
 .SUFFIXES:
 
 p3: main.o y.tab.o
-	gcc -o p3 main.o y.tab.o
+	gcc -o p3 main.o y.tab.o -Wall
 
 y.tab.o: y.tab.c
-	gcc -c y.tab.c -std=c11
+	gcc -c y.tab.c -std=c11 -Wall
 
 main.o: main.c
-	gcc -c main.c
+	gcc -c main.c -Wall
 
 y.tab.c: p3.y lex.yy.c
 	bison -o y.tab.c p3.y -v
