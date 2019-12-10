@@ -33,7 +33,6 @@ PRINCIPAL{
                     x1= 3.1 ;
                 DEVOLVER x1 ;
             }
-
             xf= funcionC (VERDADERO, 10);
             x2= xf*(funcionC(FALSO,1*2)-funcionC(VERDADERO,23))/10.0;
             MIENTRAS (x2*funcionC(FALSO,1)-xf<10.0)
@@ -87,9 +86,9 @@ PRINCIPAL{
     $lr ;
     vr = ?(lr--2) ;
     ve = #(le++3@1) ;
-	ve = #lr ;
+	ve = #le ;
 	lr = lr%2 ;
-    lr = le%(#le/2) ** lb ;
+    lr = le%(#le/2) ** le2 ;
     lr = lr+2;
     lr = 2-lr;
     lr = lr*2;

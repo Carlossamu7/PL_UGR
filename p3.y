@@ -102,7 +102,7 @@ bloque							: INIBLOQUE {	insertarMarca();
 							 	  sentencias
 							 	  FINBLOQUE {	//printf("FIN BLOQUE\n");
 									   			contBloques--; 
-												imprimirTS(); 
+												//imprimirTS(); 
 												eliminarBloque(); };
 
 declar_subprogs					: declar_subprogs declar_subprog
@@ -169,14 +169,24 @@ sentencia						: bloque
 								| funcion FINLINEA 
 								| error ;
 
-sentencia_asignacion			: IDENTIFICADOR ASIGNACION exp_cad FINLINEA {	if( variableExiste($1) ){
-																					if( $1.entrada == funcion ) mensajeErrorNoVariable($1);
+sentencia_asignacion			: IDENTIFICADOR ASIGNACION exp_cad FINLINEA {	bool error = false;
+																				if( variableExiste($1) ){
+																					if( $1.entrada == funcion ){
+																						mensajeErrorNoVariable($1);
+																						error=true;
+																					}
 																					else {
 																						entradaTS aux = getSimboloIdentificador($1.nombre);
-																						if( aux.tipoDato != $3.tipoDato )
-																						mensajeErrorAsignacion($1, $3);
+																						if( aux.tipoDato != $3.tipoDato ){
+																							mensajeErrorAsignacion(aux, $3);
+																							error=true;
+																						}
 																					}
-																				} else mensajeErrorNoDeclarada($1);	};
+																				} else {
+																					mensajeErrorNoDeclarada($1);
+																					error=true;
+																				}
+																				if(error) $$.tipoDato = desconocido;};
 
 sentencia_if					: CONDICION PARIZQ expresion PARDER sentencia
 									SUBCONDICION sentencia {	if( $3.tipoDato != booleano ) mensajeErrorTipo1($3, booleano);	}
@@ -225,8 +235,22 @@ lista_parametros				: lista_parametros COMA tipo IDENTIFICADOR {	$$.parametros++
 														if( !parametroExiste($2) ) insertar($2);
 														else mensajeErrorParametro($2);			} ;
 
-lista_exp_cadena				: lista_exp_cadena COMA exp_cad
-								| exp_cad ;
+lista_exp_cadena				: lista_exp_cadena COMA exp_cad {	$$.parametros++;
+																	if (strcmp($0.valor, "(") == 0 ){
+																		entradaTS aux = getSimboloIdentificador($-1.nombre);
+																		if( !comprobarParametro(aux.nombre, $$.parametros, $3.tipoDato) )
+																			mensajeErrorTipoArgumento(aux.nombre, $$.parametros,
+																				getSimboloArgumento(aux.nombre, $$.parametros).tipoDato); 
+																	} 
+																}
+								| exp_cad {	$$.parametros = 1;
+											if (strcmp($0.valor, "(") == 0 ){
+												entradaTS aux = getSimboloIdentificador($-1.nombre);
+												if( !comprobarParametro(aux.nombre, $$.parametros, $1.tipoDato) )
+													mensajeErrorTipoArgumento(aux.nombre, $$.parametros,
+														getSimboloArgumento(aux.nombre, $$.parametros).tipoDato);	
+											} 
+										} ;
 
 exp_cad							: expresion	{	$$.tipoDato = $1.tipoDato;
 												$$.tipoInternoLista = $1.tipoInternoLista; }
@@ -235,146 +259,316 @@ exp_cad							: expresion	{	$$.tipoDato = $1.tipoDato;
 lista_variables					: lista_variables COMA IDENTIFICADOR  {	if ( !variableExiste($3) ) mensajeErrorNoDeclarada($3);	}
 								| IDENTIFICADOR {	if ( !variableExiste($1) ) mensajeErrorNoDeclarada($1);	};
 
-lista_expresiones				: lista_expresiones COMA expresion	{	$$.parametros++;	}
-								| expresion {	$$.parametros = 1;	} ;
-
 expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																$$.tipoInternoLista = $2.tipoInternoLista;
 																concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
-								| OPUNARIO expresion	{	if( $2.tipoDato != booleano ) mensajeErrorTipo1($2, booleano);
-															$$.tipoDato = $2.tipoDato;
+								| OPUNARIO expresion	{	if( $2.tipoDato != booleano){
+																mensajeErrorTipo1($2, booleano);
+																$$.tipoDato = desconocido;
+															}
+															else $$.tipoDato = $2.tipoDato;
 															$$.tipoInternoLista = $2.tipoInternoLista;
 															concatenarStrings2($$.valor, $1.valor, $2.valor); }
-								| OPUNARIOLISTAS expresion	{	if( $2.tipoDato != lista ) mensajeErrorTipo1($2, lista);
-																$$.tipoDato = $2.tipoInternoLista;;
+								| OPUNARIOLISTAS expresion	{	if( $2.tipoDato != lista ){
+																	mensajeErrorTipo1($2, lista);
+																	$$.tipoDato = desconocido;
+																} else {
+																	if( strcmp($1.valor, "#") == 0)$$.tipoDato = entero;
+																	else $$.tipoDato = $2.tipoInternoLista;
+																}
 																$$.tipoInternoLista = desconocido;
 																concatenarStrings2($$.valor, $1.valor, $2.valor);	}
 								| SIGNO expresion	{	if( $2.tipoDato != entero && $2.tipoDato != real && 
-															$2.tipoInternoLista != entero && $2.tipoInternoLista != real )
+															$2.tipoInternoLista != entero && $2.tipoInternoLista != real ){
 																mensajeErrorTipo2($2, entero, real);
-															$$.tipoDato = $2.tipoDato;
+																$$.tipoDato = desconocido;
+															} else $$.tipoDato = $2.tipoDato;
 															$$.tipoInternoLista = $2.tipoInternoLista;
 															concatenarStrings2($$.valor, $1.valor, $2.valor);	}
-								| expresion SIGNO expresion	{	if( $1.tipoDato != entero && $1.tipoDato != real && 
-																	$1.tipoInternoLista != entero && $1.tipoInternoLista != real )
+								| expresion SIGNO expresion	{	bool error=false;
+																if( $1.tipoDato != entero && $1.tipoDato != real && 
+																	$1.tipoInternoLista != entero && $1.tipoInternoLista != real ){
 																		mensajeErrorTipo2($1, entero, real);
+																		error=true;
+																}
 																if( $3.tipoDato != entero && $3.tipoDato != real &&
-																	$3.tipoInternoLista != entero && $3.tipoInternoLista != real )
+																	$3.tipoInternoLista != entero && $3.tipoInternoLista != real ){
 																		mensajeErrorTipo2($3, entero, real);
-																if( $1.tipoDato == lista && $3.tipoDato == lista)
+																		error=true;
+																}
+																if( $1.tipoDato == lista && $3.tipoDato == lista){
 																	mensajeErrorNoTipo($1);
-																if( $1.tipoDato == lista || $3.tipoDato == lista )   $$.tipoDato = lista;
-																else if( $1.tipoDato == real || $3.tipoDato == real ) $$.tipoDato = real;
-																else $$.tipoDato = $1.tipoDato;
+																	error=true;
+																}
+																if(error) $$.tipoDato = desconocido;
+																else{
+																	if( $1.tipoDato == lista || $3.tipoDato == lista )   
+																		$$.tipoDato = lista;
+																	else if( $1.tipoDato == real || $3.tipoDato == real ) 
+																		$$.tipoDato = real;
+																	else $$.tipoDato = $1.tipoDato;
+																}
 																if( $1.tipoInternoLista == real || $3.tipoInternoLista == real ) 
 																	$$.tipoInternoLista = real;
 																else $$.tipoInternoLista = $1.tipoInternoLista;
 																concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
-								| expresion OPORLOGICO expresion	{	if( $1.tipoDato != booleano ) mensajeErrorTipo1($1, booleano);
-																		if( $3.tipoDato != booleano ) mensajeErrorTipo1($3, booleano);
-																		$$.tipoDato = $1.tipoDato;
+								| expresion OPORLOGICO expresion	{	bool error=false;
+																		if( $1.tipoDato != booleano ){
+																			mensajeErrorTipo1($1, booleano);
+																			error = true;
+																		}
+																		if( $3.tipoDato != booleano ){
+																			mensajeErrorTipo1($3, booleano);
+																			error = true;
+																		}
+																		if (error) $$.tipoDato = desconocido;
+																		else $$.tipoDato = $1.tipoDato;
 																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
-								| expresion OPANDLOGICO expresion	{	if( $1.tipoDato != booleano ) mensajeErrorTipo1($1, booleano);
-																		if( $3.tipoDato != booleano ) mensajeErrorTipo1($3, booleano);
-																		$$.tipoDato = $1.tipoDato;
+								| expresion OPANDLOGICO expresion	{	bool error=false;
+																		if( $1.tipoDato != booleano ){
+																			mensajeErrorTipo1($1, booleano);
+																			error = true;
+																		}
+																		if( $3.tipoDato != booleano ){
+																			mensajeErrorTipo1($3, booleano);
+																			error = true;
+																		}
+																		if (error) $$.tipoDato = desconocido;
+																		else $$.tipoDato = $1.tipoDato;
 																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
-								| expresion OPEXCLUSIVEOR expresion	{	if( $1.tipoDato != booleano ) mensajeErrorTipo1($1, booleano);
-																		if( $3.tipoDato != booleano ) mensajeErrorTipo1($3, booleano);
-																		$$.tipoDato = $1.tipoDato;
+								| expresion OPEXCLUSIVEOR expresion	{	bool error=false;
+																		if( $1.tipoDato != booleano ){
+																			mensajeErrorTipo1($1, booleano);
+																			error = true;
+																		}
+																		if( $3.tipoDato != booleano ){
+																			mensajeErrorTipo1($3, booleano);
+																			error = true;
+																		}
+																		if (error) $$.tipoDato = desconocido;
+																		else $$.tipoDato = $1.tipoDato;
 																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
-								| expresion OPIGUALDAD expresion	{	if( $1.tipoDato == lista) mensajeErrorNoTipo($1);
-																		if( $3.tipoDato == lista) mensajeErrorNoTipo($3);
-																		if( $1.tipoDato != $3.tipoDato ) mensajeErrorComparacion($1, $3);
-																		$$.tipoDato = booleano;
+								| expresion OPIGUALDAD expresion	{	bool error=false;
+																		if( $1.tipoDato == lista){
+																			mensajeErrorNoTipo($1);
+																			error = true;
+																		}
+																		if( $3.tipoDato == lista){
+																			mensajeErrorNoTipo($3);
+																			error = true;
+																		}
+																		if( $1.tipoDato != $3.tipoDato ){ 
+																			mensajeErrorComparacion($1, $3);
+																			error = true;
+																		}
+																		if (error) $$.tipoDato = desconocido;
+																		else $$.tipoDato = booleano;
 																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
-								| expresion OPRELACION expresion	{	if( $1.tipoDato == lista) mensajeErrorNoTipo($1);
-																		if( $3.tipoDato == lista) mensajeErrorNoTipo($3);
-																		if( $1.tipoDato != $3.tipoDato ) mensajeErrorComparacion($1, $3);
-																		$$.tipoDato = booleano;
+								| expresion OPRELACION expresion	{	bool error=false;
+																		if( $1.tipoDato == lista){
+																			mensajeErrorNoTipo($1);
+																			error = true;
+																		}
+																		if( $3.tipoDato == lista){
+																			mensajeErrorNoTipo($3);
+																			error = true;
+																		}
+																		if( $1.tipoDato != $3.tipoDato ){ 
+																			mensajeErrorComparacion($1, $3);
+																			error = true;
+																		}
+																		if (error) $$.tipoDato = desconocido;
+																		else $$.tipoDato = booleano;
 																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
-								| expresion OPMULTIPLICATIVOS expresion	{	if( $1.tipoDato != entero && $1.tipoDato != real && 
-																				$1.tipoInternoLista != entero && $1.tipoInternoLista != real )
-																				mensajeErrorTipo2($1, entero, real);
-																			if( $3.tipoDato != entero && $3.tipoDato != real && 
-																				$3.tipoInternoLista != entero && $3.tipoInternoLista != real )
-																				mensajeErrorTipo2($3, entero, real);
-																			if( $1.tipoDato == real || $3.tipoDato == real ) 
-																				$$.tipoDato = real;
-																			if( $1.tipoDato == lista && $3.tipoDato == lista)
+								| expresion OPMULTIPLICATIVOS expresion	{	bool error=false;
+																			if( $1.tipoDato != entero && $1.tipoDato != real && 
+																				$1.tipoInternoLista != entero && 
+																				$1.tipoInternoLista != real ){
+																					mensajeErrorTipo2($1, entero, real);
+																					error=true;
+																			}
+																			if( $3.tipoDato != entero && $3.tipoDato != real &&
+																				$3.tipoInternoLista != entero && 
+																				$3.tipoInternoLista != real ){
+																					mensajeErrorTipo2($3, entero, real);
+																					error=true;
+																			}
+																			if( $1.tipoDato == lista && $3.tipoDato == lista){
 																				mensajeErrorNoTipo($1);
+																				error=true;
+																			}
+																			if(error) $$.tipoDato = desconocido;
+																			else{
+																				if( $1.tipoDato == lista || $3.tipoDato == lista )   
+																					$$.tipoDato = lista;
+																				else if( $1.tipoDato == real || $3.tipoDato == real ) 
+																					$$.tipoDato = real;
+																				else $$.tipoDato = $1.tipoDato;
+																			}
+																			if( $1.tipoInternoLista == real || 
+																				$3.tipoInternoLista == real ) 
+																				$$.tipoInternoLista = real;
+																			else $$.tipoInternoLista = $1.tipoInternoLista;
 																			concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
-								| expresion OPDECREMENTO expresion	{	if( $1.tipoDato != lista ) mensajeErrorTipo1($1, lista);
-																		if( $3.tipoDato != entero ) mensajeErrorTipo1($3, entero);
-																		$$.tipoDato = lista;
+								| expresion OPDECREMENTO expresion	{	bool error=false;
+																		if( $1.tipoDato != lista ){ 
+																			mensajeErrorTipo1($1, lista);
+																			error = true;
+																		}
+																		if( $3.tipoDato != entero ) {
+																			mensajeErrorTipo1($3, entero);
+																			error = true;
+																		}
+																		if (error) $$.tipoDato = desconocido;
+																		else $$.tipoDato = lista;
 																		$$.tipoInternoLista = $1.tipoInternoLista;
 																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
-								| expresion OPPORCENTAJE expresion	{	if( $1.tipoDato != lista ) mensajeErrorTipo1($1, lista);
-																		if( $3.tipoDato != entero ) mensajeErrorTipo1($3, entero);
-																		$$.tipoDato = lista;
+								| expresion OPPORCENTAJE expresion	{	bool error=false;
+																		if( $1.tipoDato != lista ){ 
+																			mensajeErrorTipo1($1, lista);
+																			error = true;
+																		}
+																		if( $3.tipoDato != entero ) {
+																			mensajeErrorTipo1($3, entero);
+																			error = true;
+																		}
+																		if (error) $$.tipoDato = desconocido;
+																		else $$.tipoDato = lista;
 																		$$.tipoInternoLista = $1.tipoInternoLista;
 																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
-								| expresion OPCONCATENAR expresion	{	if( $1.tipoDato != lista ) mensajeErrorTipo1($1, lista);
-																		if( $3.tipoDato != lista ) mensajeErrorTipo1($3, lista);
-																		if( $1.tipoInternoLista != $3.tipoInternoLista) 
+								| expresion OPCONCATENAR expresion	{	bool error=false;
+																		if( $1.tipoDato != lista ){
+																			mensajeErrorTipo1($1, lista);
+																			error = true;
+																		}
+																		if( $3.tipoDato != lista ){
+																			mensajeErrorTipo1($3, lista);
+																			error = true;
+																		}
+																		if( $1.tipoInternoLista != $3.tipoInternoLista){
 																			mensajeErrorTiposInternosNoCoinciden($1, $3);
-																		$$.tipoDato = lista;
-																		$$.tipoInternoLista = $1.tipoInternoLista;
+																			error = true;
+																		} 
+																		if (error){ 
+																			$$.tipoDato = desconocido;
+																			$$.tipoInternoLista = desconocido;
+																		}
+																		else{
+																			$$.tipoDato = lista;
+																			$$.tipoInternoLista = $1.tipoInternoLista;
+																		}
 																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
-								| expresion OPARROBA expresion	{	if( $1.tipoDato != lista ) mensajeErrorTipo1($1, lista);
-																	if( $3.tipoDato != entero ) mensajeErrorTipo1($3, entero);
-																	$$.tipoDato = $1.tipoInternoLista;
+								| expresion OPARROBA expresion	{	bool error=false;
+																	if( $1.tipoDato != lista ){ 
+																		mensajeErrorTipo1($1, lista);
+																		error = true;
+																	}
+																	if( $3.tipoDato != entero ) {
+																		mensajeErrorTipo1($3, entero);
+																		error = true;
+																	}
+																	if (error) $$.tipoDato = desconocido;
+																	else $$.tipoDato = $1.tipoInternoLista;
+																	$$.tipoInternoLista = desconocido;
 																	concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
-								| expresion OPINCREMENTO expresion OPARROBA expresion	{	
-												if( $1.tipoDato != lista ) mensajeErrorTipo1($1, lista);
-												if( $3.tipoDato != $1.tipoInternoLista ) mensajeErrorTipo1($3, $1.tipoInternoLista);
-												if( $5.tipoDato != entero ) mensajeErrorTipo1($3, entero);
-												$$.tipoDato = lista;
-												$$.tipoInternoLista = $1.tipoInternoLista;
+								| expresion OPINCREMENTO expresion OPARROBA expresion	{
+												bool error = false;	
+												if( $1.tipoDato != lista ){ 
+													mensajeErrorTipo1($1, lista);
+													error = true;
+												}
+												if( $3.tipoDato != $1.tipoInternoLista ){
+													mensajeErrorTipo1($3, $1.tipoInternoLista);
+													error = true;
+												}
+												if( $5.tipoDato != entero ){ 
+													mensajeErrorTipo1($5, entero);
+													error = true;
+												}
+												if (error){ 
+													$$.tipoDato = desconocido;
+													$$.tipoInternoLista = desconocido;
+												}
+												else{
+													$$.tipoDato = lista;
+													$$.tipoInternoLista = $1.tipoInternoLista;
+												}
 												concatenarStrings5($$.valor, $1.valor, $2.valor, $3.valor, $4.valor, $5.valor);	}
-								| IDENTIFICADOR	{	if( !variableExiste($1) ) mensajeErrorNoDeclarada($1);
-													entradaTS aux = getSimboloIdentificador($1.nombre);
+								| IDENTIFICADOR	{	if( !variableExiste($1) ){
+														mensajeErrorNoDeclarada($1);
+														$$.tipoDato = desconocido;
+														$$.tipoInternoLista = desconocido;
+													}
+													else{
+														entradaTS aux = getSimboloIdentificador($1.nombre);
+														$$.tipoDato = aux.tipoDato;
+														$$.tipoInternoLista = aux.tipoInternoLista;
+													}
 													$$.entrada = variable;
-													$$.tipoDato = aux.tipoDato;
-													$$.tipoInternoLista = aux.tipoInternoLista;
 													concatenarStrings1($$.valor, $1.nombre);	}
 								| lista	{	$$.tipoDato = lista;
 											$$.tipoInternoLista = $1.tipoInternoLista;
 											concatenarStrings1($$.valor, $1.valor);	}
 								| constante	{	$$.tipoDato = $1.tipoDato;
 												concatenarStrings1($$.valor, $1.valor);	}
-								| funcion	{	if( !variableExiste($1) ) mensajeErrorNoDeclarada($1);
-												entradaTS aux = getSimboloIdentificador($1.nombre);
+								| funcion	{	if( !variableExiste($1) ){
+													mensajeErrorNoDeclarada($1);
+													$$.tipoDato = desconocido;
+													$$.tipoInternoLista = desconocido;
+												}
+												else{
+													entradaTS aux = getSimboloIdentificador($1.nombre);
+													$$.tipoDato = aux.tipoDato;
+													$$.tipoInternoLista = aux.tipoInternoLista;
+												}
 												$$.entrada = funcion;
-												$$.tipoDato = aux.tipoDato;
-												$$.tipoInternoLista = aux.tipoInternoLista;
 												concatenarStrings1($$.valor, $1.valor);	}
 								| error ;
 
-funcion							: IDENTIFICADOR PARIZQ lista_expresiones PARDER	
-									{	if( !variableExiste($1) ) mensajeErrorNoDeclarada($1);
-										else if( getSimboloIdentificador($1.nombre).entrada != funcion ) mensajeErrorSeEsperabaFuncion($1);
-										else if( $3.parametros != getSimboloIdentificador($1.nombre).parametros )	
-												mensajeErrorNumParametros($1,$3);
+funcion							: IDENTIFICADOR PARIZQ lista_exp_cadena PARDER	
+									{	$1.entrada = getSimboloIdentificador($1.nombre).entrada;
+										if( !variableExiste($1) ){
+											mensajeErrorNoDeclarada($1);
+											$$.tipoDato = desconocido;
+										}
+										else if( getSimboloIdentificador($1.nombre).entrada != funcion ){
+											mensajeErrorSeEsperabaFuncion($1);
+											$$.tipoDato = desconocido;
+										}
+										else if( $3.parametros != getSimboloIdentificador($1.nombre).parametros ){
+											mensajeErrorNumParametros(getSimboloIdentificador($1.nombre),$3);
+											$$.tipoDato = desconocido;
+										}
+										$$.tipoDato = getSimboloIdentificador($1.nombre).tipoDato;
+										$$.tipoInternoLista = getSimboloIdentificador($1.nombre).tipoInternoLista;
 										concatenarStrings4($$.valor, $1.nombre, $2.valor, $3.valor, $4.valor);	};
-									/*TODO: Como comprobamos que cada parametro es del tipo esperado?*/
 
 constante						: ENTERO	{	$$.tipoDato = entero;
+												$$.tipoInternoLista = desconocido;
 												concatenarStrings1($$.valor, $1.valor);	}
 								| REAL	{	$$.tipoDato = real;
+											$$.tipoInternoLista = desconocido;
 											concatenarStrings1($$.valor, $1.valor);	}
 								| CONSTANTE_CARACTER	{	$$.tipoDato = caracter;
+															$$.tipoInternoLista = desconocido;
 															concatenarStrings1($$.valor, $1.valor);	}
 								| CONSTANTE_BOOLEANA 	{	$$.tipoDato = booleano;
+															$$.tipoInternoLista = desconocido;
 															concatenarStrings1($$.valor, $1.valor);	} ;
 
 lista							: ABRIRCORCHETE lista2 {	$$.tipoInternoLista = $1.tipoDato;
 															$$.tipoDato = lista;
 															concatenarStrings2($$.valor, $1.valor, $2.valor);	};
 
-lista2							: exp_cad COMA lista2 	{	if( $1.tipoInternoLista != $3.tipoDato ) 
+lista2							: exp_cad COMA lista2 	{	if( $1.tipoInternoLista != $3.tipoDato ){
 																mensajeErrorTipo1($3, $1.tipoInternoLista); 
-															$$.tipoInternoLista = $1.tipoInternoLista;
-															$$.tipoDato = lista;
+																$$.tipoDato = desconocido;
+																$$.tipoInternoLista = desconocido;
+															}
+															else{																
+																$$.tipoInternoLista = $1.tipoInternoLista;
+																$$.tipoDato = lista;
+															}
 															concatenarStrings2($$.valor, $2.valor, $3.valor);	}
 								| exp_cad CERRARCORCHETE {	$$.tipoInternoLista = $1.tipoDato;
 															$$.tipoDato = lista;

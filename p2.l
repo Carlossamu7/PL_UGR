@@ -57,10 +57,12 @@ otros			.
 "VAR"					return INIVARIABLES;
 "FINVAR"				return FINVARIABLES;
 "VERDADERO"				{
+						yylval.valor = strdup(yytext);
 						yylval.tipoDato = booleano;
 						return CONSTANTE_BOOLEANA;
 						}
 "FALSO"					{
+						yylval.valor = strdup(yytext);
 						yylval.tipoDato = booleano;
 						return CONSTANTE_BOOLEANA;
 						}
@@ -221,6 +223,7 @@ otros			.
 						return DOSPUNTOSIGUAL;
 						}
 {identificador} 		{
+						yylval.valor = strdup(yytext);
 						yylval.nombre = strdup(yytext);
 						return IDENTIFICADOR;
 						}
