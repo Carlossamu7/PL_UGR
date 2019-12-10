@@ -241,7 +241,8 @@ lista_exp_cadena				: lista_exp_cadena COMA exp_cad {	$$.parametros++;
 																		if( !comprobarParametro(aux.nombre, $$.parametros, $3.tipoDato) )
 																			mensajeErrorTipoArgumento(aux.nombre, $$.parametros,
 																				getSimboloArgumento(aux.nombre, $$.parametros).tipoDato); 
-																	} 
+																	}
+																	concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);
 																}
 								| exp_cad {	$$.parametros = 1;
 											if (strcmp($0.valor, "(") == 0 ){
@@ -250,14 +251,19 @@ lista_exp_cadena				: lista_exp_cadena COMA exp_cad {	$$.parametros++;
 													mensajeErrorTipoArgumento(aux.nombre, $$.parametros,
 														getSimboloArgumento(aux.nombre, $$.parametros).tipoDato);	
 											} 
+											concatenarStrings1($$.valor, $1.valor);
 										} ;
 
 exp_cad							: expresion	{	$$.tipoDato = $1.tipoDato;
-												$$.tipoInternoLista = $1.tipoInternoLista; }
-								| CADENA {	$$.tipoDato = caracter;	} ;
+												$$.tipoInternoLista = $1.tipoInternoLista;
+												concatenarStrings1($$.valor, $1.valor); }
+								| CADENA {	$$.tipoDato = caracter;	
+											concatenarStrings1($$.valor, $1.valor); } ;
 
-lista_variables					: lista_variables COMA IDENTIFICADOR  {	if ( !variableExiste($3) ) mensajeErrorNoDeclarada($3);	}
-								| IDENTIFICADOR {	if ( !variableExiste($1) ) mensajeErrorNoDeclarada($1);	};
+lista_variables					: lista_variables COMA IDENTIFICADOR  {	if ( !variableExiste($3) ) mensajeErrorNoDeclarada($3);	
+																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor); }
+								| IDENTIFICADOR {	if ( !variableExiste($1) ) mensajeErrorNoDeclarada($1);	
+													concatenarStrings1($$.valor, $1.valor);};
 
 expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																$$.tipoInternoLista = $2.tipoInternoLista;
@@ -285,32 +291,22 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 															} else $$.tipoDato = $2.tipoDato;
 															$$.tipoInternoLista = $2.tipoInternoLista;
 															concatenarStrings2($$.valor, $1.valor, $2.valor);	}
-								| expresion SIGNO expresion	{	bool error=false;
-																if( $1.tipoDato != entero && $1.tipoDato != real && 
-																	$1.tipoInternoLista != entero && $1.tipoInternoLista != real ){
-																		mensajeErrorTipo2($1, entero, real);
-																		error=true;
+								| expresion SIGNO expresion	{	if ($1.tipoDato == lista && $3.tipoDato == $1.tipoInternoLista){
+																	$$.tipoDato = lista;
+																	$$.tipoInternoLista = $1.tipoInternoLista;
 																}
-																if( $3.tipoDato != entero && $3.tipoDato != real &&
-																	$3.tipoInternoLista != entero && $3.tipoInternoLista != real ){
-																		mensajeErrorTipo2($3, entero, real);
-																		error=true;
+																else if ($3.tipoDato == lista && $1.tipoDato == $3.tipoInternoLista){
+																	$$.tipoDato = lista;
+																	$$.tipoInternoLista = $3.tipoInternoLista;
 																}
-																if( $1.tipoDato == lista && $3.tipoDato == lista){
-																	mensajeErrorNoTipo($1);
-																	error=true;
+																else if( $1.tipoDato == $3.tipoDato){
+																	$$.tipoDato = $1.tipoDato;
+																	$$.tipoInternoLista = desconocido;
 																}
-																if(error) $$.tipoDato = desconocido;
-																else{
-																	if( $1.tipoDato == lista || $3.tipoDato == lista )   
-																		$$.tipoDato = lista;
-																	else if( $1.tipoDato == real || $3.tipoDato == real ) 
-																		$$.tipoDato = real;
-																	else $$.tipoDato = $1.tipoDato;
+																else {
+																	mensajeErrorOperarTipos($1, $3);
+																	$$.tipoDato = desconocido;
 																}
-																if( $1.tipoInternoLista == real || $3.tipoInternoLista == real ) 
-																	$$.tipoInternoLista = real;
-																else $$.tipoInternoLista = $1.tipoInternoLista;
 																concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
 								| expresion OPORLOGICO expresion	{	bool error=false;
 																		if( $1.tipoDato != booleano ){
@@ -380,36 +376,23 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																		if (error) $$.tipoDato = desconocido;
 																		else $$.tipoDato = booleano;
 																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
-								| expresion OPMULTIPLICATIVOS expresion	{	bool error=false;
-																			if( $1.tipoDato != entero && $1.tipoDato != real && 
-																				$1.tipoInternoLista != entero && 
-																				$1.tipoInternoLista != real ){
-																					mensajeErrorTipo2($1, entero, real);
-																					error=true;
-																			}
-																			if( $3.tipoDato != entero && $3.tipoDato != real &&
-																				$3.tipoInternoLista != entero && 
-																				$3.tipoInternoLista != real ){
-																					mensajeErrorTipo2($3, entero, real);
-																					error=true;
-																			}
-																			if( $1.tipoDato == lista && $3.tipoDato == lista){
-																				mensajeErrorNoTipo($1);
-																				error=true;
-																			}
-																			if(error) $$.tipoDato = desconocido;
-																			else{
-																				if( $1.tipoDato == lista || $3.tipoDato == lista )   
-																					$$.tipoDato = lista;
-																				else if( $1.tipoDato == real || $3.tipoDato == real ) 
-																					$$.tipoDato = real;
-																				else $$.tipoDato = $1.tipoDato;
-																			}
-																			if( $1.tipoInternoLista == real || 
-																				$3.tipoInternoLista == real ) 
-																				$$.tipoInternoLista = real;
-																			else $$.tipoInternoLista = $1.tipoInternoLista;
-																			concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
+								| expresion OPMULTIPLICATIVOS expresion	{	if ($1.tipoDato == lista && $3.tipoDato == $1.tipoInternoLista){
+																			$$.tipoDato = lista;
+																			$$.tipoInternoLista = $1.tipoInternoLista;
+																		}
+																		else if ($3.tipoDato == lista && $1.tipoDato == $3.tipoInternoLista){
+																			$$.tipoDato = lista;
+																			$$.tipoInternoLista = $3.tipoInternoLista;
+																		}
+																		else if( $1.tipoDato == $3.tipoDato){
+																			$$.tipoDato = $1.tipoDato;
+																			$$.tipoInternoLista = desconocido;
+																		}
+																		else {
+																			mensajeErrorOperarTipos($1, $3);
+																			$$.tipoDato = desconocido;
+																		}
+																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
 								| expresion OPDECREMENTO expresion	{	bool error=false;
 																		if( $1.tipoDato != lista ){ 
 																			mensajeErrorTipo1($1, lista);
@@ -556,22 +539,20 @@ constante						: ENTERO	{	$$.tipoDato = entero;
 															$$.tipoInternoLista = desconocido;
 															concatenarStrings1($$.valor, $1.valor);	} ;
 
-lista							: ABRIRCORCHETE lista2 {	$$.tipoInternoLista = $1.tipoDato;
+lista							: ABRIRCORCHETE lista2 {	$$.tipoInternoLista = $2.tipoDato;
 															$$.tipoDato = lista;
 															concatenarStrings2($$.valor, $1.valor, $2.valor);	};
 
-lista2							: exp_cad COMA lista2 	{	if( $1.tipoInternoLista != $3.tipoDato ){
-																mensajeErrorTipo1($3, $1.tipoInternoLista); 
+lista2							: exp_cad COMA lista2 	{	if( $3.tipoDato != $1.tipoDato ){
+																mensajeErrorTipo1($1, $3.tipoDato); 
 																$$.tipoDato = desconocido;
 																$$.tipoInternoLista = desconocido;
 															}
 															else{																
-																$$.tipoInternoLista = $1.tipoInternoLista;
-																$$.tipoDato = lista;
+																$$.tipoDato = $1.tipoDato;
 															}
 															concatenarStrings2($$.valor, $2.valor, $3.valor);	}
-								| exp_cad CERRARCORCHETE {	$$.tipoInternoLista = $1.tipoDato;
-															$$.tipoDato = lista;
+								| exp_cad CERRARCORCHETE {	$$.tipoDato = $1.tipoDato;
 															concatenarStrings2($$.valor, $1.valor, $2.valor);	};
 
 tipo							: TIPO	{	$$.tipoDato = $1.tipoDato;	}

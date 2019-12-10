@@ -6,7 +6,7 @@ int debug=0;
 #define false 0
 #define MAX_TS 1000
 
-typedef enum {variable, marca, funcion, parametro_formal} tipoEntrada ;
+typedef enum {marca, variable, funcion, parametro_formal} tipoEntrada ;
 
 typedef enum {desconocido, entero, real, caracter, booleano, lista} dtipo ;
 
@@ -427,6 +427,19 @@ void mensajeErrorTipo2(entradaTS ts, dtipo esperado1, dtipo esperado2){
 						toStringTipo(esperado1), toStringTipo(esperado2));
 		else printf("Error semantico en la linea %d: La expresion %s no es de tipo %s o %s\n", numLinea, ts.valor,  toStringTipo(esperado1),
 						toStringTipo(esperado2));
+	}
+}
+
+void mensajeErrorOperarTipos(entradaTS ts1, entradaTS ts2){
+	if (ts1.tipoDato != desconocido && ts2.tipoDato != desconocido){
+		if (ts1.tipoDato == lista)
+			printf("Error semantico en la linea %d: No se pueden operar los tipos %s de %s y %s\n", numLinea, 
+						toStringTipo(ts1.tipoDato), toStringTipo(ts1.tipoInternoLista), toStringTipo(ts2.tipoDato));
+		else if (ts2.tipoDato == lista)
+			printf("Error semantico en la linea %d: No se pueden operar los tipos %s y %s de %s\n", numLinea, 
+						toStringTipo(ts1.tipoDato), toStringTipo(ts2.tipoDato), toStringTipo(ts2.tipoInternoLista));
+		else printf("Error semantico en la linea %d: No se pueden operar los tipos %s (%s) y %s (%s)\n", numLinea, 
+						toStringTipo(ts1.tipoDato), ts1.valor , toStringTipo(ts2.tipoDato), ts2.valor);
 	}
 }
 

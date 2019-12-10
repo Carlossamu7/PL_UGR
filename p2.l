@@ -176,7 +176,7 @@ otros			.
 						}
 "%"						{
 						yylval.valor = strdup(yytext);
-						return OPMULTIPLICATIVOS;
+						return OPPORCENTAJE;
 						}
 "!"						{
 						yylval.valor = strdup(yytext);

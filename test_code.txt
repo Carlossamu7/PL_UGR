@@ -88,9 +88,9 @@ PRINCIPAL{
     ve = #(le++3@1) ;
 	ve = #le ;
 	lr = lr%2 ;
-    lr = le%(#le/2) ** le2 ;
-    lr = lr+2;
-    lr = 2-lr;
-    lr = lr*2;
-    lr = 2*lr;
+    le = le%(#le/2) ** le2 ;
+    lr = lr+2.0;
+    lr = 2.0-lr;
+    le = le*2;
+    le = 2*le;
 }
