@@ -1,0 +1,103 @@
+
+
+PRINCIPAL{
+    VAR
+        ENTERO ve;
+	ENTERO ve2;
+        REAL vf;
+        CARACTER vc;
+        BOOLEANO vl;
+        ENTERO pe[3][3], pe2[3][3], pe23[2][3], pe32[3][2];
+        REAL pf[2][2], pf2[2][2];
+        CARACTER pc[2][2], pc2[2][2];
+        BOOLEANO pl[2][2];
+    FINVAR
+
+    ENTERO funcionA (ENTERO a1, REAL a2, CARACTER a3){
+
+        VAR
+            ENTERO x1,x2, cont1, cont2;
+        FINVAR
+
+        CARACTER funcionB (CARACTER b1, BOOLEANO b2){
+            VAR
+                REAL xf, x2, x3;
+            FINVAR
+
+            REAL funcionC (BOOLEANO c1, ENTERO c2){
+               
+		VAR
+                	REAL x1;
+            	FINVAR
+                SI (c2>10)
+                    c2 = c2-1;
+                SINO
+                    x1 = 3.1;                
+                DEVOLVER x1;
+            }
+	    
+            xf = funcionC (VERDADERO,10);
+            x2 = xf*(funcionC(FALSO,1)-funcionC(VERDADERO,23))/10.0;
+
+            MIENTRAS ((x2*(funcionC(FALSO,1)-xf))<10.0)
+                x2 = x2/xf;
+        }
+	
+        REAL funcionD (REAL d1){
+            VAR
+                CARACTER dato;
+                ENTERO valor;
+		REAL rrrr;
+            FINVAR
+
+            CARACTER funcionE (CARACTER e1, CARACTER e2){
+                SALIDA "introduzca dos caracteres: ";
+                ENTRADA e1, e2;
+		
+                SI (e1 == 'a')
+                    DEVOLVER e1;
+
+                SINO SI (e1 == 'b')
+                    DEVOLVER e2;
+
+                SINO
+                    DEVOLVER ' ' ;
+            }
+            SALIDA "introduzca un valor entero:";
+            ENTRADA valor;
+                SI (d1 > 0.0) {
+                    VAR
+                        ENTERO dato;
+                    FINVAR
+
+                    dato = 2;
+                    dato = valor*20/dato;
+		}
+                SINO {
+                    valor = valor * 100;
+                    d1 = d1/1000.0;
+		}
+                DEVOLVER d1; 
+        }
+        cont1 = 0;
+        MIENTRAS (cont1 <  2) {
+            cont2 = 0;
+            MIENTRAS (cont2 < 2) {
+                pe[cont1][cont2] = 10;
+                pf[cont1][cont2] = 10.0;
+                pc[cont1][cont2] = '#';
+	    }
+	}
+        SI (pe[2][2] == 20)
+            ve = pe[2][2];
+
+        SINO {
+            pe = pe * pe2;
+		pe = pe23*pe32;
+		pe = pe*2.5;
+            pe = pe2 - pe;   
+    	}
+    }
+    SALIDA "Godbye my lover ";
+}
+

@@ -1,0 +1,50 @@
+PRINCIPAL{
+ENTERO main (ENTERO argc, CARACTER argv) {
+	VAR
+		ENTERO nu,curr,ultim,cuenta,primero,di;
+	FINVAR
+	ultim = 0;
+	cuenta = 0;	
+
+	SALIDA "Introduce un numero : ";
+	ENTRADA nu;
+	SALIDA nu;
+	curr = 2;
+	MIENTRAS (curr <= nu) {
+		di = nu/curr;
+		SI (di*curr==nu) {
+			SI (curr != ultim) {
+				ultim = curr;
+				curr = 1;
+			} SINO
+				cuenta = cuenta + 1;
+			nu = nu / curr;
+		}  SINO {
+			SI(cuenta > 0) {
+				SI(primero == 0)
+					SALIDA " *";
+				SINO SALIDA "";
+				primero = 0;
+				SALIDA curr;
+				SI(cuenta > 1)
+					SALIDA cuenta;
+				SINO SALIDA "";
+				curr = curr + 1;
+			} SINO SALIDA "";
+			curr = curr + 1;
+			cuenta = 0;
+		}	
+	}
+	SI (cuenta>0) {
+		SI(primero == 0) 
+			SALIDA " *";
+		SINO SALIDA "";
+		primero = 0;
+		SALIDA (curr);
+		SI(cuenta > 1)
+			SALIDA(cuenta);
+		SINO SALIDA "";
+	} SINO SALIDA "";
+	SALIDA "\n";
+}
+}

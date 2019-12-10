@@ -1,0 +1,22 @@
+
+PRINCIPAL{
+ENTERO main (ENTERO argc, CARACTER argv) {
+	VAR
+		ENTERO nu,curr,di;
+	FINVAR
+	
+	SALIDA "Introduce un numero : ";
+	ENTRADA nu;
+	SALIDA nu;
+	curr = 2;
+	MIENTRAS (curr <= nu) {
+		di = nu/curr;
+		SI (di*curr==nu) {
+			SALIDA(curr);
+			nu = nu/curr;
+		}
+		SINO 
+			curr = curr + 1;
+	}
+}
+}

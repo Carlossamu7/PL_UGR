@@ -8,13 +8,13 @@
 #include "tabla_simbolos.h"
 
 #define YYDEBUG 1
-void comprobarVariables(char* Nomb, int numPar, char* dim1, char* dim2);
-void comprobarEsBueno(char* Nomb, int dat, int atrib);
-void yyerror(char const* msg);
+void comprobarVariables(char * Nomb,int numPar,char * dim1,char * dim2);
+void comprobarEsBueno(char * Nomb,int dat,int atrib);
+void yyerror(char const * msg);
 int yylex();
 Simbolo aux;
 int numPar = 0;
-char* nombreFun;
+char * nombreFun;
 int contBloques = 0;
 int linea = 1;
 /****/
@@ -40,6 +40,7 @@ int linea = 1;
 %right OPUNARIO
 
 
+
 /*Inicio de la sintaxis*/
 
 %start Programa
@@ -63,7 +64,7 @@ variables: cuerpo_de_variables
          | variables cuerpo_de_variables;
 
 cuerpo_de_variables: TIPO lista_identificador FINLINEA				{agregarVariable($1.dato); asignarTipo($1.dato,$1.atributo);}			
-		   | TIPO lista_identificador_array FINLINEA			{agregarVariable($1.dato); asignarTipo($1.dato,$1.atributo);}
+		   | TIPO lista_identificador_array FINLINEA			{agregarVariable($1.dato);asignarTipo($1.dato,$1.atributo);}
 		   | error;
 	
 lista_identificador_array: lista_identificador_array COMA identificador_array
@@ -335,6 +336,32 @@ funcion: IDENTIFICADOR {nombreFun=$1.Nombre;} PARENTESISABIERTO lista_exp PARENT
 %%
 
 #include "lex.yy.c"
+
+void comprobarVariables(char * Nomb,int numPar,char * dim1, char * dim2){
+	if(compruebaMismoNombreDeclar(Nomb,numPar)){
+		printf("\nError semantico en la linea %d: la variable %s ya esta declarada en este bloque\n",linea,Nomb);
+	}else{ 
+		aux.entrada=3;
+		aux.Nombre=Nomb;
+		aux.dato=6;
+		aux.dim1 = atoi(dim1);
+		aux.dim2 = atoi(dim2);
+		aniadir(aux);
+	}
+}
+
+
+void comprobarEsBueno(char * Nomb,int dat,int atrib) {
+	if(compruebaVar(Nomb) == 0) 
+		printf("\nError semantico en la linea %d: la variable %s no esta declarada\n",linea,Nomb);
+	else {
+		aux=tipoDato(Nomb);
+		if(aux.dato != dat && aux.parametros != atrib) {			
+			printf("\nError semantico en la linea %d: se intento asignar a la variable %s el tipo %s\n",linea,Nomb,cadenaTipo(dat,atrib));
+		}
+	}
+}
+
 
 void yyerror(char const * msg) {
 	fprintf(stderr, "Error en la linea %d: %s\n",linea,msg);

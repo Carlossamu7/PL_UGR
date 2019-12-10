@@ -1,0 +1,21 @@
+
+PRINCIPAL{
+ENTERO main (ENTERO argc, CARACTER argv) {
+	VAR
+		ENTERO nu,prim,sec,sal;
+	FINVAR
+	prim = 0;
+	sec = 1;
+	SALIDA "Introduce un numero : ";
+	ENTRADA nu;
+	MIENTRAS(nu>0){
+		sal = prim + sec;
+		SALIDA sal;
+		prim = sec;
+		sec = sal;
+		nu = nu - 1;
+		SI (nu != 0)
+			SALIDA " - ";
+		SINO SALIDA "\n";
+	}
+}}
