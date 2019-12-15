@@ -22,14 +22,14 @@ typedef struct {
 entradaTS TS[MAX_TS];	/*Pila de la tabla de símbolos*/
 int TOPE = 0;
 unsigned int Subprog ;     /*Indicador de comienzo de bloque de un subprog*/
-FILE * file;
-char * argumento;
+FILE* file;
+char* argumento;
 
 
 #define YYSTYPE entradaTS  /*A partir de ahora, cada símbolo tiene*/
 							/*una estructura de tipo atributos*/
 
-
+char* tipoDeDato();
 char* toStringEntrada();
 char* toStringTipo();
 
@@ -295,6 +295,12 @@ entradaTS getSimboloArgumento(char* nombreFun, int numPar){
 
 /****************************		FUNCIONES AUXILIARES		**************************/
 
+void concatenarStrings(char* destination, char* format, ...){
+	_G_va_list argptr;
+
+	sprintf(destination, format, argptr);
+}
+
 void concatenarStrings1(char* destination, char* source1){
 	if( destination == NULL)
 		destination = (char *) malloc(200);
@@ -488,120 +494,22 @@ char *strdup(const char *src) {
 }
 
 
-/*
-void insertarVariable(char* nom, int numPar, int longitud){
-	if(compruebaMismoNombreDeclar(nom, numPar)){
-		printf("\nError semantico en la linea %d: la variable %s ya esta declarada en este bloque\n", numLinea, nom);
-	}else{ 
-		entradaTS aux;
-		aux.entrada = variable;
-		aux.nombre = nom;
-		aux.tipoDato = desconocido;
-		insertar(aux);
-	}
-}
-
-
-void comprobarEsBueno(char* nom, dtipo dat) {
-	if(compruebaVar(nom) == 0) 
-		printf("\nError semantico en la linea %d: la variable %s no esta declarada\n", numLinea, nom);
-	else {
-		aux=getSimboloIdentificador(nom);
-		if(aux.tipoDato != dat) {			
-			printf("\nError semantico en la linea %d: se intento asignar a la variable %s el tipo %s\n", numLinea, nom, toStringTipo(dat));
-		}
-	}
-}
-
-
-void insertarParametros(entradaTS* argumentos, int numArg){
-	for (int i = 0; i < numArg; ++i)
-		insertar(argumentos);
-}
-
-
-agregarParametros(char * Nomb, int numArgumentos){
-	int index;
-	for(int i = numArgumentos; i>0; --i) {
-		if(i!=numArgumentos)
-			fputs(",",file);
-		index = buscarFuncion(Nomb);
-		char * Nombre = TS[index-i].Nombre;
-		char * midato = tipoDeDato(TS[index-i].dato);
-		char * sent;
-		sent =(char *) malloc(200);;
-		sprintf(sent,"%s %s",midato,Nombre);
-		fputs(sent,file);
-	}	
-}
-
-
-aniadeSubprog(char * Nombre,int dato,int numArgumentos){
-	char * sent;
-	sent =(char *) malloc(200);
-	char * midato = tipoDeDato(dato);
-	sprintf(sent,"%s %s (",midato,Nombre);
-	fputs(sent,file);
-	agregarParametros(Nombre,numArgumentos);
-	fputs(")",file);
-}
-
-
-agregarVariable(int dato){
-	int i;
-	bool fin=false;
-	bool coma=false;
-	char * sent;
-	sent =(char *) malloc(200);
-	sprintf(sent,"%s ",tipoDeDato(dato));
-	for(i=0; i < TOPE && fin==false; i++){
-		if(TS[TOPE-1-i].entrada == 3 && TS[TOPE-1-i].dato == 6){
-			if(coma)	sprintf(sent,"%s,",sent);
-			sprintf(sent,"%s %s",sent,TS[TOPE-1-i].Nombre);
-			coma = true;
-		}else{
-			fin=true;
-		}
-	}
-	sprintf(sent,"%s;\n",sent);
-	fputs(("%s",sent),file);
-
-}
-
-
-agregarAsignacion(char * Nombre,char * valor) {
-	char * sent;
-	sent =(char *) malloc(200);
-	sprintf(sent,"%s = %s;\n",Nombre,valor);
-	fputs(("%s",sent),file);
-}
-
-
-char raizTipo(int dato) {
-	if(dato==1)	return 'd';
-	else if(dato==2)	return 'f';
-	else if(dato==3)	return 'c';
-	else if(dato==4)	return 'b';
-	else return 'a';
-}
-*/
-
 /* PRÁCTICA 5 */
 
-int temp = 0;
-int etiqueta = 0;
+int temp = -1;
+int etiqueta = -1;
 
-char* generarTemp(){
+char* generarTemp(dtipo tipo){
 	char* cadena = (char*) malloc(20);
-	sprintf("temp%d", temp);
 	++temp;
+	sprintf(cadena, "%s temp%d;\ntemp%d", tipoDeDato(tipo), temp, temp);
 	return cadena;
 }
 
 char* generarEtiqueta() {
 	char* cadena = (char*) malloc(20);
-	sprintf("etiqueta %d", etiqueta);
 	++etiqueta;
+	sprintf(cadena, "etiqueta%d", etiqueta);
 	return cadena;
 }
 
@@ -614,15 +522,16 @@ void cerrarFichero() {
 	fclose(file);
 }
 
-int tipoDeDato (dtipo td) {
-	if(td == entero) return "int";
-	if(td == booleano) return "bool";	
-	if(td == real) return "float";
-	if(td == caracter) return "char";
-	if(td == lista) return "list";
+char* tipoDeDato (dtipo td) {
+	if(td == entero)	return "int";
+	if(td == booleano)	return "bool";	
+	if(td == real)		return "float";
+	if(td == caracter)	return "char";
+	if(td == lista)		return "list";
+	return "Error de tipo";
 }
 
-insertarParametros(char* nom, int numArgumentos){
+void insertarParametros(char* nom, int numArgumentos){
 	int index;
 	
 	for(int i=numArgumentos; i>0; --i) {
@@ -637,19 +546,17 @@ insertarParametros(char* nom, int numArgumentos){
 		fputs(sent, file);
 	}	
 }
-/*
-aniadeSubprog(char* Nombre, int dato, int numArgumentos){
+
+void insertarSubprog(char* nom, dtipo dato, int numArgumentos){
 	char* sent;
 	sent = (char*) malloc(200);
-	char* midato = tipoDeDato(dato);
-	sprintf(sent,"%s %s (", midato, Nombre);
-	fputs(sent,file);
-	agregarParametros(Nombre, numArgumentos);
-	fputs(")",file);
+	sprintf(sent,"%s %s (", tipoDeDato(dato), nom);
+	fputs(sent, file);
+	insertarParametros(nom, numArgumentos);
+	fputs(")", file);
 }
-*/
 
-insertarVariables(dtipo dato){
+void insertarVariables(dtipo dato){
 	int i;
 	bool fin = false;
 	bool coma = false;
@@ -669,14 +576,13 @@ insertarVariables(dtipo dato){
 	}
 
 	sprintf(sent, "%s;\n", sent);
-	fputs(("%s", sent), file);
+	fputs(sent, file);
 }
 
-insertarAsignacion(char* nom, char* valor) {
-	char* sent;
-	sent = (char*) malloc(200);
+void insertarAsignacion(char* nom, char* valor) {
+	char* sent = (char*) malloc(200);
 	sprintf(sent, "%s = %s;\n", nom, valor);
-	fputs(("%s", sent), file);
+	fputs(sent, file);
 }
 
 char raizTipo(dtipo dato) {

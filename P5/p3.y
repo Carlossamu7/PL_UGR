@@ -90,12 +90,13 @@
 
 %%
 
-programa						: CABECERA bloque ;
+programa						: {generarFichero();} CABECERA bloque {cerrarFichero();} ;
 
 bloque							: INIBLOQUE {	insertarMarca();
 												if($0.parametros > 0) insertarArgumentos($0.nombre, $0.parametros); 
 												contBloques++; 
 												//printf("INICIO BLOQUE\n");	
+												fputs("{\n", file);
 											}
 					 			  declar_variables_locales
 					 			  declar_subprogs
@@ -103,7 +104,9 @@ bloque							: INIBLOQUE {	insertarMarca();
 							 	  FINBLOQUE {	//printf("FIN BLOQUE\n");
 									   			contBloques--; 
 												//imprimirTS(); 
-												eliminarBloque(); };
+												eliminarBloque();
+												fputs("\n}\n", file);
+											};
 
 declar_subprogs					: declar_subprogs declar_subprog
 								| /* vacío */ ;
@@ -118,8 +121,7 @@ declar_variables_locales		: INIVARIABLES
 variables_locales				: variables_locales cuerpo_declar_variables
 								| cuerpo_declar_variables ;
 
-cuerpo_declar_variables			: tipo lista_identificadores FINLINEA
-								| tipo sentencia_asignacion 
+cuerpo_declar_variables			: tipo lista_identificadores FINLINEA {insertarVariables($1.tipoDato);}
 								| error ; 
 								/**
 								 * 	error es una palabra reservada de yacc 
@@ -142,7 +144,7 @@ lista_identificadores			: lista_identificadores COMA IDENTIFICADOR {	$3.tipoDato
 													$1.tipoInternoLista = $0.tipoInternoLista;
 													$1.entrada = variable;
 													if(!variableExisteBloque($1)) insertar($1);
-													else mensajeErrorDeclaradaBloque($1);} ;
+													else mensajeErrorDeclaradaBloque($1); } ;
 
 cabecera_subprog				: tipo IDENTIFICADOR PARIZQ lista_parametros PARDER {	$2.tipoDato = $1.tipoDato; 
 																						$2.tipoInternoLista = $1.tipoInternoLista;
@@ -151,7 +153,9 @@ cabecera_subprog				: tipo IDENTIFICADOR PARIZQ lista_parametros PARDER {	$2.tip
 																						$2.parametros = $4.parametros;
 																						$2.entrada = funcion;
 																						if(!variableExisteBloque($2)) insertar($2);
-																						else mensajeErrorDeclaradaBloque($2);} ;
+																						else mensajeErrorDeclaradaBloque($2);
+																						insertarSubprog($2.nombre, $1.tipoDato, $2.parametros);
+																					} ;
 
 sentencias						: sentencias sentencia
 								| sentencia ;
@@ -186,11 +190,13 @@ sentencia_asignacion			: IDENTIFICADOR ASIGNACION exp_cad FINLINEA {	bool error 
 																					mensajeErrorNoDeclarada($1);
 																					error=true;
 																				}
-																				if(error) $$.tipoDato = desconocido;};
+																				if(error) $$.tipoDato = desconocido;
+																				insertarAsignacion($1.nombre, $3.valor);
+																			} ;
 
 sentencia_if					: CONDICION PARIZQ expresion PARDER sentencia
 									SUBCONDICION sentencia {	if( $3.tipoDato != booleano ) mensajeErrorTipo1($3, booleano);	}
-								| CONDICION PARIZQ expresion PARDER sentencia {	if( $3.tipoDato != booleano ) mensajeErrorTipo1($3, 																					booleano);	};
+								| CONDICION PARIZQ expresion PARDER sentencia {	if( $3.tipoDato != booleano ) mensajeErrorTipo1($3, 																					booleano);	} ;
 
 sentencia_while					: CICLO PARIZQ expresion PARDER sentencia {	if( $3.tipoDato != booleano ) mensajeErrorTipo1($3, booleano);	};
 
@@ -267,14 +273,22 @@ lista_variables					: lista_variables COMA IDENTIFICADOR  {	if ( !variableExiste
 
 expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																$$.tipoInternoLista = $2.tipoInternoLista;
-																concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
+																char* aux = (char*) malloc(20);
+																sprintf(aux, "temp%d", temp);
+																concatenarStrings1($$.valor, aux);
+															}
 								| OPUNARIO expresion	{	if( $2.tipoDato != booleano){
 																mensajeErrorTipo1($2, booleano);
 																$$.tipoDato = desconocido;
 															}
 															else $$.tipoDato = $2.tipoDato;
 															$$.tipoInternoLista = $2.tipoInternoLista;
-															concatenarStrings2($$.valor, $1.valor, $2.valor); }
+															char* sent = (char*) malloc(200);
+															sprintf(sent, "%s = %s%s", generarTemp($$.tipoDato), $1.valor, $2.valor);
+															char* aux = (char*) malloc(20);
+															sprintf(aux, "temp%d", temp);
+															concatenarStrings1($$.valor, aux);
+														}
 								| OPUNARIOLISTAS expresion	{	if( $2.tipoDato != lista ){
 																	mensajeErrorTipo1($2, lista);
 																	$$.tipoDato = desconocido;
@@ -283,14 +297,21 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																	else $$.tipoDato = $2.tipoInternoLista;
 																}
 																$$.tipoInternoLista = desconocido;
-																concatenarStrings2($$.valor, $1.valor, $2.valor);	}
-								| SIGNO expresion	{	if( $2.tipoDato != entero && $2.tipoDato != real && 
-															$2.tipoInternoLista != entero && $2.tipoInternoLista != real ){
-																mensajeErrorTipo2($2, entero, real);
-																$$.tipoDato = desconocido;
-															} else $$.tipoDato = $2.tipoDato;
-															$$.tipoInternoLista = $2.tipoInternoLista;
-															concatenarStrings2($$.valor, $1.valor, $2.valor);	}
+																concatenarStrings2($$.valor, $1.valor, $2.valor);
+																// TODO FOR BONUS
+															}
+								| SIGNO expresion %prec OPUNARIO	{	if( $2.tipoDato != entero && $2.tipoDato != real && 
+																			$2.tipoInternoLista != entero && $2.tipoInternoLista != real ){
+																			mensajeErrorTipo2($2, entero, real);
+																			$$.tipoDato = desconocido;
+																		} else $$.tipoDato = $2.tipoDato;
+																		$$.tipoInternoLista = $2.tipoInternoLista;
+																		char* sent = (char*) malloc(200);
+																		sprintf(sent, "%s = %s%s", generarTemp($2.tipoDato), $1.valor, $2.valor);
+																		char* aux = (char*) malloc(20);
+																		sprintf(aux, "temp%d", temp);
+																		concatenarStrings1($$.valor, aux);
+																	}
 								| expresion SIGNO expresion	{	if ($1.tipoDato == lista && $3.tipoDato == $1.tipoInternoLista){
 																	$$.tipoDato = lista;
 																	$$.tipoInternoLista = $1.tipoInternoLista;
@@ -307,7 +328,12 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																	mensajeErrorOperarTipos($1, $3);
 																	$$.tipoDato = desconocido;
 																}
-																concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
+																char* sent = (char*) malloc(200);
+																sprintf(sent, "%s = %s %s %s", generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																char* aux = (char*) malloc(20);
+																sprintf(aux, "temp%d", temp);
+																concatenarStrings1($$.valor, aux);
+															}
 								| expresion OPORLOGICO expresion	{	bool error=false;
 																		if( $1.tipoDato != booleano ){
 																			mensajeErrorTipo1($1, booleano);
@@ -319,7 +345,12 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																		}
 																		if (error) $$.tipoDato = desconocido;
 																		else $$.tipoDato = $1.tipoDato;
-																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
+																		char* sent = (char*) malloc(200);
+																		sprintf(sent, "%s = %s %s %s", generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																		char* aux = (char*) malloc(20);
+																		sprintf(aux, "temp%d", temp);
+																		concatenarStrings1($$.valor, aux);
+																	}
 								| expresion OPANDLOGICO expresion	{	bool error=false;
 																		if( $1.tipoDato != booleano ){
 																			mensajeErrorTipo1($1, booleano);
@@ -331,7 +362,12 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																		}
 																		if (error) $$.tipoDato = desconocido;
 																		else $$.tipoDato = $1.tipoDato;
-																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
+																		char* sent = (char*) malloc(200);
+																		sprintf(sent, "%s = %s %s %s", generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																		char* aux = (char*) malloc(20);
+																		sprintf(aux, "temp%d", temp);
+																		concatenarStrings1($$.valor, aux);
+																	}
 								| expresion OPEXCLUSIVEOR expresion	{	bool error=false;
 																		if( $1.tipoDato != booleano ){
 																			mensajeErrorTipo1($1, booleano);
@@ -343,7 +379,12 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																		}
 																		if (error) $$.tipoDato = desconocido;
 																		else $$.tipoDato = $1.tipoDato;
-																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
+																		char* sent = (char*) malloc(200);
+																		sprintf(sent, "%s = %s %s %s", generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																		char* aux = (char*) malloc(20);
+																		sprintf(aux, "temp%d", temp);
+																		concatenarStrings1($$.valor, aux);
+																	}
 								| expresion OPIGUALDAD expresion	{	bool error=false;
 																		if( $1.tipoDato == lista){
 																			mensajeErrorNoTipo($1);
@@ -359,7 +400,12 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																		}
 																		if (error) $$.tipoDato = desconocido;
 																		else $$.tipoDato = booleano;
-																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
+																		char* sent = (char*) malloc(200);
+																		sprintf(sent, "%s = %s %s %s", generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																		char* aux = (char*) malloc(20);
+																		sprintf(aux, "temp%d", temp);
+																		concatenarStrings1($$.valor, aux);
+																	}
 								| expresion OPRELACION expresion	{	bool error=false;
 																		if( $1.tipoDato == lista){
 																			mensajeErrorNoTipo($1);
@@ -375,24 +421,34 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																		}
 																		if (error) $$.tipoDato = desconocido;
 																		else $$.tipoDato = booleano;
-																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
+																		char* sent = (char*) malloc(200);
+																		sprintf(sent, "%s = %s %s %s", generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																		char* aux = (char*) malloc(20);
+																		sprintf(aux, "temp%d", temp);
+																		concatenarStrings1($$.valor, aux);
+																	}
 								| expresion OPMULTIPLICATIVOS expresion	{	if ($1.tipoDato == lista && $3.tipoDato == $1.tipoInternoLista){
 																			$$.tipoDato = lista;
 																			$$.tipoInternoLista = $1.tipoInternoLista;
+																			}
+																			else if ($3.tipoDato == lista && $1.tipoDato == $3.tipoInternoLista){
+																				$$.tipoDato = lista;
+																				$$.tipoInternoLista = $3.tipoInternoLista;
+																			}
+																			else if( $1.tipoDato == $3.tipoDato){
+																				$$.tipoDato = $1.tipoDato;
+																				$$.tipoInternoLista = desconocido;
+																			}
+																			else {
+																				mensajeErrorOperarTipos($1, $3);
+																				$$.tipoDato = desconocido;
+																			}
+																			char* sent = (char*) malloc(200);
+																			sprintf(sent, "%s = %s %s %s", generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																			char* aux = (char*) malloc(20);
+																			sprintf(aux, "temp%d", temp);
+																			concatenarStrings1($$.valor, aux);
 																		}
-																		else if ($3.tipoDato == lista && $1.tipoDato == $3.tipoInternoLista){
-																			$$.tipoDato = lista;
-																			$$.tipoInternoLista = $3.tipoInternoLista;
-																		}
-																		else if( $1.tipoDato == $3.tipoDato){
-																			$$.tipoDato = $1.tipoDato;
-																			$$.tipoInternoLista = desconocido;
-																		}
-																		else {
-																			mensajeErrorOperarTipos($1, $3);
-																			$$.tipoDato = desconocido;
-																		}
-																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
 								| expresion OPDECREMENTO expresion	{	bool error=false;
 																		if( $1.tipoDato != lista ){ 
 																			mensajeErrorTipo1($1, lista);
@@ -405,7 +461,9 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																		if (error) $$.tipoDato = desconocido;
 																		else $$.tipoDato = lista;
 																		$$.tipoInternoLista = $1.tipoInternoLista;
-																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
+																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);
+																		// TODO FOR BONUS
+																	}
 								| expresion OPPORCENTAJE expresion	{	bool error=false;
 																		if( $1.tipoDato != lista ){ 
 																			mensajeErrorTipo1($1, lista);
@@ -418,7 +476,9 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																		if (error) $$.tipoDato = desconocido;
 																		else $$.tipoDato = lista;
 																		$$.tipoInternoLista = $1.tipoInternoLista;
-																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
+																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);
+																		// TODO FOR BONUS
+																	}
 								| expresion OPCONCATENAR expresion	{	bool error=false;
 																		if( $1.tipoDato != lista ){
 																			mensajeErrorTipo1($1, lista);
@@ -440,7 +500,9 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																			$$.tipoDato = lista;
 																			$$.tipoInternoLista = $1.tipoInternoLista;
 																		}
-																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
+																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);
+																		// TODO FOR BONUS
+																	}
 								| expresion OPARROBA expresion	{	bool error=false;
 																	if( $1.tipoDato != lista ){ 
 																		mensajeErrorTipo1($1, lista);
@@ -453,7 +515,9 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																	if (error) $$.tipoDato = desconocido;
 																	else $$.tipoDato = $1.tipoInternoLista;
 																	$$.tipoInternoLista = desconocido;
-																	concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	}
+																	concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);
+																	// TODO FOR BONUS
+																}
 								| expresion OPINCREMENTO expresion OPARROBA expresion	{
 												bool error = false;	
 												if( $1.tipoDato != lista ){ 
@@ -476,7 +540,9 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 													$$.tipoDato = lista;
 													$$.tipoInternoLista = $1.tipoInternoLista;
 												}
-												concatenarStrings5($$.valor, $1.valor, $2.valor, $3.valor, $4.valor, $5.valor);	}
+												concatenarStrings5($$.valor, $1.valor, $2.valor, $3.valor, $4.valor, $5.valor);
+												// TODO FOR BONUS
+											}
 								| IDENTIFICADOR	{	if( !variableExiste($1) ){
 														mensajeErrorNoDeclarada($1);
 														$$.tipoDato = desconocido;
@@ -488,12 +554,16 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 														$$.tipoInternoLista = aux.tipoInternoLista;
 													}
 													$$.entrada = variable;
-													concatenarStrings1($$.valor, $1.nombre);	}
+													concatenarStrings1($$.valor, $1.nombre);
+												}
 								| lista	{	$$.tipoDato = lista;
 											$$.tipoInternoLista = $1.tipoInternoLista;
-											concatenarStrings1($$.valor, $1.valor);	}
+											concatenarStrings1($$.valor, $1.valor);
+											// TODO FOR BONUS
+										}
 								| constante	{	$$.tipoDato = $1.tipoDato;
-												concatenarStrings1($$.valor, $1.valor);	}
+												concatenarStrings1($$.valor, $1.valor);
+											}
 								| funcion	{	if( !variableExiste($1) ){
 													mensajeErrorNoDeclarada($1);
 													$$.tipoDato = desconocido;
@@ -505,7 +575,13 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 													$$.tipoInternoLista = aux.tipoInternoLista;
 												}
 												$$.entrada = funcion;
-												concatenarStrings1($$.valor, $1.valor);	}
+												// TODO VAMOS POR AQUÍ
+												char* sent = (char*) malloc(200);
+												sprintf(sent, "%s = %s %s %s", generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+												char* aux = (char*) malloc(20);
+												sprintf(aux, "temp%d", temp);
+												concatenarStrings1($$.valor, aux);
+											}
 								| error ;
 
 funcion							: IDENTIFICADOR PARIZQ lista_exp_cadena PARDER	
