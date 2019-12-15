@@ -1,0 +1,96 @@
+PRINCIPAL{
+    VAR
+        ENTERO ve ;
+        REAL vr;
+        CARACTER vc ;
+        BOOLEANO vb ;
+
+        LISTA DE ENTERO le, le2 ;
+        LISTA DE REAL lr, lr2 ;
+        LISTA DE CARACTER lc, lc2 ;
+        LISTA DE BOOLEANO lb ;
+    FINVAR
+
+    ENTERO funcionA (ENTERO a1, ENTERO a2, CARACTER a3){
+        VAR
+            ENTERO x1, x2 ;
+        FINVAR
+
+        CARACTER funcionB (CARACTER b1, BOOLEANO b2){
+            VAR
+                REAL xf, x2 ;
+            FINVAR
+
+            REAL funcionC (BOOLEANO c1, ENTERO c2){
+                VAR
+                    REAL x1 ;
+                FINVAR
+
+                x1= 1.3 ;
+                SI (c2>10)
+                    c2= c2-1 ;
+                SINO
+                    x1= 3.1 ;
+                DEVOLVER x1 ;
+            }
+            xf= funcionC (VERDADERO, 10);
+            x2= xf*(funcionC(FALSO,1*2)-funcionC(VERDADERO,23))/10.0;
+            MIENTRAS (x2*funcionC(FALSO,1)-xf<10.0)
+                x2= x2*xf ;
+        }
+        REAL funcionD (REAL d1){
+            VAR
+                CARACTER dato ;
+                ENTERO valor ;
+            FINVAR
+
+            CARACTER funcionE (CARACTER e1, CARACTER e2){
+                IMPRIMIR "Introduzca dos caracteres: " ;
+                LEER e1, e2 ;
+                SI (e1=='a')
+                    DEVOLVER e1 ;
+                SINO SI (e1=='b')
+                    DEVOLVER e2 ;
+                SINO
+                    DEVOLVER ' ';
+            }
+
+            IMPRIMIR "Introduzca un valor entero: " ;
+            LEER valor ;
+
+            SI (d1>0.0){
+                VAR
+                    ENTERO dato ;
+                FINVAR
+
+                dato= 2 ;
+                dato= valor*20/dato ;
+            }
+            SINO {
+                valor= valor * 100 ;
+                d1= d1/1000.0 ;
+            }
+
+            DEVOLVER d1 ;
+        }
+        vr=2.0;
+    }
+
+    PARA ve :=  0  HASTA 10  PASO 1 {
+        lr = lr ++ vr @ ve ;
+        vr = lr @ ve ;
+    }
+
+    lr>> ;
+    lr<< ;
+    $lr ;
+    vr = ?(lr--2) ;
+    ve = #(le++3@1) ;
+	ve = #le ;
+	lr = lr%2 ;
+    le = le%(#le/2) ** le2 ;
+    lr = lr+2.0;
+    lr = 2.0-lr;
+    le = le*2;
+    le = 2*le;
+}

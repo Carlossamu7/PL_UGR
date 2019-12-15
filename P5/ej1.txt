@@ -1,0 +1,27 @@
+PRINCIPAL{
+	VAR
+		ENTERO nombre;
+		ENTERO i, a, b;
+		LISTA DE ENTERO serie_dobles;
+	FINVAR
+
+	ENTERO sumar (ENTERO a, ENTERO b) {
+		DEVOLVER a + b ;
+	}
+	
+	nombre = 2;
+
+	SI (nombre > 3){
+        nombre = 1;
+    }
+    SINO {
+        nombre = 0;
+    }
+
+	i = sumar (a, b) ;
+	mostrar(a) ;
+
+	
+	PARA i :=  0  HASTA 10  PASO 1 { nombre = serie_dobles ++ i @ i ; }
+}
+
