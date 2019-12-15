@@ -589,47 +589,55 @@ char raizTipo(int dato) {
 /* PRÁCTICA 5 */
 
 int temp = 0;
+int etiqueta = 0;
 
-char * generaTemp(){
-	char * cadena = (char *) malloc(20);
-	sprintf("temp%d",temp);
+char* generarTemp(){
+	char* cadena = (char*) malloc(20);
+	sprintf("temp%d", temp);
 	++temp;
 	return cadena;
 }
 
-generarFichero() {
+char* generarEtiqueta() {
+	char* cadena = (char*) malloc(20);
+	sprintf("etiqueta %d", etiqueta);
+	++etiqueta;
+	return cadena;
+}
+
+void generarFichero() {
 	file = fopen("codigoGenerado.c","w");
 	fputs("#include<stdio.h>\n",file);
 }
 
-cerrarFichero() {
+void cerrarFichero() {
 	fclose(file);
 }
 
-int tipoDeDato (int td) {
-	if(td == 1) return "int";
-	if(td == 4) return "bool";	
-	if(td == 2) return "float";
-	if(td == 3) return "char";
-	if(td == 5) return "array";
+int tipoDeDato (dtipo td) {
+	if(td == entero) return "int";
+	if(td == booleano) return "bool";	
+	if(td == real) return "float";
+	if(td == caracter) return "char";
+	if(td == lista) return "list";
 }
 
-agregarParametros(char* Nomb, int numArgumentos){
+insertarParametros(char* nom, int numArgumentos){
 	int index;
+	
 	for(int i=numArgumentos; i>0; --i) {
 		if(i!=numArgumentos)
 			fputs(",",file);
-		index = buscarFuncion(Nomb);
-		char* Nombre = TS[index-i].Nombre;
-		char* midato = tipoDeDato(TS[index-i].dato);
+		index = buscarFuncion(nom);
+		char* nombre = TS[index-i].nombre;
+		char* midato = tipoDeDato(TS[index-i].tipoDato);
 		char* sent;
 		sent = (char*) malloc(200);;
-		sprintf(sent, "%s %s", midato,Nombre);
+		sprintf(sent, "%s %s", midato, nombre);
 		fputs(sent, file);
 	}	
 }
-
-
+/*
 aniadeSubprog(char* Nombre, int dato, int numArgumentos){
 	char* sent;
 	sent = (char*) malloc(200);
@@ -639,40 +647,44 @@ aniadeSubprog(char* Nombre, int dato, int numArgumentos){
 	agregarParametros(Nombre, numArgumentos);
 	fputs(")",file);
 }
+*/
 
-agregarVariable(int dato){
+insertarVariables(dtipo dato){
 	int i;
 	bool fin = false;
 	bool coma = false;
 	char* sent;
 	sent = (char*) malloc(200);
 	sprintf(sent, "%s ", tipoDeDato(dato));
+
 	for(i=0; i<TOPE && fin==false; ++i){
-		if(TS[TOPE-1-i].entrada == 3 && TS[TOPE-1-i].dato == 6){
+		if(TS[TOPE-1-i].entrada == 3 && TS[TOPE-1-i].tipoDato == dato){
 			if(coma) sprintf(sent,"%s,",sent);
-			sprintf(sent, "%s %s", sent,TS[TOPE-1-i].Nombre);
+			sprintf(sent, "%s %s", sent, TS[TOPE-1-i].nombre);
 			coma = true;
 		}
 		else{
 			fin=true;
 		}
 	}
+
 	sprintf(sent, "%s;\n", sent);
 	fputs(("%s", sent), file);
 }
 
-agregarAsignacion(char* Nombre, char* valor) {
+insertarAsignacion(char* nom, char* valor) {
 	char* sent;
 	sent = (char*) malloc(200);
-	sprintf(sent, "%s = %s;\n", Nombre, valor);
+	sprintf(sent, "%s = %s;\n", nom, valor);
 	fputs(("%s", sent), file);
 }
 
-char raizTipo(int dato) {
-	if(dato==1)			return 'd';
-	else if(dato==2)	return 'f';
-	else if(dato==3)	return 'c';
-	else if(dato==4)	return 'b';
-	else 				return 'a';
+char raizTipo(dtipo dato) {
+	if(dato == desconocido)		return 'd';
+	else if(dato == real)		return 'f';
+	else if(dato == caracter)	return 'c';
+	else if(dato == booleano)	return 'b';
+	else 						return 'l';
 }
+
 
