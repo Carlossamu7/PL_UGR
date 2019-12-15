@@ -67,6 +67,6 @@ void parse( const int aux, char ret[] ){
 int main( int argc, char *argv[] ){
     yyin = abrir_entrada(argc,argv) ;
 	int ret = yyparse();
-	printf("***** Valor devuelto por yyparse(): %d\n",ret);
+	//printf("***** Valor devuelto por yyparse(): %d\n",ret);
     return ret ;
 }

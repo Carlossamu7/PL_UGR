@@ -32,6 +32,10 @@ char* argumento;
 char* tipoDeDato();
 char* toStringEntrada();
 char* toStringTipo();
+void concatenarStrings1(char* destination, char* source1);
+
+char* tabs = NULL;
+
 
 // Inserta una entrada en la pila
 void insertar (entradaTS s){
@@ -127,6 +131,9 @@ void eliminarBloque(){
    }
    if(encontrada == false)
 	  vaciar();
+
+	if(strlen(tabs) > 0)
+		tabs[strlen(tabs)-1] = '\0';
 }
 
 
@@ -134,12 +141,18 @@ void eliminarBloque(){
 void insertarMarca(){
 	if(debug) printf("insertarMarca()\n");
 
-	 if (TOPE == 1000) {
+	if (TOPE == 1000) {
 		printf("\nError: tamanio maximo alcanzado\n");
 		exit(-1);
 	} else {
 		TS[TOPE].entrada = marca;
 		++TOPE;
+		
+		if( tabs == NULL ){
+			tabs = (char*) malloc(50);
+			tabs[0] = '\0';
+		}
+		if (contBloques > 0)	concatenarStrings1(tabs, "\t");
 	}
 }
 
@@ -295,11 +308,13 @@ entradaTS getSimboloArgumento(char* nombreFun, int numPar){
 
 /****************************		FUNCIONES AUXILIARES		**************************/
 
+/*
 void concatenarStrings(char* destination, char* format, ...){
 	_G_va_list argptr;
 
 	sprintf(destination, format, argptr);
 }
+*/
 
 void concatenarStrings1(char* destination, char* source1){
 	if( destination == NULL)
@@ -351,11 +366,13 @@ char* toStringEntrada(tipoEntrada te){
 // Imprime el contenido de la pila 
 void imprimirTS(){
 	int i;
-	char tabs[50] = "\0";
+	char* tabs;
 	
 	for(i=0; i < TOPE ; ++i){
-		if(TS[i].entrada == marca)
+		if(TS[i].entrada == marca){
 			printf("\nINICIO BLOQUE\n");
+			concatenarStrings1(tabs, "\t");
+		}
 		else{
 			if( TS[i].parametros > 0 && TS[i].tipoInternoLista != desconocido )
 				printf("%s%s\t%s\t%s\t%s\t%d\n", tabs, toStringEntrada(TS[i].entrada), TS[i].nombre, 
@@ -562,7 +579,7 @@ void insertarVariables(dtipo dato){
 	bool coma = false;
 	char* sent;
 	sent = (char*) malloc(200);
-	sprintf(sent, "%s ", tipoDeDato(dato));
+	sprintf(sent, "%s%s ", tabs, tipoDeDato(dato));
 
 	for(i=0; i<TOPE && fin==false; ++i){
 		if(TS[TOPE-1-i].entrada == 3 && TS[TOPE-1-i].tipoDato == dato){
@@ -581,8 +598,12 @@ void insertarVariables(dtipo dato){
 
 void insertarAsignacion(char* nom, char* valor) {
 	char* sent = (char*) malloc(200);
-	sprintf(sent, "%s = %s;\n", nom, valor);
+	sprintf(sent, "%s%s = %s;\n", tabs, nom, valor);
 	fputs(sent, file);
+}
+
+void insertarCadena(char* cad){
+	fputs(cad, file);
 }
 
 char raizTipo(dtipo dato) {

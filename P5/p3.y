@@ -121,7 +121,10 @@ declar_variables_locales		: INIVARIABLES
 variables_locales				: variables_locales cuerpo_declar_variables
 								| cuerpo_declar_variables ;
 
-cuerpo_declar_variables			: tipo lista_identificadores FINLINEA {insertarVariables($1.tipoDato);}
+cuerpo_declar_variables			: tipo lista_identificadores FINLINEA 	{	char* sent = (char*) malloc(200);
+																			sprintf(sent, "%s%s %s;\n", tabs, tipoDeDato($1.tipoDato), $2.valor);
+																			fputs(sent, file);
+																		}
 								| error ; 
 								/**
 								 * 	error es una palabra reservada de yacc 
@@ -139,12 +142,16 @@ lista_identificadores			: lista_identificadores COMA IDENTIFICADOR {	$3.tipoDato
 																				$3.tipoInternoLista = $0.tipoInternoLista;
 																				$3.entrada = variable;
 																				if(!variableExisteBloque($3)) insertar($3);
-																				else mensajeErrorDeclaradaBloque($3);	}
+																				else mensajeErrorDeclaradaBloque($3);	
+																				concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);
+																			}
 								| IDENTIFICADOR {	$1.tipoDato = $0.tipoDato;
 													$1.tipoInternoLista = $0.tipoInternoLista;
 													$1.entrada = variable;
 													if(!variableExisteBloque($1)) insertar($1);
-													else mensajeErrorDeclaradaBloque($1); } ;
+													else mensajeErrorDeclaradaBloque($1); 
+													concatenarStrings1($$.valor, $1.valor);
+												} ;
 
 cabecera_subprog				: tipo IDENTIFICADOR PARIZQ lista_parametros PARDER {	$2.tipoDato = $1.tipoDato; 
 																						$2.tipoInternoLista = $1.tipoInternoLista;
@@ -242,21 +249,35 @@ lista_parametros				: lista_parametros COMA tipo IDENTIFICADOR {	$$.parametros++
 														else mensajeErrorParametro($2);			} ;
 
 lista_exp_cadena				: lista_exp_cadena COMA exp_cad {	$$.parametros++;
-																	if (strcmp($0.valor, "(") == 0 ){
+																	if (strcmp($0.valor, "(") == 0 ){		// Funcion
 																		entradaTS aux = getSimboloIdentificador($-1.nombre);
 																		if( !comprobarParametro(aux.nombre, $$.parametros, $3.tipoDato) )
 																			mensajeErrorTipoArgumento(aux.nombre, $$.parametros,
 																				getSimboloArgumento(aux.nombre, $$.parametros).tipoDato); 
 																	}
+																	else if(strcmp($0.valor, "[") == 0){	// Lista
+																		if( $3.tipoDato != $1.tipoDato ){
+																			mensajeErrorTipo1($3, $1.tipoDato); 
+																			$$.tipoDato = desconocido;
+																			$$.tipoInternoLista = desconocido;
+																		}
+																		else{																
+																			$$.tipoDato = $1.tipoDato;
+																			$$.tipoInternoLista = $1.tipoDato;
+																		}
+																	}
 																	concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);
 																}
 								| exp_cad {	$$.parametros = 1;
-											if (strcmp($0.valor, "(") == 0 ){
+											if (strcmp($0.valor, "(") == 0 ){		// Funcion
 												entradaTS aux = getSimboloIdentificador($-1.nombre);
 												if( !comprobarParametro(aux.nombre, $$.parametros, $1.tipoDato) )
 													mensajeErrorTipoArgumento(aux.nombre, $$.parametros,
 														getSimboloArgumento(aux.nombre, $$.parametros).tipoDato);	
-											} 
+											}else if(strcmp($0.valor, "[") == 0){	// Lista																
+												$$.tipoDato = $1.tipoDato;
+												$$.tipoInternoLista = $1.tipoDato;
+											}
 											concatenarStrings1($$.valor, $1.valor);
 										} ;
 
@@ -284,7 +305,8 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 															else $$.tipoDato = $2.tipoDato;
 															$$.tipoInternoLista = $2.tipoInternoLista;
 															char* sent = (char*) malloc(200);
-															sprintf(sent, "%s = %s%s", generarTemp($$.tipoDato), $1.valor, $2.valor);
+															sprintf(sent, "%s%s = %s%s;\n", tabs, generarTemp($$.tipoDato), $1.valor, $2.valor);
+															fputs(sent, file);
 															char* aux = (char*) malloc(20);
 															sprintf(aux, "temp%d", temp);
 															concatenarStrings1($$.valor, aux);
@@ -307,7 +329,8 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																		} else $$.tipoDato = $2.tipoDato;
 																		$$.tipoInternoLista = $2.tipoInternoLista;
 																		char* sent = (char*) malloc(200);
-																		sprintf(sent, "%s = %s%s", generarTemp($2.tipoDato), $1.valor, $2.valor);
+																		sprintf(sent, "%s%s = %s%s;\n", tabs, generarTemp($2.tipoDato), $1.valor, $2.valor);
+																		fputs(sent, file);
 																		char* aux = (char*) malloc(20);
 																		sprintf(aux, "temp%d", temp);
 																		concatenarStrings1($$.valor, aux);
@@ -329,7 +352,8 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																	$$.tipoDato = desconocido;
 																}
 																char* sent = (char*) malloc(200);
-																sprintf(sent, "%s = %s %s %s", generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																sprintf(sent, "%s%s = %s %s %s;\n", tabs, generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																fputs(sent, file);
 																char* aux = (char*) malloc(20);
 																sprintf(aux, "temp%d", temp);
 																concatenarStrings1($$.valor, aux);
@@ -346,7 +370,8 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																		if (error) $$.tipoDato = desconocido;
 																		else $$.tipoDato = $1.tipoDato;
 																		char* sent = (char*) malloc(200);
-																		sprintf(sent, "%s = %s %s %s", generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																		sprintf(sent, "%s%s = %s %s %s;\n", tabs, generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																		fputs(sent, file);
 																		char* aux = (char*) malloc(20);
 																		sprintf(aux, "temp%d", temp);
 																		concatenarStrings1($$.valor, aux);
@@ -363,7 +388,8 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																		if (error) $$.tipoDato = desconocido;
 																		else $$.tipoDato = $1.tipoDato;
 																		char* sent = (char*) malloc(200);
-																		sprintf(sent, "%s = %s %s %s", generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																		sprintf(sent, "%s%s = %s %s %s;\n", tabs, generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																		fputs(sent, file);
 																		char* aux = (char*) malloc(20);
 																		sprintf(aux, "temp%d", temp);
 																		concatenarStrings1($$.valor, aux);
@@ -380,7 +406,8 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																		if (error) $$.tipoDato = desconocido;
 																		else $$.tipoDato = $1.tipoDato;
 																		char* sent = (char*) malloc(200);
-																		sprintf(sent, "%s = %s %s %s", generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																		sprintf(sent, "%s%s = %s %s %s;\n", tabs, generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																		fputs(sent, file);
 																		char* aux = (char*) malloc(20);
 																		sprintf(aux, "temp%d", temp);
 																		concatenarStrings1($$.valor, aux);
@@ -401,7 +428,8 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																		if (error) $$.tipoDato = desconocido;
 																		else $$.tipoDato = booleano;
 																		char* sent = (char*) malloc(200);
-																		sprintf(sent, "%s = %s %s %s", generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																		sprintf(sent, "%s%s = %s %s %s;\n", tabs, generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																		fputs(sent, file);
 																		char* aux = (char*) malloc(20);
 																		sprintf(aux, "temp%d", temp);
 																		concatenarStrings1($$.valor, aux);
@@ -422,7 +450,8 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																		if (error) $$.tipoDato = desconocido;
 																		else $$.tipoDato = booleano;
 																		char* sent = (char*) malloc(200);
-																		sprintf(sent, "%s = %s %s %s", generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																		sprintf(sent, "%s%s = %s %s %s;\n", tabs, generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																		fputs(sent, file);
 																		char* aux = (char*) malloc(20);
 																		sprintf(aux, "temp%d", temp);
 																		concatenarStrings1($$.valor, aux);
@@ -444,7 +473,8 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																				$$.tipoDato = desconocido;
 																			}
 																			char* sent = (char*) malloc(200);
-																			sprintf(sent, "%s = %s %s %s", generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																			sprintf(sent, "%s%s = %s %s %s;\n", tabs, generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																			fputs(sent, file);
 																			char* aux = (char*) malloc(20);
 																			sprintf(aux, "temp%d", temp);
 																			concatenarStrings1($$.valor, aux);
@@ -575,12 +605,7 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 													$$.tipoInternoLista = aux.tipoInternoLista;
 												}
 												$$.entrada = funcion;
-												// TODO VAMOS POR AQUÍ
-												char* sent = (char*) malloc(200);
-												sprintf(sent, "%s = %s %s %s", generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
-												char* aux = (char*) malloc(20);
-												sprintf(aux, "temp%d", temp);
-												concatenarStrings1($$.valor, aux);
+												concatenarStrings1($$.valor, $1.valor);
 											}
 								| error ;
 
@@ -600,7 +625,13 @@ funcion							: IDENTIFICADOR PARIZQ lista_exp_cadena PARDER
 										}
 										$$.tipoDato = getSimboloIdentificador($1.nombre).tipoDato;
 										$$.tipoInternoLista = getSimboloIdentificador($1.nombre).tipoInternoLista;
-										concatenarStrings4($$.valor, $1.nombre, $2.valor, $3.valor, $4.valor);	};
+										char* sent = (char*) malloc(200);
+										sprintf(sent, "%s%s = %s(%s);\n", tabs, generarTemp($$.tipoDato), $1.valor, $3.valor);
+										fputs(sent, file);
+										char* aux = (char*) malloc(20);
+										sprintf(aux, "temp%d", temp);
+										concatenarStrings1($$.valor, aux);	
+									};
 
 constante						: ENTERO	{	$$.tipoDato = entero;
 												$$.tipoInternoLista = desconocido;
@@ -615,25 +646,17 @@ constante						: ENTERO	{	$$.tipoDato = entero;
 															$$.tipoInternoLista = desconocido;
 															concatenarStrings1($$.valor, $1.valor);	} ;
 
-lista							: ABRIRCORCHETE lista2 {	$$.tipoInternoLista = $2.tipoDato;
-															$$.tipoDato = lista;
-															concatenarStrings2($$.valor, $1.valor, $2.valor);	};
+lista							: ABRIRCORCHETE lista_exp_cadena CERRARCORCHETE {	$$.tipoInternoLista = $2.tipoDato;
+																					$$.tipoDato = lista;
+																					concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	};
 
-lista2							: exp_cad COMA lista2 	{	if( $3.tipoDato != $1.tipoDato ){
-																mensajeErrorTipo1($1, $3.tipoDato); 
-																$$.tipoDato = desconocido;
-																$$.tipoInternoLista = desconocido;
-															}
-															else{																
-																$$.tipoDato = $1.tipoDato;
-															}
-															concatenarStrings2($$.valor, $2.valor, $3.valor);	}
-								| exp_cad CERRARCORCHETE {	$$.tipoDato = $1.tipoDato;
-															concatenarStrings2($$.valor, $1.valor, $2.valor);	};
-
-tipo							: TIPO	{	$$.tipoDato = $1.tipoDato;	}
+tipo							: TIPO	{	$$.tipoDato = $1.tipoDato;
+											concatenarStrings1($$.valor, $1.valor);
+										}
 								| LISTA_DE TIPO	{	$$.tipoDato = $1.tipoDato;	
-													$$.tipoInternoLista = $2.tipoDato;	};
+													$$.tipoInternoLista = $2.tipoDato;	
+													concatenarStrings3($$.valor, $1.valor," ", $2.valor);
+												};
 
 %%
 

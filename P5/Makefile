@@ -16,7 +16,7 @@ lex.yy.c: p2.l
 	flex p2.l 
 
 clean:
-	rm -f p3 p3.exe main.o y.tab.o y.tab.c lex.yy.c y.output
+	rm -f p3 p3.exe main.o y.tab.o y.tab.c lex.yy.c y.output codigoGenerado.c
 
 all:
 	make clean

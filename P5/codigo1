@@ -4,24 +4,24 @@ PRINCIPAL{
 		ENTERO d;
 	FINVAR
 
-	IMPRIMIR ¨Introduce un numero: ¨ ;
+	IMPRIMIR "Introduce un numero: " ;
 	
 	LEER n;
 
-	IMPRIMIR  n ¨ == ¨; 
+	IMPRIMIR  n, " == "; 
 	
 	curr = 2;
 	
 	MIENTRAS(curr <= n){
-		d = n\curr;
+		d = n/curr;
 		SI (d*curr == n){
-			IMPRIMIR ¨ * ¨ curr;
+			IMPRIMIR " * ", curr;
 			n = n/curr;	
 		}
 		SINO 
 			curr = curr + 1;
 	}	
-	IMPRIMIR ¨\n¨;
+	IMPRIMIR "\n";
 	
 }
 
