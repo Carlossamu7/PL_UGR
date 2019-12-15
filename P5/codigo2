@@ -1,0 +1,53 @@
+PRINCIPAL{
+	VAR
+		ENTERO n, curr, ultim, cuenta, primero;
+		ENTERO d;
+	FINVAR
+	
+	ultim = 0;
+	cuenta = 0;
+	primero = 1;
+	IMPRIMIR ¨Introduce numero: ¨;
+	
+	LEER n;
+	
+	IMPRIMIR  n ¨ == ¨;
+
+	curr = 2; 
+	
+	MIENTRAS (curr <= n){
+		d = n/curr;	
+		SI (d*curr == n){
+			SI (curr != ultim){
+				ultim = curr;
+				cuenta = 1;			
+			}		
+			SINO 
+				cuenta = cuenta + 1;
+			n = n/curr;
+		}
+		ELSE{
+			SI (cuenta>0){
+				SI (primero == 0)
+					IMPRIMIR ¨ *¨;
+				primero = 0;				
+				IMPRIMIR	curr;
+				SI (cuenta>1) 
+					IMPRIMIR ¨^¨cuenta;
+						
+			}
+			curr = curr +1;
+			cuenta = 0;
+		}
+						
+	}
+	
+	SI (cuenta>0){
+		SI (primero == 0)
+			primero = 0;
+		IMPRIMIR ¨ *¨;
+		SI (cuenta > 1) 
+			IMPRIMIR  ¨^¨ cuenta;	
+	}
+	IMPRIMIR ¨\n¨;
+}
