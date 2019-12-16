@@ -1,0 +1,16 @@
+PRINCIPAL{
+    VAR
+        ENTERO a1, a2 ;
+    FINVAR
+
+    ENTERO sumar (ENTERO a1, ENTERO a2){
+		ENTERO restar (ENTERO b1, ENTERO b2){
+		    DEVOLVER b1-b2;
+    	}	
+
+        DEVOLVER restar(a1,-a2);
+    }
+
+    LEER a1, a2;
+	IMPRIMIR sumar(a1, a2), "\n";
+}

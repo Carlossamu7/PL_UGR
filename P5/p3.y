@@ -11,6 +11,7 @@
 	void yyerror(const char * msg);
 
 	unsigned int contBloques = 0;
+	unsigned int contBloquesPrimeraFun = 0;
 	unsigned int numLinea = 1;
 	//Una vez declarada numLinea, puedo incluir p4.h
 	#include "p4.h"
@@ -93,7 +94,9 @@
 programa						: {generarFichero();} CABECERA {fputs("int main()", file);} bloque {cerrarFichero();} ;
 
 bloque							: INIBLOQUE {	insertarMarca();
-												if($0.parametros > 0) insertarArgumentos($0.nombre, $0.parametros); 
+												if($0.parametros > 0){
+													insertarArgumentos($0.nombre, $0.parametros);
+												}
 												contBloques++; 
 												//printf("INICIO BLOQUE\n");	
 												fputs("{\n", file);
@@ -105,7 +108,13 @@ bloque							: INIBLOQUE {	insertarMarca();
 									   			contBloques--; 
 												//imprimirTS(); 
 												eliminarBloque();
-												fputs("}\n", file);
+												char* sent = (char*) malloc(200);
+												sprintf(sent, "%s}\n", numTabs());
+												fputs(sent, file);
+												if (contBloquesPrimeraFun == contBloques){
+													file = file_std;
+													contBloquesPrimeraFun = 0;
+												}
 											};
 
 declar_subprogs					: declar_subprogs declar_subprog
@@ -122,7 +131,7 @@ variables_locales				: variables_locales cuerpo_declar_variables
 								| cuerpo_declar_variables ;
 
 cuerpo_declar_variables			: tipo lista_identificadores FINLINEA 	{	char* sent = (char*) malloc(200);
-																			sprintf(sent, "%s%s %s;\n", tabs, tipoDeDato($1.tipoDato), $2.valor);
+																			sprintf(sent, "%s%s %s;\n", numTabs(), tipoDeDato($1.tipoDato), $2.valor);
 																			fputs(sent, file);
 																		}
 								| error ; 
@@ -153,16 +162,23 @@ lista_identificadores			: lista_identificadores COMA IDENTIFICADOR {	$3.tipoDato
 													concatenarStrings1($$.valor, $1.valor);
 												} ;
 
-cabecera_subprog				: tipo IDENTIFICADOR PARIZQ lista_parametros PARDER {	$2.tipoDato = $1.tipoDato; 
-																						$2.tipoInternoLista = $1.tipoInternoLista;
-																						$$.nombre = $2.nombre; 
-																						$$.parametros = $4.parametros;	
-																						$2.parametros = $4.parametros;
-																						$2.entrada = funcion;
-																						if(!variableExisteBloque($2)) insertar($2);
-																						else mensajeErrorDeclaradaBloque($2);
-																						insertarSubprog($2.nombre, $1.tipoDato, $2.parametros);
-																					} ;
+cabecera_subprog				: tipo IDENTIFICADOR PARIZQ lista_parametros PARDER {	
+											$2.tipoDato = $1.tipoDato; 
+											$2.tipoInternoLista = $1.tipoInternoLista;
+											$$.nombre = $2.nombre; 
+											$$.parametros = $4.parametros;	
+											$2.parametros = $4.parametros;
+											$2.entrada = funcion;
+											if(!variableExisteBloque($2)) insertar($2);
+											else mensajeErrorDeclaradaBloque($2);
+											//insertarSubprog($2.nombre, $1.tipoDato, $2.parametros);ç
+											if(contBloquesPrimeraFun == 0)
+												contBloquesPrimeraFun = contBloques;
+											char* sent = (char*) malloc(200);
+											sprintf(sent, "%s%s %s(%s)", numTabs(), tipoDeDato($1.tipoDato), $2.nombre, $4.valor);
+											fputs(sent, file_fun);
+											file = file_fun;
+										} ;
 
 sentencias						: sentencias sentencia
 								| sentencia ;
@@ -207,33 +223,33 @@ aux		: {	etiquetaFlujo *aux = malloc(sizeof(etiquetaFlujo));
 			insertarFlujo(*aux);
 			copiarEF(&($$.ef), aux);
 			char* sent = (char*) malloc(200);
-			sprintf(sent, "%sif(!%s) goto %s;\n", tabs, $-1.valor, aux->EtiquetaElse);
+			sprintf(sent, "%sif(!%s) goto %s;\n", numTabs(), $-1.valor, aux->EtiquetaElse);
 			fputs(sent, file);
 		} ;
 
 sentencia_if					: CONDICION PARIZQ expresion PARDER aux sentencia 	{	
 																		char* sent = (char*) malloc(200);
-																		sprintf(sent, "%sgoto %s;\n", tabs, TF[TOPEFLUJO-1].EtiquetaSalida);
+																		sprintf(sent, "%sgoto %s;\n", numTabs(), TF[TOPEFLUJO-1].EtiquetaSalida);
 																		fputs(sent, file);
 																	}
 									SUBCONDICION 	{	char* sent = (char*) malloc(200);
-														sprintf(sent, "%s%s:\n", tabs, TF[TOPEFLUJO-1].EtiquetaElse);
+														sprintf(sent, "%s%s:\n", numTabs(), TF[TOPEFLUJO-1].EtiquetaElse);
 														fputs(sent, file);
 													}
 									sentencia 	{	if( $3.tipoDato != booleano ) mensajeErrorTipo1($3, booleano); 
 													char* sent = (char*) malloc(200);
-													sprintf(sent, "%s%s:\n;\n", tabs, TF[TOPEFLUJO-1].EtiquetaSalida);
+													sprintf(sent, "%s%s:\n;\n", numTabs(), TF[TOPEFLUJO-1].EtiquetaSalida);
 													fputs(sent, file);
 													sacarTF();
 												}
 								| CONDICION PARIZQ expresion PARDER aux sentencia 	{	
 													if( $3.tipoDato != booleano ) mensajeErrorTipo1($3, booleano);	
 													char* sent = (char*) malloc(200);
-													sprintf(sent, "%sgoto %s;\n", tabs, TF[TOPEFLUJO-1].EtiquetaSalida);
+													sprintf(sent, "%sgoto %s;\n", numTabs(), TF[TOPEFLUJO-1].EtiquetaSalida);
 													fputs(sent, file);
-													sprintf(sent, "%s%s:\n", tabs, TF[TOPEFLUJO-1].EtiquetaElse);
+													sprintf(sent, "%s%s:\n", numTabs(), TF[TOPEFLUJO-1].EtiquetaElse);
 													fputs(sent, file);
-													sprintf(sent, "%s%s:\n;\n", tabs, TF[TOPEFLUJO-1].EtiquetaSalida);
+													sprintf(sent, "%s%s:\n;\n", numTabs(), TF[TOPEFLUJO-1].EtiquetaSalida);
 													fputs(sent, file);
 													sacarTF();
 												} ;
@@ -243,33 +259,36 @@ sentencia_while					: CICLO PARIZQ {	etiquetaFlujo *aux = malloc(sizeof(etiqueta
 													aux->EtiquetaSalida = generarEtiqueta();
 													insertarFlujo(*aux);
 													char* sent = (char*) malloc(200);
-													sprintf(sent, "%s%s:\n;\n", tabs, aux->EtiquetaEntrada);
+													sprintf(sent, "%s%s:\n;\n", numTabs(), aux->EtiquetaEntrada);
 													fputs(sent, file);
 												}
 									expresion	{	char* sent = (char*) malloc(200);
-													sprintf(sent, "%sif (!%s) goto %s;\n", tabs, $4.valor ,TF[TOPEFLUJO-1].EtiquetaSalida);
+													sprintf(sent, "%sif (!%s) goto %s;\n", numTabs(), $4.valor ,TF[TOPEFLUJO-1].EtiquetaSalida);
 													fputs(sent, file);
 												} 
 									PARDER sentencia {	if( $4.tipoDato != booleano ) mensajeErrorTipo1($4, booleano);	
 														char* sent = (char*) malloc(200);
-														sprintf(sent, "%sgoto %s;\n", tabs, TF[TOPEFLUJO-1].EtiquetaEntrada);
+														sprintf(sent, "%sgoto %s;\n", numTabs(), TF[TOPEFLUJO-1].EtiquetaEntrada);
 														fputs(sent, file);
-														sprintf(sent, "%s%s:\n;\n", tabs, TF[TOPEFLUJO-1].EtiquetaSalida);
+														sprintf(sent, "%s%s:\n;\n", numTabs(), TF[TOPEFLUJO-1].EtiquetaSalida);
 														fputs(sent, file);
 														sacarTF();
-													};
+													} ;
 
 sentencia_entrada				: ENTRADA lista_variables FINLINEA 	{	char* sent = (char*) malloc(200);
-																		sprintf(sent, "\", %s);\n",$2.valor);
+																		sprintf(sent, "\", %s);\n", $2.valor);
 																		fputs(sent, file);
-																	};;
+																	} ;
 
 sentencia_salida				: SALIDA lista_exp_cadena FINLINEA 	{	char* sent = (char*) malloc(200);
-																		sprintf(sent, "\", %s);\n",$2.valor);
+																		sprintf(sent, "\", %s);\n", $2.valor);
 																		fputs(sent, file);
-																	};
+																	} ;
 
-sentencia_return				: RETURN expresion FINLINEA ;
+sentencia_return				: RETURN expresion FINLINEA {	char* sent = (char*) malloc(200);
+																sprintf(sent, "%sreturn %s;\n", numTabs(), $2.valor);
+																fputs(sent, file);
+															} ;
 
 sentencia_for					: BUCLE IDENTIFICADOR DOSPUNTOSIGUAL expresion {	
 													etiquetaFlujo *aux = malloc(sizeof(etiquetaFlujo));
@@ -277,17 +296,17 @@ sentencia_for					: BUCLE IDENTIFICADOR DOSPUNTOSIGUAL expresion {
 													aux->EtiquetaSalida = generarEtiqueta();
 													insertarFlujo(*aux);
 													char* sent = (char*) malloc(200);
-													/*sprintf(sent, "%sint %s;\n", tabs, $2.nombre);
+													/*sprintf(sent, "%sint %s;\n", numTabs(), $2.nombre);
 													fputs(sent, file);*/
-													sprintf(sent, "%s%s = %s;\n", tabs, $2.nombre, $4.valor);
+													sprintf(sent, "%s%s = %s;\n", numTabs(), $2.nombre, $4.valor);
 													fputs(sent, file);
-													sprintf(sent, "%s%s:\n;\n", tabs, aux->EtiquetaEntrada);
+													sprintf(sent, "%s%s:\n;\n", numTabs(), aux->EtiquetaEntrada);
 													fputs(sent, file);
 												} HASTA expresion {
 													char* sent = (char*) malloc(200);
-													sprintf(sent, "%s%s = %s<%s;\n", tabs, generarTemp(booleano), $2.nombre, $7.valor);
+													sprintf(sent, "%s%s = %s<%s;\n", numTabs(), generarTemp(booleano), $2.nombre, $7.valor);
 													fputs(sent, file);
-													sprintf(sent, "%sif (!temp%d) goto %s;\n", tabs, temp ,TF[TOPEFLUJO-1].EtiquetaSalida);
+													sprintf(sent, "%sif (!temp%d) goto %s;\n", numTabs(), temp ,TF[TOPEFLUJO-1].EtiquetaSalida);
 													fputs(sent, file);
 												} PASO expresion sentencia
 									{	
@@ -301,13 +320,13 @@ sentencia_for					: BUCLE IDENTIFICADOR DOSPUNTOSIGUAL expresion {
 										if( $10.tipoDato != entero ) mensajeErrorTipo1($10, entero);
 
 										char* sent = (char*) malloc(200);
-										sprintf(sent, "%s%s = %s+%s;\n", tabs, generarTemp(entero), $2.nombre, $10.valor);
+										sprintf(sent, "%s%s = %s+%s;\n", numTabs(), generarTemp(entero), $2.nombre, $10.valor);
 										fputs(sent, file);
-										sprintf(sent, "%s%s = temp%d;\n", tabs, $2.nombre, temp);
+										sprintf(sent, "%s%s = temp%d;\n", numTabs(), $2.nombre, temp);
 										fputs(sent, file);
-										sprintf(sent, "%sgoto %s;\n", tabs, TF[TOPEFLUJO-1].EtiquetaEntrada);
+										sprintf(sent, "%sgoto %s;\n", numTabs(), TF[TOPEFLUJO-1].EtiquetaEntrada);
 										fputs(sent, file);
-										sprintf(sent, "%s%s:\n;\n", tabs, TF[TOPEFLUJO-1].EtiquetaSalida);
+										sprintf(sent, "%s%s:\n;\n", numTabs(), TF[TOPEFLUJO-1].EtiquetaSalida);
 										fputs(sent, file);
 										sacarTF();
 									};
@@ -322,18 +341,23 @@ sentencia_reset_cursor			: OPDOLAR IDENTIFICADOR FINLINEA {	if( !variableExiste(
 																			entradaTS aux = getSimboloIdentificador($2.nombre);
 																			if( aux.tipoDato != lista ) mensajeErrorTipo1(aux, lista); }	};
 
-lista_parametros				: lista_parametros COMA tipo IDENTIFICADOR {	$$.parametros++; 
-																				$4.tipoDato = $3.tipoDato;
-																				$4.tipoInternoLista = $3.tipoInternoLista;
-																				$4.entrada = parametro_formal;
-																				if( !parametroExiste($4) ) insertar($4);
-																				else mensajeErrorParametro($4);			}
+lista_parametros				: lista_parametros COMA tipo IDENTIFICADOR {	
+												$$.parametros++; 
+												$4.tipoDato = $3.tipoDato;
+												$4.tipoInternoLista = $3.tipoInternoLista;
+												$4.entrada = parametro_formal;
+												if( !parametroExiste($4) ) insertar($4);
+												else mensajeErrorParametro($4);	
+												concatenarStrings5($$.valor, $1.valor, $2.valor, tipoDeDato($3.tipoDato), " ", $4.nombre);
+											}
 								| tipo IDENTIFICADOR {	$$.parametros = 1; 
 														$2.tipoDato = $1.tipoDato; 
 														$2.tipoInternoLista = $1.tipoInternoLista;
 														$2.entrada = parametro_formal;
 														if( !parametroExiste($2) ) insertar($2);
-														else mensajeErrorParametro($2);			} ;
+														else mensajeErrorParametro($2);
+														concatenarStrings3($$.valor, tipoDeDato($1.tipoDato), " ", $2.nombre);		
+													} ;
 
 lista_exp_cadena				: lista_exp_cadena COMA exp_cad {	$$.parametros++;
 																	if (strcmp($0.valor, "(") == 0 ){		// Funcion
@@ -355,7 +379,7 @@ lista_exp_cadena				: lista_exp_cadena COMA exp_cad {	$$.parametros++;
 																	}
 																	else if(strcmp($0.valor, "IMPRIMIR") == 0){
 																		char* sent = (char*) malloc(200);
-																		sprintf(sent, "%%%c",tipoAFormato($3.tipoDato));
+																		sprintf(sent, "%%%c", tipoAFormato($3.tipoDato));
 																		fputs(sent, file);
 																	}
 																	concatenarStrings4($$.valor, $1.valor, $2.valor, " ", $3.valor);
@@ -372,7 +396,7 @@ lista_exp_cadena				: lista_exp_cadena COMA exp_cad {	$$.parametros++;
 											}
 											else if(strcmp($0.valor, "IMPRIMIR") == 0){
 												char* sent = (char*) malloc(200);
-												sprintf(sent, "%sprintf(\"%%%c", tabs, tipoAFormato($1.tipoDato));
+												sprintf(sent, "%sprintf(\"%%%c", numTabs(), tipoAFormato($1.tipoDato));
 												fputs(sent, file);
 											}
 											concatenarStrings1($$.valor, $1.valor);
@@ -397,7 +421,7 @@ lista_variables					: lista_variables COMA IDENTIFICADOR  	{	if ( !variableExist
 													entradaTS aux = getSimboloIdentificador($1.nombre);
 													if(strcmp($0.valor, "LEER") == 0){
 														char* sent = (char*) malloc(200);
-														sprintf(sent, "%sscanf(\"%%%c",tabs, tipoAFormato(aux.tipoDato));
+														sprintf(sent, "%sscanf(\"%%%c", numTabs(), tipoAFormato(aux.tipoDato));
 														fputs(sent, file);
 													}
 													concatenarStrings2($$.valor, tipoAPuntero(aux.tipoDato), $1.nombre);
@@ -416,7 +440,7 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 															else $$.tipoDato = $2.tipoDato;
 															$$.tipoInternoLista = $2.tipoInternoLista;
 															char* sent = (char*) malloc(200);
-															sprintf(sent, "%s%s = %s%s;\n", tabs, generarTemp($$.tipoDato), $1.valor, $2.valor);
+															sprintf(sent, "%s%s = %s%s;\n", numTabs(), generarTemp($$.tipoDato), $1.valor, $2.valor);
 															fputs(sent, file);
 															char* aux = (char*) malloc(20);
 															sprintf(aux, "temp%d", temp);
@@ -440,7 +464,7 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																		} else $$.tipoDato = $2.tipoDato;
 																		$$.tipoInternoLista = $2.tipoInternoLista;
 																		char* sent = (char*) malloc(200);
-																		sprintf(sent, "%s%s = %s%s;\n", tabs, generarTemp($2.tipoDato), $1.valor, $2.valor);
+																		sprintf(sent, "%s%s = %s%s;\n", numTabs(), generarTemp($2.tipoDato), $1.valor, $2.valor);
 																		fputs(sent, file);
 																		char* aux = (char*) malloc(20);
 																		sprintf(aux, "temp%d", temp);
@@ -463,7 +487,7 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																	$$.tipoDato = desconocido;
 																}
 																char* sent = (char*) malloc(200);
-																sprintf(sent, "%s%s = %s %s %s;\n", tabs, generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																sprintf(sent, "%s%s = %s %s %s;\n", numTabs(), generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
 																fputs(sent, file);
 																char* aux = (char*) malloc(20);
 																sprintf(aux, "temp%d", temp);
@@ -481,7 +505,7 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																		if (error) $$.tipoDato = desconocido;
 																		else $$.tipoDato = $1.tipoDato;
 																		char* sent = (char*) malloc(200);
-																		sprintf(sent, "%s%s = %s %s %s;\n", tabs, generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																		sprintf(sent, "%s%s = %s %s %s;\n", numTabs(), generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
 																		fputs(sent, file);
 																		char* aux = (char*) malloc(20);
 																		sprintf(aux, "temp%d", temp);
@@ -499,7 +523,7 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																		if (error) $$.tipoDato = desconocido;
 																		else $$.tipoDato = $1.tipoDato;
 																		char* sent = (char*) malloc(200);
-																		sprintf(sent, "%s%s = %s %s %s;\n", tabs, generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																		sprintf(sent, "%s%s = %s %s %s;\n", numTabs(), generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
 																		fputs(sent, file);
 																		char* aux = (char*) malloc(20);
 																		sprintf(aux, "temp%d", temp);
@@ -517,7 +541,7 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																		if (error) $$.tipoDato = desconocido;
 																		else $$.tipoDato = $1.tipoDato;
 																		char* sent = (char*) malloc(200);
-																		sprintf(sent, "%s%s = %s %s %s;\n", tabs, generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																		sprintf(sent, "%s%s = %s %s %s;\n", numTabs(), generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
 																		fputs(sent, file);
 																		char* aux = (char*) malloc(20);
 																		sprintf(aux, "temp%d", temp);
@@ -539,7 +563,7 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																		if (error) $$.tipoDato = desconocido;
 																		else $$.tipoDato = booleano;
 																		char* sent = (char*) malloc(200);
-																		sprintf(sent, "%s%s = %s %s %s;\n", tabs, generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																		sprintf(sent, "%s%s = %s %s %s;\n", numTabs(), generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
 																		fputs(sent, file);
 																		char* aux = (char*) malloc(20);
 																		sprintf(aux, "temp%d", temp);
@@ -561,7 +585,7 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																		if (error) $$.tipoDato = desconocido;
 																		else $$.tipoDato = booleano;
 																		char* sent = (char*) malloc(200);
-																		sprintf(sent, "%s%s = %s %s %s;\n", tabs, generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																		sprintf(sent, "%s%s = %s %s %s;\n", numTabs(), generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
 																		fputs(sent, file);
 																		char* aux = (char*) malloc(20);
 																		sprintf(aux, "temp%d", temp);
@@ -584,7 +608,7 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																				$$.tipoDato = desconocido;
 																			}
 																			char* sent = (char*) malloc(200);
-																			sprintf(sent, "%s%s = %s %s %s;\n", tabs, generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+																			sprintf(sent, "%s%s = %s %s %s;\n", numTabs(), generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
 																			fputs(sent, file);
 																			char* aux = (char*) malloc(20);
 																			sprintf(aux, "temp%d", temp);
@@ -737,7 +761,7 @@ funcion							: IDENTIFICADOR PARIZQ lista_exp_cadena PARDER
 										$$.tipoDato = getSimboloIdentificador($1.nombre).tipoDato;
 										$$.tipoInternoLista = getSimboloIdentificador($1.nombre).tipoInternoLista;
 										char* sent = (char*) malloc(200);
-										sprintf(sent, "%s%s = %s(%s);\n", tabs, generarTemp($$.tipoDato), $1.valor, $3.valor);
+										sprintf(sent, "%s%s = %s(%s);\n", numTabs(), generarTemp($$.tipoDato), $1.valor, $3.valor);
 										fputs(sent, file);
 										char* aux = (char*) malloc(20);
 										sprintf(aux, "temp%d", temp);

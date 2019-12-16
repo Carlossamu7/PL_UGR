@@ -35,6 +35,8 @@ entradaTS TS[MAX_TS];	/*Pila de la tabla de símbolos*/
 int TOPE = 0;
 unsigned int Subprog ;     /*Indicador de comienzo de bloque de un subprog*/
 FILE* file;
+FILE* file_std;
+FILE* file_fun;
 char* argumento;
 
 
@@ -46,7 +48,8 @@ char* toStringEntrada();
 char* toStringTipo();
 void concatenarStrings1(char* destination, char* source1);
 char tipoAFormato();
-char *strdup(const char *src);
+char* strdup(const char *src);
+char* numTabs();
 
 char* tabs = NULL;
 
@@ -562,7 +565,7 @@ int etiqueta = -1;
 char* generarTemp(dtipo tipo){
 	char* cadena = (char*) malloc(20);
 	++temp;
-	sprintf(cadena, "%s temp%d;\n%stemp%d", tipoDeDato(tipo), temp, tabs, temp);
+	sprintf(cadena, "%s temp%d;\n%stemp%d", tipoDeDato(tipo), temp, numTabs(), temp);
 	return cadena;
 }
 
@@ -573,14 +576,24 @@ char* generarEtiqueta() {
 	return cadena;
 }
 
+void generarFicheroFunciones() {
+	file_fun = fopen("dec_fun.h", "w");
+	fputs("#include<stdio.h>\n", file_fun);
+	fputs("typedef int bool;\n", file_fun);
+}
+
 void generarFichero() {
-	file = fopen("codigoGenerado.c","w");
-	fputs("#include<stdio.h>\n",file);
-	fputs("typedef int bool;\n",file);
+	file_std = fopen("codigoGenerado.c", "w");
+	file = file_std;
+	fputs("#include<stdio.h>\n", file);
+	fputs("#include \"dec_fun.h\"\n", file);
+	fputs("typedef int bool;\n", file);
+	generarFicheroFunciones();
 }
 
 void cerrarFichero() {
 	fclose(file);
+	fclose(file_fun);
 }
 
 char* tipoDeDato (dtipo td) {
@@ -608,6 +621,7 @@ void insertarParametros(char* nom, int numArgumentos){
 	}	
 }
 
+/*
 void insertarSubprog(char* nom, dtipo dato, int numArgumentos){
 	char* sent;
 	sent = (char*) malloc(200);
@@ -616,6 +630,7 @@ void insertarSubprog(char* nom, dtipo dato, int numArgumentos){
 	insertarParametros(nom, numArgumentos);
 	fputs(")", file);
 }
+
 
 void insertarVariables(dtipo dato){
 	int i;
@@ -639,6 +654,8 @@ void insertarVariables(dtipo dato){
 	sprintf(sent, "%s;\n", sent);
 	fputs(sent, file);
 }
+
+*/
 
 void insertarAsignacion(char* nom, char* valor) {
 	char* sent = (char*) malloc(200);
@@ -668,6 +685,14 @@ char* tipoAPuntero(dtipo dato){
 	else if(dato == cadena )	return " ";
 	else if(dato == booleano)	return " &";
 	else 						return " l";
+}
+
+char* numTabs(){
+	char* aux = (char*) malloc(50);
+	sprintf(aux, "");
+	for( int i=0; i<contBloques-contBloquesPrimeraFun; ++i )
+		sprintf(aux, "%s\t", aux);
+	return aux;
 }
 
 

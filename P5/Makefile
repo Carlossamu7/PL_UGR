@@ -27,6 +27,14 @@ cod3: p3 codigo3 p3.y p4.h
 	./p3 codigo3
 	gcc -o p5 codigoGenerado.c
 
+cod4: p3 codigo4 p3.y p4.h
+	./p3 codigo4
+	gcc -o p5 codigoGenerado.c
+
+cod5: p3 codigo5 p3.y p4.h
+	./p3 codigo5
+	gcc -o p5 codigoGenerado.c
+
 clean:
 	rm -f p3 p3.exe main.o y.tab.o y.tab.c lex.yy.c y.output codigoGenerado.c
 
