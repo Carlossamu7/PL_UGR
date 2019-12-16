@@ -5,9 +5,9 @@ int main(){
     Node* a;
     int entero = 2;
 
-    push(a, &entero, sizeof(int));
+    push(a, entero);
     //printList(a, entero);
     begin(a);
-    sum(a, 2.0);
+    sum(a, 2);
     return 0;
 }

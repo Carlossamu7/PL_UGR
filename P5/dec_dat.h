@@ -24,24 +24,7 @@ void printList(Node* l)
 	printf("[");
     while (l != NULL)
     {
-		if (td == real) {
-			if (l->next != NULL)
-				printf("%f, ", * (float*) l->data);
-			else
-				printf("%f", * (float*) l->data);
-        }
-        else if (td == entero){
-            if (l->next != NULL)
-				printf("%d, ", * (int*) l->data);
-			else
-				printf("%d", * (int*) l->data);
-        }
-		else{
-			if (l->next != NULL)
-				printf("%s, ", (char*) l->data);
-			else
-				printf("%s", (char*) l->data);
-        }
+		printf("%d", l->data);
         l = l->next;
     }
 	printf("]");
@@ -67,7 +50,6 @@ void end(Node* l){
 		next(l);
 }
 
-
 unsigned int length(Node* l){
 	if (l == NULL)
 		return 0;
@@ -81,11 +63,11 @@ unsigned int length(Node* l){
 	return count;
 }
 
-void* currentData(Node* l){
+int currentData(Node* l){
 	return l->data;
 }
 
-void* dataAt(Node* l, int pos){
+int dataAt(Node* l, unsigned int pos){
 	if (l == NULL)
 		return 0;
 	if (pos >= length(l))
@@ -98,7 +80,7 @@ void* dataAt(Node* l, int pos){
 	return currentData(aux);
 }
 
-Node* addAt(Node* l, unsigned int pos, void* dat){
+Node* addAt(Node* l, unsigned int pos, int dat){
 	if (l == NULL)
 		return NULL;
 	if (pos >= length(l))
@@ -170,13 +152,13 @@ Node* concatenate(Node* l1, Node* l2){
 	return l1;
 }
 
-Node* sum(Node* l, float dat){
+Node* sum(Node* l, int dat){
 	if (l == NULL)
 		return NULL;
 	Node* aux = l;
 	begin(aux);
 	while(aux->next != NULL){
-        *(float*) aux->data = *(float*) aux->data + dat;
+        aux->data = aux->data + dat;
 		//*(aux->data) = *(aux->data) + *dat;
 		next(aux);
 	}
@@ -189,7 +171,7 @@ Node* subtract(Node* l, float dat){
 	Node* aux = l;
 	begin(aux);
 	while(aux->next != NULL){
-        *(float*) aux->data = *(float*) aux->data - dat;
+        aux->data = aux->data - dat;
 		//aux->data = aux->data - *dat;
 		next(aux);
 	}
@@ -202,7 +184,7 @@ Node* mult(Node* l, float dat){
 	Node* aux = l;
 	begin(aux);
 	while(aux->next != NULL){
-        *(float*) aux->data = *(float*) aux->data * dat;
+        aux->data = aux->data * dat;
 		//aux->data = aux->data * *dat;
 		next(aux);
 	}
@@ -215,63 +197,9 @@ Node* divi(Node* l, float dat){
 	Node* aux = l;
 	begin(aux);
 	while(aux->next != NULL){
-        *(float*) aux->data = *(float*) aux->data / dat;
+        aux->data = aux->data / dat;
 		//aux->data = aux->data * *dat;
 		next(aux);
 	}
 	return l;
 }
-
-/*
-Node* sum(Node* l, int dat){
-	if (l == NULL)
-		return NULL;
-	Node* aux = l;
-	begin(aux);
-	while(aux->next != NULL){
-        *(int*) aux->data = *(int*) aux->data + dat;
-		//*(aux->data) = *(aux->data) + *dat;
-		next(aux);
-	}
-	return l;
-}
-
-Node* subtract(Node* l, int dat){
-	if (l == NULL)
-		return NULL;
-	Node* aux = l;
-	begin(aux);
-	while(aux->next != NULL){
-        *(int*) aux->data = *(int*) aux->data - dat;
-		//aux->data = aux->data - *dat;
-		next(aux);
-	}
-	return l;
-}
-
-Node* mult(Node* l, int dat){
-	if (l == NULL)
-		return NULL;
-	Node* aux = l;
-	begin(aux);
-	while(aux->next != NULL){
-        *(int*) aux->data = *(int*) aux->data * dat;
-		//aux->data = aux->data * *dat;
-		next(aux);
-	}
-	return l;
-}
-
-Node* div(Node* l, int dat){
-	if (l == NULL || *dat == 0)
-		return NULL;
-	Node* aux = l;
-	begin(aux);
-	while(aux->next != NULL){
-        *(int*) aux->data = *(int*) aux->data / dat;
-		//aux->data = aux->data * *dat;
-		next(aux);
-	}
-	return l;
-}
-*/
