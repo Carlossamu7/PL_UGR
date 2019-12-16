@@ -3,7 +3,7 @@
 #include <string.h>
 
 typedef struct Node_t {
-    int data;
+    void* data;
     struct Node_t* next;
 	struct Node_t* previous;
 } Node;
@@ -11,15 +11,19 @@ typedef struct Node_t {
 typedef int bool;
 typedef enum {desconocido, entero, real, caracter, booleano, lista, cadena} dtipo ;
 
-void push(Node* inicial, int new_data)
+void push(Node* inicial, void *new_data, size_t data_size)
 {
 	Node* new_node = (Node*) malloc(sizeof(Node));
-	new_node->data  = new_data;
+	new_node->data  = malloc(data_size);
 	new_node->next = inicial;
+
+	for (int i=0; i<data_size; ++i)
+		*(char*) (new_node->data + i) = *(char*) (new_data + i);
+
 	inicial = new_node;
 }
 
-void printList(Node* l)
+void printList(Node* l, dtipo td)
 {
 	printf("[");
     while (l != NULL)
