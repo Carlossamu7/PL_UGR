@@ -1,73 +1,76 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include "p4.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node_t {
+    void* data;
+    struct Node_t* next;
+	struct Node_t* previous;
+} Node;
+
 typedef int bool;
-typedef Node* List;
+typedef enum {desconocido, entero, real, caracter, booleano, lista, cadena} dtipo ;
 
-struct Node { 
-    void* data; 
-    struct Node* next;
-	struct Node* previous;
-}; 
+void push(Node* inicial, void *new_data, size_t data_size)
+{
+	Node* new_node = (Node*) malloc(sizeof(Node));
+	new_node->data  = malloc(data_size);
+	new_node->next = inicial;
 
-void push(struct List* inicial, void *new_data, size_t data_size) 
-{ 
-	struct Node* new_node = (struct Node*)malloc(sizeof(struct Node)); 
-	new_node->data  = malloc(data_size); 
-	new_node->next = (*inicial); 
-	
-	for (int i=0; i<data_size; ++i) 
-		*(char*) (new_node->data + i) = *(char*) (new_data + i); 
+	for (int i=0; i<data_size; ++i)
+		*(char*) (new_node->data + i) = *(char*) (new_data + i);
 
-	(*inicial) = new_node; 
-} 
+	inicial = new_node;
+}
 
-void printList(struct Node *node, dtipo td) 
-{ 
+void printList(Node* l, dtipo td)
+{
 	printf("[");
-    while (node != NULL) 
-    { 
-		if (td == entero || td == real)
-			if (node->next != NULL)
-				printf("%d, ", node->data);
+    while (l != NULL)
+    {
+		if (td == entero || td == real) {
+			if (l->next != NULL)
+				printf("%f, ", * (float*) l->data);
 			else
-				printf("%d", node->data);
-		else
-			if (node->next != NULL)
-				printf("%s, ", node->data);
+				printf("%f", * (float*) l->data);
+        }
+		else{
+			if (l->next != NULL)
+				printf("%s, ", (char*) l->data);
 			else
-				printf("%s", node->data);
-        node = node->next; 
+				printf("%s", (char*) l->data);
+        }
+        l = l->next;
     }
 	printf("]");
 }
 
-void next(List* l){
+void next(Node* l){
 	if (l->next != NULL)
 		l = l->next;
-} 
+}
 
-void previous(List* l){
+void previous(Node* l){
 	if (l->previous != NULL)
 		l = l->previous;
 }
 
-void begin(List* l){
+void begin(Node* l){
 	while (l->previous != NULL)
 		previous(l);
 }
 
-void end(List* l){
+void end(Node* l){
 	while (l->next != NULL)
 		next(l);
 }
 
 
-unsigned int length(List* l){
+unsigned int length(Node* l){
 	if (l == NULL)
 		return 0;
 	unsigned int count = 1;
-	List* aux = l;
+	Node* aux = l;
 	begin(aux);
 	while(l->next != NULL){
 		next(aux);
@@ -76,16 +79,16 @@ unsigned int length(List* l){
 	return count;
 }
 
-void* currentData(List* l){
+void* currentData(Node* l){
 	return l->data;
 }
 
-void* dataAt(List* l, int pos){
+void* dataAt(Node* l, int pos){
 	if (l == NULL)
 		return 0;
 	if (pos >= length(l))
 		return 0;
-	List* aux = l;
+	Node* aux = l;
 	begin(aux);
 	for(int i = 0; i < pos; ++i){
 		next(aux);
@@ -93,49 +96,49 @@ void* dataAt(List* l, int pos){
 	return currentData(aux);
 }
 
-List addAt(List* l, unsigned int pos, void* dat){
+Node* addAt(Node* l, unsigned int pos, void* dat){
 	if (l == NULL)
-		return;
+		return NULL;
 	if (pos >= length(l))
 		pos = length(l)-1;
-	List* aux = l;
+	Node* aux = l;
 	begin(aux);
 	for(int i = 0; i < pos; ++i){
 		next(aux);
 	}
-	Node* n = malloc(sizeof(struct Node));
+	Node* n = malloc(sizeof(Node));
 	n->previous = aux->previous;
-	n->next = *aux;
-	(aux->previous).next = *n;
-	aux->previous = *n;
+	n->next = aux;
+	(aux->previous)->next = n;
+	aux->previous = n;
 	n->data = dat;
-	return *l;
+	return l;
 }
 
-List deleteAt(List* l, unsigned int pos){
+Node* deleteAt(Node* l, unsigned int pos){
 	if (l == NULL)
-		return;
+		return NULL;
 	if (pos >= length(l))
-		return;
-	List* aux = l;
+		return NULL;
+	Node* aux = l;
 	begin(aux);
 	for(int i = 0; i < pos; ++i){
 		next(aux);
 	}
-	(aux->previous).next = aux->next;
-	(aux->next).previous = aux->previous;
+	(aux->previous)->next = aux->next;
+	(aux->next)->previous = aux->previous;
 	if (aux == l)
 		l = aux->next;
 	free(aux);
-	return *l;
+	return l;
 }
 
-List deleteSince(List* l, unsigned int pos){
+Node* deleteSince(Node* l, unsigned int pos){
 	if (l == NULL)
-		return;
+		return NULL;
 	if (pos >= length(l))
-		return;
-	List* aux = l;
+		return NULL;
+	Node* aux = l;
 	begin(aux);
 	for(int i = 0; i < pos; ++i){
 		next(aux);
@@ -151,66 +154,122 @@ List deleteSince(List* l, unsigned int pos){
 	free(node_aux);
 }
 
-List concatenate(List* l1, List* l2){
+Node* concatenate(Node* l1, Node* l2){
 	if (l1 == NULL)
 		return l2;
 	else if (l2 == NULL)
 		return l1;
-	
+
 	end(l1);
 	begin(l2);
-	l1->next = *l2;
-	l2->previous = *l1;
+	l1->next = l2;
+	l2->previous = l1;
 	begin(l1);
 	return l1;
 }
 
-List sum(List* l, void* dat){
+Node* sum(Node* l, float dat){
 	if (l == NULL)
 		return NULL;
 	Node* aux = l;
 	begin(aux);
 	while(aux->next != NULL){
-		aux->data = aux->data + *dat;
-		next(aux);
-	}
-	return l;
-} 
-
-List subtract(List* l, void* dat){
-	if (l == NULL)
-		return NULL;
-	Node* aux = l;
-	begin(aux);
-	while(aux->next != NULL){
-		aux->data = aux->data - *dat;
-		next(aux);
-	}
-	return l;
-} 
-
-List mult(List* l, void* dat){
-	if (l == NULL)
-		return NULL;
-	Node* aux = l;
-	begin(aux);
-	while(aux->next != NULL){
-		aux->data = aux->data * *dat;
+        *(float*) aux->data = *(float*) aux->data + dat;
+		//*(aux->data) = *(aux->data) + *dat;
 		next(aux);
 	}
 	return l;
 }
 
-List div(List* l, void* dat){
+Node* subtract(Node* l, float dat){
+	if (l == NULL)
+		return NULL;
+	Node* aux = l;
+	begin(aux);
+	while(aux->next != NULL){
+        *(float*) aux->data = *(float*) aux->data - dat;
+		//aux->data = aux->data - *dat;
+		next(aux);
+	}
+	return l;
+}
+
+Node* mult(Node* l, float dat){
+	if (l == NULL)
+		return NULL;
+	Node* aux = l;
+	begin(aux);
+	while(aux->next != NULL){
+        *(float*) aux->data = *(float*) aux->data * dat;
+		//aux->data = aux->data * *dat;
+		next(aux);
+	}
+	return l;
+}
+
+Node* divi(Node* l, float dat){
+	if (l == NULL || dat == 0)
+		return NULL;
+	Node* aux = l;
+	begin(aux);
+	while(aux->next != NULL){
+        *(float*) aux->data = *(float*) aux->data / dat;
+		//aux->data = aux->data * *dat;
+		next(aux);
+	}
+	return l;
+}
+
+/*
+Node* sum(Node* l, int dat){
+	if (l == NULL)
+		return NULL;
+	Node* aux = l;
+	begin(aux);
+	while(aux->next != NULL){
+        *(int*) aux->data = *(int*) aux->data + dat;
+		//*(aux->data) = *(aux->data) + *dat;
+		next(aux);
+	}
+	return l;
+}
+
+Node* subtract(Node* l, int dat){
+	if (l == NULL)
+		return NULL;
+	Node* aux = l;
+	begin(aux);
+	while(aux->next != NULL){
+        *(int*) aux->data = *(int*) aux->data - dat;
+		//aux->data = aux->data - *dat;
+		next(aux);
+	}
+	return l;
+}
+
+Node* mult(Node* l, int dat){
+	if (l == NULL)
+		return NULL;
+	Node* aux = l;
+	begin(aux);
+	while(aux->next != NULL){
+        *(int*) aux->data = *(int*) aux->data * dat;
+		//aux->data = aux->data * *dat;
+		next(aux);
+	}
+	return l;
+}
+
+Node* div(Node* l, int dat){
 	if (l == NULL || *dat == 0)
 		return NULL;
 	Node* aux = l;
 	begin(aux);
 	while(aux->next != NULL){
-		aux->data = aux->data * *dat;
+        *(int*) aux->data = *(int*) aux->data / dat;
+		//aux->data = aux->data * *dat;
 		next(aux);
 	}
 	return l;
 }
-
-
+*/
