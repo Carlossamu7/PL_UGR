@@ -201,13 +201,35 @@ sentencia_asignacion			: IDENTIFICADOR ASIGNACION exp_cad FINLINEA {	bool error 
 																				insertarAsignacion($1.nombre, $3.valor);
 																			} ;
 
-sentencia_if					: CONDICION PARIZQ expresion PARDER sentencia
-									SUBCONDICION sentencia {	if( $3.tipoDato != booleano ) mensajeErrorTipo1($3, booleano);	}
+sentencia_if					: CONDICION PARIZQ expresion PARDER {	etiquetaFlujo aux;
+																		aux.EtiquetaElse = generarEtiqueta();
+																		aux.EtiquetaSalida = generarEtiqueta();
+																		insertarFlujo(aux);
+																		char* sent = (char*) malloc(200);
+																		sprintf(sent, "%sif(!%s) goto %s;\n", tabs, $3.valor, aux.EtiquetaElse);
+																		fputs(sent, file);
+																	} 
+														sentencia 	{	char* sent = (char*) malloc(200);
+																		sprintf(sent, "%sgoto %s;\n", tabs, aux.EtiquetaSalida);
+																		fputs(sent, file);
+																	}
+									SUBCONDICION 	{	char* sent = (char*) malloc(200);
+														sprintf(sent, "%s%s:\n", tabs, aux.EtiquetaElse);
+														fputs(sent, file);
+													}
+									sentencia 	{	if( $3.tipoDato != booleano ) mensajeErrorTipo1($3, booleano); 
+													char* sent = (char*) malloc(200);
+													sprintf(sent, "%s%s:\n", tabs, aux.EtiquetaSalida);
+													fputs(sent, file);
+												}
 								| CONDICION PARIZQ expresion PARDER sentencia {	if( $3.tipoDato != booleano ) mensajeErrorTipo1($3, 																					booleano);	} ;
 
 sentencia_while					: CICLO PARIZQ expresion PARDER sentencia {	if( $3.tipoDato != booleano ) mensajeErrorTipo1($3, booleano);	};
 
-sentencia_entrada				: ENTRADA lista_variables FINLINEA ;
+sentencia_entrada				: ENTRADA lista_variables FINLINEA 	{	char* sent = (char*) malloc(200);
+																		sprintf(sent, "\", %s);\n",$2.valor);
+																		fputs(sent, file);
+																	};;
 
 sentencia_salida				: SALIDA lista_exp_cadena FINLINEA 	{	char* sent = (char*) malloc(200);
 																		sprintf(sent, "\", %s);\n",$2.valor);
@@ -271,11 +293,10 @@ lista_exp_cadena				: lista_exp_cadena COMA exp_cad {	$$.parametros++;
 																	}
 																	else if(strcmp($0.valor, "IMPRIMIR") == 0){
 																		char* sent = (char*) malloc(200);
-																		printf("Tipo de dato: %s, %s, %c\n", toStringTipo($3.tipoDato), tipoAFormato($3.tipoDato), tipoAFormato($3.tipoDato));
-																		sprintf(sent, "%%%c", tabs, tipoAFormato($3.tipoDato));
+																		sprintf(sent, "%%%c",tipoAFormato($3.tipoDato));
 																		fputs(sent, file);
 																	}
-																	concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);
+																	concatenarStrings4($$.valor, $1.valor, $2.valor, " ", $3.valor);
 																}
 								| exp_cad {	$$.parametros = 1;
 											if (strcmp($0.valor, "(") == 0 ){		// Funcion
@@ -298,13 +319,27 @@ lista_exp_cadena				: lista_exp_cadena COMA exp_cad {	$$.parametros++;
 exp_cad							: expresion	{	$$.tipoDato = $1.tipoDato;
 												$$.tipoInternoLista = $1.tipoInternoLista;
 												concatenarStrings1($$.valor, $1.valor); }
-								| CADENA {	$$.tipoDato = caracter;	
+								| CADENA {	$$.tipoDato = cadena;	
 											concatenarStrings1($$.valor, $1.valor); } ;
 
-lista_variables					: lista_variables COMA IDENTIFICADOR  {	if ( !variableExiste($3) ) mensajeErrorNoDeclarada($3);	
-																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor); }
+lista_variables					: lista_variables COMA IDENTIFICADOR  	{	if ( !variableExiste($3) ) mensajeErrorNoDeclarada($3);	
+																			entradaTS aux = getSimboloIdentificador($3.nombre);
+																			if(strcmp($0.valor, "LEER") == 0){
+																				char* sent = (char*) malloc(200);
+																				sprintf(sent, "%%%c",tipoAFormato(aux.tipoDato));
+																				fputs(sent, file);
+																			}
+																			concatenarStrings4($$.valor, $1.valor, $2.valor, tipoAPuntero(aux.tipoDato), $3.nombre); 
+																		}
 								| IDENTIFICADOR {	if ( !variableExiste($1) ) mensajeErrorNoDeclarada($1);	
-													concatenarStrings1($$.valor, $1.valor);};
+													entradaTS aux = getSimboloIdentificador($1.nombre);
+													if(strcmp($0.valor, "LEER") == 0){
+														char* sent = (char*) malloc(200);
+														sprintf(sent, "%sscanf(\"%%%c",tabs, tipoAFormato(aux.tipoDato));
+														fputs(sent, file);
+													}
+													concatenarStrings2($$.valor, tipoAPuntero(aux.tipoDato), $1.nombre);
+												};
 
 expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																$$.tipoInternoLista = $2.tipoInternoLista;

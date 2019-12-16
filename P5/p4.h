@@ -5,10 +5,11 @@ int debug=0;
 #define true 1
 #define false 0
 #define MAX_TS 1000
+#define MAX_TF 1000
 
 typedef enum {marca, variable, funcion, parametro_formal} tipoEntrada ;
 
-typedef enum {desconocido, entero, real, caracter, booleano, lista} dtipo ;
+typedef enum {desconocido, entero, real, caracter, booleano, lista, cadena} dtipo ;
 
 typedef struct {
 	tipoEntrada 	entrada ;
@@ -18,6 +19,16 @@ typedef struct {
 	dtipo			tipoInternoLista ;
 	unsigned int 	parametros ;
 } entradaTS;
+
+typedef struct {
+char* EtiquetaEntrada ;
+char* EtiquetaSalida ;
+char* EtiquetaElse ;
+char* NombreVarControl ;
+} etiquetaFlujo ;
+
+int TOPEFLUJO = 0;
+etiquetaFlujo TF[MAX_TF];
 
 entradaTS TS[MAX_TS];	/*Pila de la tabla de símbolos*/
 int TOPE = 0;
@@ -33,6 +44,7 @@ char* tipoDeDato();
 char* toStringEntrada();
 char* toStringTipo();
 void concatenarStrings1(char* destination, char* source1);
+char tipoAFormato();
 
 char* tabs = NULL;
 
@@ -41,7 +53,7 @@ char* tabs = NULL;
 void insertar (entradaTS s){
 	if(debug) printf("Inserto la %s %s\n", toStringEntrada(s.entrada), s.nombre);
 
-   if (TOPE == 1000) {
+   if (TOPE == MAX_TS) {
 		printf("\nError: tamanio maximo alcanzado\n");
 		exit(-1);
    } else {
@@ -53,6 +65,21 @@ void insertar (entradaTS s){
 		TS[TOPE].entrada=s.entrada;
 		++TOPE;
    }
+}
+
+void insertarFlujo (etiquetaFlujo s){
+	if(debug) printf("Inserto la %s %s\n", toStringEntrada(s.entrada), s.nombre);
+
+	if (TOPEFLUJO == MAX_TF) {
+		printf("\nError: tamanio maximo alcanzado\n");
+		exit(-1);
+	} else {
+		TF[TOPEFLUJO].EtiquetaEntrada=s.EtiquetaEntrada;
+		TF[TOPEFLUJO].EtiquetaSalida=s.EtiquetaSalida;
+		TF[TOPEFLUJO].EtiquetaElse=s.EtiquetaElse;
+		TF[TOPEFLUJO].NombreVarControl=s.NombreVarControl;
+		++TOPEFLUJO;
+	}
 }
 
 int buscarFuncion (char* nom) {
@@ -610,13 +637,21 @@ char tipoAFormato(dtipo dato) {
 	if(dato == desconocido)		return 's';
 	else if(dato == real)		return 'f';
 	else if(dato == entero)		return 'd';
-	else if(dato == caracter)	return 's';
+	else if(dato == caracter)	return 'c';
+	else if(dato == cadena )	return 's';
 	else if(dato == booleano)	return 'd';
 	else 						return 'l';
 }
 
-insertarSalida(char* vars){
-
+char* tipoAPuntero(dtipo dato){
+	if(dato == desconocido)		return " s";
+	else if(dato == real)		return " &";
+	else if(dato == entero)		return " &";
+	else if(dato == caracter)	return " &";
+	else if(dato == cadena )	return " ";
+	else if(dato == booleano)	return " &";
+	else 						return " l";
 }
+
 
 

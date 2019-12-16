@@ -1,12 +1,12 @@
 PRINCIPAL{
 	VAR
-		ENTERO n, curr;
+		ENTERO n, curr, n2;
 		ENTERO d;
 	FINVAR
 
 	IMPRIMIR "Introduce un numero: " ;
 	
-	LEER n;
+	LEER n, n2;
 
 	IMPRIMIR  n, " == "; 
 	

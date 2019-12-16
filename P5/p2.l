@@ -114,7 +114,7 @@ otros			.
 						return CONSTANTE_CARACTER;
 						}
 {cadena}				{						
-						yylval.tipoDato = caracter;
+						yylval.tipoDato = cadena;
 						yylval.valor = strdup(yytext);
 						return CADENA;
 						}
