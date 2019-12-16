@@ -233,7 +233,7 @@ sentencia_if					: CONDICION PARIZQ expresion PARDER aux sentencia 	{
 																		fputs(sent, file);
 																	}
 									SUBCONDICION 	{	char* sent = (char*) malloc(200);
-														sprintf(sent, "%s%s:\n", numTabs(), TF[TOPEFLUJO-1].EtiquetaElse);
+														sprintf(sent, "%s%s:\n;\n", numTabs(), TF[TOPEFLUJO-1].EtiquetaElse);
 														fputs(sent, file);
 													}
 									sentencia 	{	if( $3.tipoDato != booleano ) mensajeErrorTipo1($3, booleano); 

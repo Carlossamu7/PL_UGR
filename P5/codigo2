@@ -7,11 +7,11 @@ PRINCIPAL{
 	ultim = 0;
 	cuenta = 0;
 	primero = 1;
-	IMPRIMIR ¨Introduce numero: ¨;
+	IMPRIMIR "Introduce numero: ";
 	
 	LEER n;
 	
-	IMPRIMIR  n ¨ == ¨;
+	IMPRIMIR  n,  " == ";
 
 	curr = 2; 
 	
@@ -26,14 +26,14 @@ PRINCIPAL{
 				cuenta = cuenta + 1;
 			n = n/curr;
 		}
-		ELSE{
+		SINO{
 			SI (cuenta>0){
 				SI (primero == 0)
-					IMPRIMIR ¨ *¨;
+					IMPRIMIR " *";
 				primero = 0;				
 				IMPRIMIR	curr;
 				SI (cuenta>1) 
-					IMPRIMIR ¨^¨cuenta;
+					IMPRIMIR "^" ,cuenta;
 						
 			}
 			curr = curr +1;
@@ -45,9 +45,9 @@ PRINCIPAL{
 	SI (cuenta>0){
 		SI (primero == 0)
 			primero = 0;
-		IMPRIMIR ¨ *¨;
+		IMPRIMIR " *";
 		SI (cuenta > 1) 
-			IMPRIMIR  ¨^¨ cuenta;	
+			IMPRIMIR  "^", cuenta;	
 	}
-	IMPRIMIR ¨\n¨;
+	IMPRIMIR "\n";
 }
