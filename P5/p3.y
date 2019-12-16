@@ -205,24 +205,37 @@ sentencia_if					: CONDICION PARIZQ expresion PARDER {	etiquetaFlujo aux;
 																		aux.EtiquetaElse = generarEtiqueta();
 																		aux.EtiquetaSalida = generarEtiqueta();
 																		insertarFlujo(aux);
+																		copiarEF($$.ef, aux);
 																		char* sent = (char*) malloc(200);
 																		sprintf(sent, "%sif(!%s) goto %s;\n", tabs, $3.valor, aux.EtiquetaElse);
 																		fputs(sent, file);
 																	} 
 														sentencia 	{	char* sent = (char*) malloc(200);
-																		sprintf(sent, "%sgoto %s;\n", tabs, aux.EtiquetaSalida);
+																		sprintf(sent, "%sgoto %s;\n", tabs, $$.ef.EtiquetaSalida);
 																		fputs(sent, file);
 																	}
 									SUBCONDICION 	{	char* sent = (char*) malloc(200);
-														sprintf(sent, "%s%s:\n", tabs, aux.EtiquetaElse);
+														sprintf(sent, "%s%s:\n", tabs, $$.ef.EtiquetaElse);
 														fputs(sent, file);
 													}
 									sentencia 	{	if( $3.tipoDato != booleano ) mensajeErrorTipo1($3, booleano); 
 													char* sent = (char*) malloc(200);
-													sprintf(sent, "%s%s:\n", tabs, aux.EtiquetaSalida);
+													sprintf(sent, "%s%s:\n", tabs, $$.ef.EtiquetaSalida);
 													fputs(sent, file);
 												}
-								| CONDICION PARIZQ expresion PARDER sentencia {	if( $3.tipoDato != booleano ) mensajeErrorTipo1($3, 																					booleano);	} ;
+								| CONDICION PARIZQ expresion PARDER {	etiquetaFlujo aux;
+																		aux.EtiquetaSalida = generarEtiqueta();
+																		insertarFlujo(aux);
+																		copiarEF($$.ef, aux);
+																		char* sent = (char*) malloc(200);
+																		sprintf(sent, "%sif(!%s) goto %s;\n", tabs, $3.valor, aux.EtiquetaSalida);
+																		fputs(sent, file);
+																	}
+									sentencia 	{	if( $3.tipoDato != booleano ) mensajeErrorTipo1($3, booleano);	
+													char* sent = (char*) malloc(200);
+													sprintf(sent, "%s%s:\n", tabs, $$.ef.EtiquetaSalida);
+													fputs(sent, file);
+												} ;
 
 sentencia_while					: CICLO PARIZQ expresion PARDER sentencia {	if( $3.tipoDato != booleano ) mensajeErrorTipo1($3, booleano);	};
 

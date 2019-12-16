@@ -1,15 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-void concatenarStrings(char* destination, char* format, ...){
-	if( destination == NULL)
-		destination = (char*) malloc(200);
-	_G_va_list argptr;
-	sprintf(destination, format, argptr[0]);
-}
+
+typedef struct 
+{
+	char* str1;
+	char* str2;
+	int int1;
+}asd;
+
 
 int main(){
-	char* a;
-	concatenarStrings(a, "%s lo que tu quieras %d\n", "dasd", 3);
-	printf("%s", a);
+	asd test;
+	test.str1 = strdup("hola");
+	test.str2 = strdup("adios");
+	test.int1 = 3;
+	asd test2;
+	test2 = test;
+	printf("%s %d", test2.str1, test2.int1);
 }

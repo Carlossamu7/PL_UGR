@@ -12,20 +12,21 @@ typedef enum {marca, variable, funcion, parametro_formal} tipoEntrada ;
 typedef enum {desconocido, entero, real, caracter, booleano, lista, cadena} dtipo ;
 
 typedef struct {
+char* EtiquetaEntrada ;
+char* EtiquetaSalida ;
+char* EtiquetaElse ;
+char* NombreVarControl ;
+} etiquetaFlujo ;
+
+typedef struct {
 	tipoEntrada 	entrada ;
 	char*			nombre ;
 	char* 			valor;
 	dtipo 			tipoDato ;
 	dtipo			tipoInternoLista ;
 	unsigned int 	parametros ;
+	etiquetaFlujo	ef ;
 } entradaTS;
-
-typedef struct {
-char* EtiquetaEntrada ;
-char* EtiquetaSalida ;
-char* EtiquetaElse ;
-char* NombreVarControl ;
-} etiquetaFlujo ;
 
 int TOPEFLUJO = 0;
 etiquetaFlujo TF[MAX_TF];
@@ -49,6 +50,14 @@ char tipoAFormato();
 char* tabs = NULL;
 
 
+void copiarEF(etiquetaFlujo dest, etiquetaFlujo source){
+	dest.EtiquetaEntrada = strdup(source.EtiquetaEntrada) ;
+	dest.EtiquetaSalida = strdup(source.EtiquetaSalida) ;
+	dest.EtiquetaElse = strdup(source.EtiquetaElse) ;
+	dest.NombreVarControl = strdup(source.NombreVarControl) ;
+}
+
+
 // Inserta una entrada en la pila
 void insertar (entradaTS s){
 	if(debug) printf("Inserto la %s %s\n", toStringEntrada(s.entrada), s.nombre);
@@ -63,13 +72,12 @@ void insertar (entradaTS s){
 		TS[TOPE].tipoInternoLista=s.tipoInternoLista;
 		TS[TOPE].parametros=s.parametros;
 		TS[TOPE].entrada=s.entrada;
+		TS[TOPE].ef = s.ef;
 		++TOPE;
    }
 }
 
 void insertarFlujo (etiquetaFlujo s){
-	if(debug) printf("Inserto la %s %s\n", toStringEntrada(s.entrada), s.nombre);
-
 	if (TOPEFLUJO == MAX_TF) {
 		printf("\nError: tamanio maximo alcanzado\n");
 		exit(-1);
