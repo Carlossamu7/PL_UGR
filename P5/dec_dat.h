@@ -11,6 +11,27 @@ typedef struct Node_t {
 typedef int bool;
 typedef enum {desconocido, entero, real, caracter, booleano, lista, cadena} dtipo ;
 
+void next(Node* l){
+    if (l == NULL)
+        return;
+	if (l->next != NULL)
+		l = l->next;
+}
+
+void previous(Node* l){
+    if (l == NULL)
+        return;
+	if (l->previous != NULL)
+		l = l->previous;
+}
+
+void begin(Node* l){
+    if (l == NULL)
+        return;
+	while (l->previous != NULL)
+		previous(l);
+}
+
 void push(Node* inicial, int new_data)
 {
 	Node* new_node = (Node*) malloc(sizeof(Node));
@@ -34,27 +55,6 @@ void printList(Node* l)
 	printf("]\n");
 }
 
-void next(Node* l){
-    if (l == NULL)
-        return;
-	if (l->next != NULL)
-		l = l->next;
-}
-
-void previous(Node* l){
-    if (l == NULL)
-        return;
-	if (l->previous != NULL)
-		l = l->previous;
-}
-
-void begin(Node* l){
-    if (l == NULL)
-        return;
-	while (l->previous != NULL)
-		previous(l);
-}
-
 void end(Node* l){
 	while (l->next != NULL)
 		next(l);
@@ -74,6 +74,8 @@ unsigned int length(Node* l){
 }
 
 int currentData(Node* l){
+    if(l == NULL)
+        return 0;
 	return l->data;
 }
 
