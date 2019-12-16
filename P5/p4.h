@@ -602,7 +602,7 @@ char* tipoDeDato (dtipo td) {
 	if(td == booleano)	return "bool";	
 	if(td == real)		return "float";
 	if(td == caracter)	return "char";
-	if(td == lista)		return "list";
+	if(td == lista)		return "Node*";
 	return "Error de tipo";
 }
 
@@ -685,7 +685,7 @@ char* tipoAPuntero(dtipo dato){
 	else if(dato == caracter)	return " &";
 	else if(dato == cadena )	return " ";
 	else if(dato == booleano)	return " &";
-	else 						return " l";
+	else 						return " ";
 }
 
 char* numTabs(){

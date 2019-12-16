@@ -1,0 +1,28 @@
+PRINCIPAL{
+    VAR
+        ENTERO ve ;
+        REAL vr;
+        CARACTER vc ;
+        BOOLEANO vb ;
+
+        LISTA DE ENTERO le, le2 ;
+        LISTA DE REAL lr ;
+    FINVAR 
+	PARA ve :=  0  HASTA 10  PASO 1 {
+        lr = lr ++ vr @ ve ;
+        vr = lr @ ve ;
+    }
+
+    lr>> ;
+    lr<< ;
+    $lr ;
+    vr = ?(lr--2) ;
+    ve = #(le++3@1) ;
+	ve = #le ;
+	lr = lr%2 ;
+    le = le%(#le/2) ** le2 ;
+    lr = lr+2.0;
+    lr = 2.0-lr;
+    le = le*2;
+    le = 2*le;
+}
