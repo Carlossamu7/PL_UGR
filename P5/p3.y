@@ -331,15 +331,29 @@ sentencia_for					: BUCLE IDENTIFICADOR DOSPUNTOSIGUAL expresion {
 										sacarTF();
 									};
 
-sentencia_iterar				: IDENTIFICADOR OPUNARIOPOST FINLINEA {	if( !variableExiste($1) ) mensajeErrorNoDeclarada($1);
-																		else{
-																			entradaTS aux = getSimboloIdentificador($1.nombre);
-																			if( aux.tipoDato != lista ) mensajeErrorTipo1(aux, lista); }	};
+sentencia_iterar				: IDENTIFICADOR OPUNARIOPOST FINLINEA {	
+										if( !variableExiste($1) ) mensajeErrorNoDeclarada($1);
+										else{
+											entradaTS aux = getSimboloIdentificador($1.nombre);
+											if( aux.tipoDato != lista ) mensajeErrorTipo1(aux, lista); 
+										}
+										char* sent = (char*) malloc(200);
+										if (strcmp($2.valor, ">>") == 0)
+											sprintf(sent, "%snext(%s);\n", numTabs(), $1.nombre);
+										else
+											sprintf(sent, "%sprevious(%s);\n", numTabs(), $1.nombre);
+										fputs(sent, file);
+									};
 																		
-sentencia_reset_cursor			: OPDOLAR IDENTIFICADOR FINLINEA {	if( !variableExiste($2) ) mensajeErrorNoDeclarada($2); 
-																	else{
-																			entradaTS aux = getSimboloIdentificador($2.nombre);
-																			if( aux.tipoDato != lista ) mensajeErrorTipo1(aux, lista); }	};
+sentencia_reset_cursor			: OPDOLAR IDENTIFICADOR FINLINEA {	
+										if( !variableExiste($2) ) mensajeErrorNoDeclarada($2); 
+										else{
+												entradaTS aux = getSimboloIdentificador($2.nombre);
+												if( aux.tipoDato != lista ) mensajeErrorTipo1(aux, lista); }	
+										char* sent = (char*) malloc(200);
+										sprintf(sent, "%sbegin(%s);\n", numTabs(), $2.nombre);
+										fputs(sent, file);
+									};
 
 lista_parametros				: lista_parametros COMA tipo IDENTIFICADOR {	
 												$$.parametros++; 
@@ -455,7 +469,6 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 										else $$.tipoDato = $2.tipoInternoLista;
 									}
 									$$.tipoInternoLista = desconocido;
-									concatenarStrings2($$.valor, $1.valor, $2.valor);
 									char* sent = (char*) malloc(200);
 									if (strcmp($1.nombre, "#") == 0) 
 										sprintf(sent, "%s%s = length(%s);\n", numTabs(), generarTemp(entero), $2.valor);
@@ -464,6 +477,7 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 									fputs(sent, file);
 									char* aux = (char*) malloc(20);
 									sprintf(aux, "temp%d", temp);
+									concatenarStrings1($$.valor, aux);
 								}
 								| SIGNO expresion %prec OPUNARIO	{	if( $2.tipoDato != entero && $2.tipoDato != real && 
 																			$2.tipoInternoLista != entero && $2.tipoInternoLista != real ){
@@ -635,92 +649,111 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 											if (error) $$.tipoDato = desconocido;
 											else $$.tipoDato = lista;
 											$$.tipoInternoLista = $1.tipoInternoLista;
-											concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);
 											char* sent = (char*) malloc(200);
 											sprintf(sent, "%s%s = deleteAt(%s, %s);\n", numTabs(), generarTemp(lista), $1.valor, $3.valor);
 											fputs(sent, file);
 											char* aux = (char*) malloc(20);
 											sprintf(aux, "temp%d", temp);
+											concatenarStrings1($$.valor, aux);
 										}
-								| expresion OPPORCENTAJE expresion	{	bool error=false;
-																		if( $1.tipoDato != lista ){ 
-																			mensajeErrorTipo1($1, lista);
-																			error = true;
-																		}
-																		if( $3.tipoDato != entero ) {
-																			mensajeErrorTipo1($3, entero);
-																			error = true;
-																		}
-																		if (error) $$.tipoDato = desconocido;
-																		else $$.tipoDato = lista;
-																		$$.tipoInternoLista = $1.tipoInternoLista;
-																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);
-																		// TODO FOR BONUS
-																	}
-								| expresion OPCONCATENAR expresion	{	bool error=false;
-																		if( $1.tipoDato != lista ){
-																			mensajeErrorTipo1($1, lista);
-																			error = true;
-																		}
-																		if( $3.tipoDato != lista ){
-																			mensajeErrorTipo1($3, lista);
-																			error = true;
-																		}
-																		if( $1.tipoInternoLista != $3.tipoInternoLista){
-																			mensajeErrorTiposInternosNoCoinciden($1, $3);
-																			error = true;
-																		} 
-																		if (error){ 
-																			$$.tipoDato = desconocido;
-																			$$.tipoInternoLista = desconocido;
-																		}
-																		else{
-																			$$.tipoDato = lista;
-																			$$.tipoInternoLista = $1.tipoInternoLista;
-																		}
-																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);
-																		// TODO FOR BONUS
-																	}
-								| expresion OPARROBA expresion	{	bool error=false;
-																	if( $1.tipoDato != lista ){ 
-																		mensajeErrorTipo1($1, lista);
-																		error = true;
-																	}
-																	if( $3.tipoDato != entero ) {
-																		mensajeErrorTipo1($3, entero);
-																		error = true;
-																	}
-																	if (error) $$.tipoDato = desconocido;
-																	else $$.tipoDato = $1.tipoInternoLista;
-																	$$.tipoInternoLista = desconocido;
-																	concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);
-																	// TODO FOR BONUS
-																}
+								| expresion OPPORCENTAJE expresion	{	
+										bool error=false;
+										if( $1.tipoDato != lista ){ 
+											mensajeErrorTipo1($1, lista);
+											error = true;
+										}
+										if( $3.tipoDato != entero ) {
+											mensajeErrorTipo1($3, entero);
+											error = true;
+										}
+										if (error) $$.tipoDato = desconocido;
+										else $$.tipoDato = lista;
+										$$.tipoInternoLista = $1.tipoInternoLista;
+										char* sent = (char*) malloc(200);
+										sprintf(sent, "%s%s = deleteSince(%s, %s);\n", numTabs(), generarTemp(lista), $1.valor, $3.valor);
+										fputs(sent, file);
+										char* aux = (char*) malloc(20);
+										sprintf(aux, "temp%d", temp);
+										concatenarStrings1($$.valor, aux);
+										}
+								| expresion OPCONCATENAR expresion	{	
+										bool error=false;
+										if( $1.tipoDato != lista ){
+											mensajeErrorTipo1($1, lista);
+											error = true;
+										}
+										if( $3.tipoDato != lista ){
+											mensajeErrorTipo1($3, lista);
+											error = true;
+										}
+										if( $1.tipoInternoLista != $3.tipoInternoLista){
+											mensajeErrorTiposInternosNoCoinciden($1, $3);
+											error = true;
+										} 
+										if (error){ 
+											$$.tipoDato = desconocido;
+											$$.tipoInternoLista = desconocido;
+										}
+										else{
+											$$.tipoDato = lista;
+											$$.tipoInternoLista = $1.tipoInternoLista;
+										}
+										char* sent = (char*) malloc(200);
+										sprintf(sent, "%s%s = concatenate(%s, %s);\n", numTabs(), generarTemp(lista), $1.valor, $3.valor);
+										fputs(sent, file);
+										char* aux = (char*) malloc(20);
+										sprintf(aux, "temp%d", temp);
+										concatenarStrings1($$.valor, aux);
+									}
+								| expresion OPARROBA expresion	{	
+										bool error=false;
+										if( $1.tipoDato != lista ){ 
+											mensajeErrorTipo1($1, lista);
+											error = true;
+										}
+										if( $3.tipoDato != entero ) {
+											mensajeErrorTipo1($3, entero);
+											error = true;
+										}
+										if (error) $$.tipoDato = desconocido;
+										else $$.tipoDato = $1.tipoInternoLista;
+										$$.tipoInternoLista = desconocido;
+										char* sent = (char*) malloc(200);
+										sprintf(sent, "%s%s = dataAt(%s, %s);\n", numTabs(), generarTemp($1.tipoInternoLista), $1.valor, $3.valor);
+										fputs(sent, file);
+										char* aux = (char*) malloc(20);
+										sprintf(aux, "temp%d", temp);
+										concatenarStrings1($$.valor, aux);
+									}
 								| expresion OPINCREMENTO expresion OPARROBA expresion	{
-												bool error = false;	
-												if( $1.tipoDato != lista ){ 
-													mensajeErrorTipo1($1, lista);
-													error = true;
-												}
-												if( $3.tipoDato != $1.tipoInternoLista ){
-													mensajeErrorTipo1($3, $1.tipoInternoLista);
-													error = true;
-												}
-												if( $5.tipoDato != entero ){ 
-													mensajeErrorTipo1($5, entero);
-													error = true;
-												}
-												if (error){ 
-													$$.tipoDato = desconocido;
-													$$.tipoInternoLista = desconocido;
-												}
-												else{
-													$$.tipoDato = lista;
-													$$.tipoInternoLista = $1.tipoInternoLista;
-												}
-												concatenarStrings5($$.valor, $1.valor, $2.valor, $3.valor, $4.valor, $5.valor);
-												// TODO FOR BONUS
-											}
+									bool error = false;	
+									if( $1.tipoDato != lista ){ 
+										mensajeErrorTipo1($1, lista);
+										error = true;
+									}
+									if( $3.tipoDato != $1.tipoInternoLista ){
+										mensajeErrorTipo1($3, $1.tipoInternoLista);
+										error = true;
+									}
+									if( $5.tipoDato != entero ){ 
+										mensajeErrorTipo1($5, entero);
+										error = true;
+									}
+									if (error){ 
+										$$.tipoDato = desconocido;
+										$$.tipoInternoLista = desconocido;
+									}
+									else{
+										$$.tipoDato = lista;
+										$$.tipoInternoLista = $1.tipoInternoLista;
+									}
+									char* sent = (char*) malloc(200);
+									sprintf(sent, "%s%s = addAt(%s, %s, %s);\n", numTabs(), generarTemp(lista), $1.valor, $5.valor, $3.valor);
+									fputs(sent, file);
+									char* aux = (char*) malloc(20);
+									sprintf(aux, "temp%d", temp);
+									concatenarStrings1($$.valor, aux);
+								}
 								| IDENTIFICADOR	{	if( !variableExiste($1) ){
 														mensajeErrorNoDeclarada($1);
 														$$.tipoDato = desconocido;
