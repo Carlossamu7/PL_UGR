@@ -2,11 +2,11 @@
 #include "dec_dat.h"
 
 int main(){
-    Node* a;
+    Node* a = NULL;
     int entero = 2;
 
-    push(a, entero);
-    push(a, entero);
+    a = push(a, entero);
+    push(a, 3);
     printList(a);
     begin(a);
     //sum(a, 2);

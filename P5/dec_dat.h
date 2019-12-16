@@ -32,14 +32,24 @@ void begin(Node* l){
 		previous(l);
 }
 
-void push(Node* inicial, int new_data)
+void end(Node* l){
+	while (l->next != NULL)
+		next(l);
+}
+
+Node* push(Node* l, int new_data)
 {
+    Node* aux = l;
+    if(aux != NULL){
+        end(aux);
+    }
 	Node* new_node = (Node*) malloc(sizeof(Node));
 	new_node->data = new_data;
-	new_node->next = inicial;
-    new_node->previous = NULL;
-    if(inicial != NULL) inicial->previous = new_node;
-	inicial = new_node;
+	new_node->next = NULL;
+    new_node->previous = aux;
+    if(aux != NULL) aux->next = new_node;
+	//l = new_node;
+    return new_node;
 }
 
 void printList(Node* l)
@@ -53,11 +63,6 @@ void printList(Node* l)
         aux = aux->next;
     }
 	printf("]\n");
-}
-
-void end(Node* l){
-	while (l->next != NULL)
-		next(l);
 }
 
 unsigned int length(Node* l){
