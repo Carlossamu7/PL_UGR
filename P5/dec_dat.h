@@ -14,33 +14,43 @@ typedef enum {desconocido, entero, real, caracter, booleano, lista, cadena} dtip
 void push(Node* inicial, int new_data)
 {
 	Node* new_node = (Node*) malloc(sizeof(Node));
-	new_node->data  = new_data;
+	new_node->data = new_data;
 	new_node->next = inicial;
+    new_node->previous = NULL;
+    if(inicial != NULL) inicial->previous = new_node;
 	inicial = new_node;
 }
 
 void printList(Node* l)
 {
+    Node* aux = l;
+	begin(aux);
 	printf("[");
-    while (l != NULL)
+    while (aux != NULL)
     {
-		printf("%d", l->data);
-        l = l->next;
+		printf("%d", aux->data);
+        aux = aux->next;
     }
-	printf("]");
+	printf("]\n");
 }
 
 void next(Node* l){
+    if (l == NULL)
+        return;
 	if (l->next != NULL)
 		l = l->next;
 }
 
 void previous(Node* l){
+    if (l == NULL)
+        return;
 	if (l->previous != NULL)
 		l = l->previous;
 }
 
 void begin(Node* l){
+    if (l == NULL)
+        return;
 	while (l->previous != NULL)
 		previous(l);
 }

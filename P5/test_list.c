@@ -6,8 +6,8 @@ int main(){
     int entero = 2;
 
     push(a, entero);
-    //printList(a, entero);
+    printList(a);
     begin(a);
-    sum(a, 2);
+    //sum(a, 2);
     return 0;
 }
