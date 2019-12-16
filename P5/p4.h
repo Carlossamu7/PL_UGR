@@ -46,15 +46,22 @@ char* toStringEntrada();
 char* toStringTipo();
 void concatenarStrings1(char* destination, char* source1);
 char tipoAFormato();
+char *strdup(const char *src);
 
 char* tabs = NULL;
 
+char *strdup(const char *src) {
+    char *dst = malloc(strlen (src) + 1);  // Space for length plus nul
+    if (dst == NULL) return NULL;          // No memory
+    strcpy(dst, src);                      // Copy the characters
+    return dst;                            // Return the new string
+}
 
-void copiarEF(etiquetaFlujo dest, etiquetaFlujo source){
-	dest.EtiquetaEntrada = strdup(source.EtiquetaEntrada) ;
-	dest.EtiquetaSalida = strdup(source.EtiquetaSalida) ;
-	dest.EtiquetaElse = strdup(source.EtiquetaElse) ;
-	dest.NombreVarControl = strdup(source.NombreVarControl) ;
+void copiarEF(etiquetaFlujo *dest, etiquetaFlujo *source){
+	if (source->EtiquetaEntrada != NULL) 	dest->EtiquetaEntrada = strdup(source->EtiquetaEntrada) ;
+	if (source->EtiquetaSalida != NULL)		dest->EtiquetaSalida = strdup(source->EtiquetaSalida) ;
+	if (source->EtiquetaElse != NULL)		dest->EtiquetaElse = strdup(source->EtiquetaElse) ;
+	if (source->NombreVarControl != NULL)	dest->NombreVarControl = strdup(source->NombreVarControl) ;
 }
 
 
@@ -196,6 +203,13 @@ void sacar(){
 	if(debug) printf("sacar()\n");
    if (TOPE > 0) {
       --TOPE;
+   }
+}
+
+void sacarTF(){
+	if(debug) printf("sacar()\n");
+   if (TOPEFLUJO > 0) {
+      --TOPEFLUJO;
    }
 }
 
@@ -538,12 +552,6 @@ bool comprobarParametro(char* nombre, int nParam, dtipo dato) {
 	return esIgual;
 }
 
-char *strdup(const char *src) {
-    char *dst = malloc(strlen (src) + 1);  // Space for length plus nul
-    if (dst == NULL) return NULL;          // No memory
-    strcpy(dst, src);                      // Copy the characters
-    return dst;                            // Return the new string
-}
 
 
 /* PRÁCTICA 5 */
@@ -568,6 +576,7 @@ char* generarEtiqueta() {
 void generarFichero() {
 	file = fopen("codigoGenerado.c","w");
 	fputs("#include<stdio.h>\n",file);
+	fputs("typedef int bool;\n",file);
 }
 
 void cerrarFichero() {

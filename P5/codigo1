@@ -1,26 +1,33 @@
 PRINCIPAL{
 	VAR
-		ENTERO n, curr, n2;
+		ENTERO n, curr;
 		ENTERO d;
+		BOOLEANO first;
 	FINVAR
 
 	IMPRIMIR "Introduce un numero: " ;
 	
-	LEER n, n2;
+	LEER n;
 
 	IMPRIMIR  n, " == "; 
 	
 	curr = 2;
+	first = VERDADERO;
 	
 	MIENTRAS(curr <= n){
 		d = n/curr;
 		SI (d*curr == n){
-			IMPRIMIR " * ", curr;
+			SI(first){ 
+				IMPRIMIR curr;
+				first = FALSO;
+			}
+			SINO IMPRIMIR " * ", curr;
 			n = n/curr;	
 		}
-		SINO 
+		SINO {
 			curr = curr + 1;
-	}	
+		}
+	}
 	IMPRIMIR "\n";
 	
 }
