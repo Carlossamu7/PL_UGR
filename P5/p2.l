@@ -226,10 +226,12 @@ otros			.
 						}
 "#"						{
 						yylval.valor = strdup(yytext);
+						yylval.nombre = strdup(yytext);
 						return OPUNARIOLISTAS;
 						}
 "?"						{
 						yylval.valor = strdup(yytext);
+						yylval.nombre = strdup(yytext);
 						return OPUNARIOLISTAS;
 						}
 "$"						{
@@ -246,10 +248,12 @@ otros			.
 						}
 ">>"					{
 						yylval.valor = strdup(yytext);
+						yylval.nombre = strdup(yytext);
 						return OPUNARIOPOST;
 						}
 "<<"					{
 						yylval.valor = strdup(yytext);
+						yylval.nombre = strdup(yytext);
 						return OPUNARIOPOST;
 						}
 "++"					{

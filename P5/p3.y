@@ -446,17 +446,25 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 															sprintf(aux, "temp%d", temp);
 															concatenarStrings1($$.valor, aux);
 														}
-								| OPUNARIOLISTAS expresion	{	if( $2.tipoDato != lista ){
-																	mensajeErrorTipo1($2, lista);
-																	$$.tipoDato = desconocido;
-																} else {
-																	if( strcmp($1.valor, "#") == 0)$$.tipoDato = entero;
-																	else $$.tipoDato = $2.tipoInternoLista;
-																}
-																$$.tipoInternoLista = desconocido;
-																concatenarStrings2($$.valor, $1.valor, $2.valor);
-																// TODO FOR BONUS
-															}
+								| OPUNARIOLISTAS expresion	{	
+									if( $2.tipoDato != lista ){
+										mensajeErrorTipo1($2, lista);
+										$$.tipoDato = desconocido;
+									} else {
+										if( strcmp($1.valor, "#") == 0)$$.tipoDato = entero;
+										else $$.tipoDato = $2.tipoInternoLista;
+									}
+									$$.tipoInternoLista = desconocido;
+									concatenarStrings2($$.valor, $1.valor, $2.valor);
+									char* sent = (char*) malloc(200);
+									if (strcmp($1.nombre, "#") == 0) 
+										sprintf(sent, "%s%s = length(%s);\n", numTabs(), generarTemp(entero), $2.valor);
+									else
+										sprintf(sent, "%s%s = currentData(%s);\n", numTabs(), generarTemp($2.tipoInternoLista), $2.valor);
+									fputs(sent, file);
+									char* aux = (char*) malloc(20);
+									sprintf(aux, "temp%d", temp);
+								}
 								| SIGNO expresion %prec OPUNARIO	{	if( $2.tipoDato != entero && $2.tipoDato != real && 
 																			$2.tipoInternoLista != entero && $2.tipoInternoLista != real ){
 																			mensajeErrorTipo2($2, entero, real);
@@ -614,21 +622,26 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																			sprintf(aux, "temp%d", temp);
 																			concatenarStrings1($$.valor, aux);
 																		}
-								| expresion OPDECREMENTO expresion	{	bool error=false;
-																		if( $1.tipoDato != lista ){ 
-																			mensajeErrorTipo1($1, lista);
-																			error = true;
-																		}
-																		if( $3.tipoDato != entero ) {
-																			mensajeErrorTipo1($3, entero);
-																			error = true;
-																		}
-																		if (error) $$.tipoDato = desconocido;
-																		else $$.tipoDato = lista;
-																		$$.tipoInternoLista = $1.tipoInternoLista;
-																		concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);
-																		// TODO FOR BONUS
-																	}
+								| expresion OPDECREMENTO expresion	{	
+											bool error=false;
+											if( $1.tipoDato != lista ){ 
+												mensajeErrorTipo1($1, lista);
+												error = true;
+											}
+											if( $3.tipoDato != entero ) {
+												mensajeErrorTipo1($3, entero);
+												error = true;
+											}
+											if (error) $$.tipoDato = desconocido;
+											else $$.tipoDato = lista;
+											$$.tipoInternoLista = $1.tipoInternoLista;
+											concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);
+											char* sent = (char*) malloc(200);
+											sprintf(sent, "%s%s = deleteAt(%s, %s);\n", numTabs(), generarTemp(lista), $1.valor, $3.valor);
+											fputs(sent, file);
+											char* aux = (char*) malloc(20);
+											sprintf(aux, "temp%d", temp);
+										}
 								| expresion OPPORCENTAJE expresion	{	bool error=false;
 																		if( $1.tipoDato != lista ){ 
 																			mensajeErrorTipo1($1, lista);

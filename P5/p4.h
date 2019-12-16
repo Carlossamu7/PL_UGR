@@ -587,7 +587,8 @@ void generarFichero() {
 	file = file_std;
 	fputs("#include<stdio.h>\n", file);
 	fputs("#include \"dec_fun.h\"\n", file);
-	fputs("typedef int bool;\n", file);
+	fputs("#include \"dec_dat.h\"\n\n", file);
+	fputs("typedef int bool;\n\n", file);
 	generarFicheroFunciones();
 }
 
