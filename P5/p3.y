@@ -492,29 +492,48 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																		sprintf(aux, "temp%d", temp);
 																		concatenarStrings1($$.valor, aux);
 																	}
-								| expresion SIGNO expresion	{	if ($1.tipoDato == lista && $3.tipoDato == $1.tipoInternoLista){
-																	$$.tipoDato = lista;
-																	$$.tipoInternoLista = $1.tipoInternoLista;
-																}
-																else if ($3.tipoDato == lista && $1.tipoDato == $3.tipoInternoLista){
-																	$$.tipoDato = lista;
-																	$$.tipoInternoLista = $3.tipoInternoLista;
-																}
-																else if( $1.tipoDato == $3.tipoDato){
-																	$$.tipoDato = $1.tipoDato;
-																	$$.tipoInternoLista = desconocido;
-																}
-																else {
-																	mensajeErrorOperarTipos($1, $3);
-																	$$.tipoDato = desconocido;
-																}
-																char* sent = (char*) malloc(200);
-																sprintf(sent, "%s%s = %s %s %s;\n", numTabs(), generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
-																fputs(sent, file);
-																char* aux = (char*) malloc(20);
-																sprintf(aux, "temp%d", temp);
-																concatenarStrings1($$.valor, aux);
-															}
+								| expresion SIGNO expresion	{	
+									char* sent = (char*) malloc(200);
+									char* aux = (char*) malloc(20);
+									if ($1.tipoDato == lista && $3.tipoDato == $1.tipoInternoLista){
+										$$.tipoDato = lista;
+										$$.tipoInternoLista = $1.tipoInternoLista;
+										if (strcmp($2.nombre, "+") == 0) 
+											sprintf(sent, "%s%s = sum(%s, %s);\n", numTabs(), generarTemp(lista), $1.valor, $3.valor);
+										else
+											sprintf(sent, "%s%s = subtract(%s, %s);\n", numTabs(), generarTemp(lista), $1.valor, $3.valor);
+										fputs(sent, file);
+										sprintf(aux, "temp%d", temp);
+										concatenarStrings1($$.valor, aux);
+									}
+									else if ($3.tipoDato == lista && $1.tipoDato == $3.tipoInternoLista){
+										$$.tipoDato = lista;
+										$$.tipoInternoLista = $3.tipoInternoLista;
+										if (strcmp($2.nombre, "+") == 0) 
+											sprintf(sent, "%s%s = sum(%s, %s);\n", numTabs(), generarTemp(lista), $3.valor, $1.valor);
+										else
+											sprintf(sent, "%s%s = subtract(%s, %s);\n", numTabs(), generarTemp(lista), $3.valor, $1.valor);
+										fputs(sent, file);
+										sprintf(aux, "temp%d", temp);
+										concatenarStrings1($$.valor, aux);
+									}
+									else if( $1.tipoDato == $3.tipoDato){
+										$$.tipoDato = $1.tipoDato;
+										$$.tipoInternoLista = desconocido;
+										sprintf(sent, "%s%s = %s %s %s;\n", numTabs(), generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+										fputs(sent, file);
+										sprintf(aux, "temp%d", temp);
+										concatenarStrings1($$.valor, aux);
+									}
+									else {
+										mensajeErrorOperarTipos($1, $3);
+										$$.tipoDato = desconocido;
+										sprintf(sent, "%s%s = %s %s %s;\n", numTabs(), generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+										fputs(sent, file);
+										sprintf(aux, "temp%d", temp);
+										concatenarStrings1($$.valor, aux);
+									}
+								}
 								| expresion OPORLOGICO expresion	{	bool error=false;
 																		if( $1.tipoDato != booleano ){
 																			mensajeErrorTipo1($1, booleano);
@@ -613,29 +632,48 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 																		sprintf(aux, "temp%d", temp);
 																		concatenarStrings1($$.valor, aux);
 																	}
-								| expresion OPMULTIPLICATIVOS expresion	{	if ($1.tipoDato == lista && $3.tipoDato == $1.tipoInternoLista){
-																			$$.tipoDato = lista;
-																			$$.tipoInternoLista = $1.tipoInternoLista;
-																			}
-																			else if ($3.tipoDato == lista && $1.tipoDato == $3.tipoInternoLista){
-																				$$.tipoDato = lista;
-																				$$.tipoInternoLista = $3.tipoInternoLista;
-																			}
-																			else if( $1.tipoDato == $3.tipoDato){
-																				$$.tipoDato = $1.tipoDato;
-																				$$.tipoInternoLista = desconocido;
-																			}
-																			else {
-																				mensajeErrorOperarTipos($1, $3);
-																				$$.tipoDato = desconocido;
-																			}
-																			char* sent = (char*) malloc(200);
-																			sprintf(sent, "%s%s = %s %s %s;\n", numTabs(), generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
-																			fputs(sent, file);
-																			char* aux = (char*) malloc(20);
-																			sprintf(aux, "temp%d", temp);
-																			concatenarStrings1($$.valor, aux);
-																		}
+								| expresion OPMULTIPLICATIVOS expresion	{	
+									char* sent = (char*) malloc(200);
+									char* aux = (char*) malloc(20);
+									if ($1.tipoDato == lista && $3.tipoDato == $1.tipoInternoLista){
+										$$.tipoDato = lista;
+										$$.tipoInternoLista = $1.tipoInternoLista;
+										if (strcmp($2.nombre, "*") == 0) 
+											sprintf(sent, "%s%s = mult(%s, %s);\n", numTabs(), generarTemp(lista), $1.valor, $3.valor);
+										else
+											sprintf(sent, "%s%s = divi(%s, %s);\n", numTabs(), generarTemp(lista), $1.valor, $3.valor);
+										fputs(sent, file);
+										sprintf(aux, "temp%d", temp);
+										concatenarStrings1($$.valor, aux);
+									}
+									else if ($3.tipoDato == lista && $1.tipoDato == $3.tipoInternoLista){
+										$$.tipoDato = lista;
+										$$.tipoInternoLista = $3.tipoInternoLista;
+										if (strcmp($2.nombre, "*") == 0) 
+											sprintf(sent, "%s%s = mult(%s, %s);\n", numTabs(), generarTemp(lista), $3.valor, $1.valor);
+										else
+											sprintf(sent, "%s%s = divi(%s, %s);\n", numTabs(), generarTemp(lista), $3.valor, $1.valor);
+										fputs(sent, file);
+										sprintf(aux, "temp%d", temp);
+										concatenarStrings1($$.valor, aux);
+									}
+									else if( $1.tipoDato == $3.tipoDato){
+										$$.tipoDato = $1.tipoDato;
+										$$.tipoInternoLista = desconocido;
+										sprintf(sent, "%s%s = %s %s %s;\n", numTabs(), generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+										fputs(sent, file);
+										sprintf(aux, "temp%d", temp);
+										concatenarStrings1($$.valor, aux);
+									}
+									else {
+										mensajeErrorOperarTipos($1, $3);
+										$$.tipoDato = desconocido;
+										sprintf(sent, "%s%s = %s %s %s;\n", numTabs(), generarTemp($$.tipoDato), $1.valor, $2.valor, $3.valor);
+										fputs(sent, file);
+										sprintf(aux, "temp%d", temp);
+										concatenarStrings1($$.valor, aux);
+									}
+								}
 								| expresion OPDECREMENTO expresion	{	
 											bool error=false;
 											if( $1.tipoDato != lista ){ 
