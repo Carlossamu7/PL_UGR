@@ -209,7 +209,10 @@ sentencia_while					: CICLO PARIZQ expresion PARDER sentencia {	if( $3.tipoDato 
 
 sentencia_entrada				: ENTRADA lista_variables FINLINEA ;
 
-sentencia_salida				: SALIDA lista_exp_cadena FINLINEA ;
+sentencia_salida				: SALIDA lista_exp_cadena FINLINEA 	{	char* sent = (char*) malloc(200);
+																		sprintf(sent, "\", %s);\n",$2.valor);
+																		fputs(sent, file);
+																	};
 
 sentencia_return				: RETURN expresion FINLINEA ;
 
@@ -266,6 +269,12 @@ lista_exp_cadena				: lista_exp_cadena COMA exp_cad {	$$.parametros++;
 																			$$.tipoInternoLista = $1.tipoDato;
 																		}
 																	}
+																	else if(strcmp($0.valor, "IMPRIMIR") == 0){
+																		char* sent = (char*) malloc(200);
+																		printf("Tipo de dato: %s, %s, %c\n", toStringTipo($3.tipoDato), tipoAFormato($3.tipoDato), tipoAFormato($3.tipoDato));
+																		sprintf(sent, "%%%c", tabs, tipoAFormato($3.tipoDato));
+																		fputs(sent, file);
+																	}
 																	concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);
 																}
 								| exp_cad {	$$.parametros = 1;
@@ -277,6 +286,11 @@ lista_exp_cadena				: lista_exp_cadena COMA exp_cad {	$$.parametros++;
 											}else if(strcmp($0.valor, "[") == 0){	// Lista																
 												$$.tipoDato = $1.tipoDato;
 												$$.tipoInternoLista = $1.tipoDato;
+											}
+											else if(strcmp($0.valor, "IMPRIMIR") == 0){
+												char* sent = (char*) malloc(200);
+												sprintf(sent, "%sprintf(\"%%%c", tabs, tipoAFormato($1.tipoDato));
+												fputs(sent, file);
 											}
 											concatenarStrings1($$.valor, $1.valor);
 										} ;

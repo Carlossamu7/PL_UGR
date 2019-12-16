@@ -519,7 +519,7 @@ int etiqueta = -1;
 char* generarTemp(dtipo tipo){
 	char* cadena = (char*) malloc(20);
 	++temp;
-	sprintf(cadena, "%s temp%d;\ntemp%d", tipoDeDato(tipo), temp, temp);
+	sprintf(cadena, "%s temp%d;\n%stemp%d", tipoDeDato(tipo), temp, tabs, temp);
 	return cadena;
 }
 
@@ -606,12 +606,17 @@ void insertarCadena(char* cad){
 	fputs(cad, file);
 }
 
-char raizTipo(dtipo dato) {
-	if(dato == desconocido)		return 'd';
+char tipoAFormato(dtipo dato) {
+	if(dato == desconocido)		return 's';
 	else if(dato == real)		return 'f';
-	else if(dato == caracter)	return 'c';
-	else if(dato == booleano)	return 'b';
+	else if(dato == entero)		return 'd';
+	else if(dato == caracter)	return 's';
+	else if(dato == booleano)	return 'd';
 	else 						return 'l';
+}
+
+insertarSalida(char* vars){
+
 }
 
 

@@ -24,38 +24,80 @@ otros			.
 
 %%
 
-"PRINCIPAL"				return CABECERA;
+"PRINCIPAL"				{
+						return CABECERA;
+						yylval.valor = strdup(yytext);
+						}
 "ENTERO"				{	 
 						yylval.tipoDato = entero;
+						yylval.valor = strdup(yytext);
 						return TIPO;
 						}
 "REAL"					{	
 						yylval.tipoDato = real;
+						yylval.valor = strdup(yytext);
 						return TIPO;
 						}
 "BOOLEANO"				{	
 						yylval.tipoDato = booleano;
+						yylval.valor = strdup(yytext);
 						return TIPO;
 						}
 "CARACTER"				{	
 						yylval.tipoDato = caracter;
+						yylval.valor = strdup(yytext);
 						return TIPO;
 						}
 "LISTA DE" 				{
 						yylval.tipoDato = lista;
+						yylval.valor = strdup(yytext);
 						return LISTA_DE;
 						}
-"PARA" 					return BUCLE;
-"HASTA"					return HASTA;
-"PASO"					return PASO;
-"SI"					return CONDICION;
-"SINO"					return SUBCONDICION;
-"MIENTRAS"				return CICLO;
-"LEER"					return ENTRADA;
-"IMPRIMIR"				return SALIDA;
-"DEVOLVER"				return RETURN;
-"VAR"					return INIVARIABLES;
-"FINVAR"				return FINVARIABLES;
+"PARA" 					{
+						yylval.tipoDato = lista;
+						yylval.valor = strdup(yytext);
+						return BUCLE;
+						}
+"HASTA"					{
+						yylval.valor = strdup(yytext);
+						return HASTA;
+						}
+"PASO"					{
+						yylval.valor = strdup(yytext);
+						return PASO;
+						}
+"SI"					{
+						yylval.valor = strdup(yytext);
+						return CONDICION;
+						}
+"SINO"					{
+						yylval.valor = strdup(yytext);
+						return SUBCONDICION;
+						}
+"MIENTRAS"				{
+						yylval.valor = strdup(yytext);
+						return CICLO;
+						}
+"LEER"					{
+						yylval.valor = strdup(yytext);
+						return ENTRADA;
+						}
+"IMPRIMIR"				{
+						yylval.valor = strdup(yytext);
+						return SALIDA;
+						}
+"DEVOLVER"				{
+						yylval.valor = strdup(yytext);
+						return RETURN;
+						}
+"VAR"					{
+						yylval.valor = strdup(yytext);
+						return INIVARIABLES;
+						}
+"FINVAR"				{
+						yylval.valor = strdup(yytext);
+						return FINVARIABLES;
+						}
 "VERDADERO"				{
 						yylval.valor = strdup(yytext);
 						yylval.tipoDato = booleano;
