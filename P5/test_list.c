@@ -8,9 +8,9 @@ int main(){
     a = push(a, entero);
     push(a, 3);
     printListNext(a);
-    printf("Lista original: "); printList(a);/*
+    printf("Lista original: "); printList(a);
     sum(a, 2);
-    printf("Suma 2: "); printList(a);
+    printf("Suma 2: "); printList(a);/*
     subtract(a, 1);
     printf("Resta 1: "); printList(a);
     mult(a, 2);
