@@ -8,9 +8,9 @@ PRINCIPAL{
 		    DEVOLVER b1-b2;
     	}	
 
-        DEVOLVER restar(a1,-a2);
+        DEVOLVER restar(a1,a1+(-a1)-a2);
     }
-
+	IMPRIMIR "Introduce dos numeros: \n";
     LEER a1, a2;
 	IMPRIMIR sumar(a1, a2), "\n";
 }
