@@ -29,12 +29,11 @@ PRINCIPAL{
 		SINO{
 			SI (cuenta>0){
 				SI (primero == 0)
-					IMPRIMIR " *";
+					IMPRIMIR " * ";
 				primero = 0;				
-				IMPRIMIR	curr;
+				IMPRIMIR curr;
 				SI (cuenta>1) 
-					IMPRIMIR "^" ,cuenta;
-						
+					IMPRIMIR "^" ,cuenta;	
 			}
 			curr = curr +1;
 			cuenta = 0;
@@ -44,8 +43,9 @@ PRINCIPAL{
 	
 	SI (cuenta>0){
 		SI (primero == 0)
-			primero = 0;
-		IMPRIMIR " *";
+			IMPRIMIR " * ";
+		primero = 0;
+		IMPRIMIR curr;
 		SI (cuenta > 1) 
 			IMPRIMIR  "^", cuenta;	
 	}
