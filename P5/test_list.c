@@ -40,6 +40,6 @@ int main(){
     addAt(b, 0, 3);
     printf("Añadimos en pos 0 de c el valor 3: "); printList(b);
     printf("Dato en la pos 0 de b: %d\n", dataAt(b,0));
-    printf("Dato actual de b: %d\n", currentData(b));
+    printf("Dato actual de a: %d\n", currentData(a));
     return 0;
 }

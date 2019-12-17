@@ -165,9 +165,19 @@ Node* deleteSince(Node* l, unsigned int pos){
 		return NULL;
 	Node* aux = l;
 	begin(&aux);
-	for(unsigned int i=0; i<pos-1; ++i)
-		next(&aux);
+    int l_before = 0;
+
+	for(unsigned int i=0; i<pos-1; ++i){
+    	next(&aux);
+        if(l==aux){
+            l_before = 1;
+        }
+    }
     aux->next = NULL;
+
+    if(!l_before)
+        begin(&l);
+    printf("EYY%d\n", l_before);
 
     /*
     Node* node_aux = aux;
