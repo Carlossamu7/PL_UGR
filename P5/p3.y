@@ -147,13 +147,14 @@ cuerpo_declar_variables			: tipo lista_identificadores FINLINEA 	{	char* sent = 
 								 *	completo y perdemos esa información
 								*/
 
-lista_identificadores			: lista_identificadores COMA IDENTIFICADOR {	$3.tipoDato = $0.tipoDato;
-																				$3.tipoInternoLista = $0.tipoInternoLista;
-																				$3.entrada = variable;
-																				if(!variableExisteBloque($3)) insertar($3);
-																				else mensajeErrorDeclaradaBloque($3);	
-																				concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);
-																			}
+lista_identificadores			: lista_identificadores COMA IDENTIFICADOR {	
+													$3.tipoDato = $0.tipoDato;
+													$3.tipoInternoLista = $0.tipoInternoLista;
+													$3.entrada = variable;
+													if(!variableExisteBloque($3)) insertar($3);
+													else mensajeErrorDeclaradaBloque($3);
+													concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);
+												}
 								| IDENTIFICADOR {	$1.tipoDato = $0.tipoDato;
 													$1.tipoInternoLista = $0.tipoInternoLista;
 													$1.entrada = variable;

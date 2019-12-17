@@ -602,7 +602,7 @@ char* tipoDeDato (dtipo td) {
 	if(td == booleano)	return "bool";	
 	if(td == real)		return "float";
 	if(td == caracter)	return "char";
-	if(td == lista)		return "Node*";
+	if(td == lista)		return "List";
 	return "Error de tipo";
 }
 

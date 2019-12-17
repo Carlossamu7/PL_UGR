@@ -35,6 +35,10 @@ cod5: p3 codigo5 p3.y p4.h
 	./p3 codigo5
 	gcc -o p5 codigoGenerado.c -std=c99
 
+cod6: p3 codigo6 p3.y p4.h
+	./p3 codigo6
+	gcc -o p5 codigoGenerado.c -std=c99
+
 clean:
 	rm -f p3 p5 prueba1 test_list prueba1.exe p3.exe main.o y.tab.o y.tab.c lex.yy.c y.output codigoGenerado.c
 

@@ -10,6 +10,7 @@ typedef struct Node_t {
 
 typedef int bool;
 typedef enum {desconocido, entero, real, caracter, booleano, lista, cadena} dtipo ;
+typedef Node* List;
 
 void next(Node** l){
     if (*l == NULL)
@@ -175,18 +176,18 @@ Node* deleteSince(Node* l, unsigned int pos){
 	free(node_aux);
 }
 
-Node* concatenate(Node* l1, Node* l2){
+Node* concatenate(Node** l1, Node** l2){
 	if (l1 == NULL)
 		return l2;
 	else if (l2 == NULL)
 		return l1;
 
-	end(&l1);
-	begin(&l2);
-	l1->next = l2;
-	l2->previous = l1;
-	begin(&l1);
-	return l1;
+	end(l1);
+	begin(l2);
+	(*l1)->next = *l2;
+	(*l2)->previous = *l1;
+	begin(l1);
+	return *l1;
 }
 
 Node* sum(Node* l, int dat){
