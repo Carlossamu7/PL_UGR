@@ -13,6 +13,8 @@ typedef enum {desconocido, entero, real, caracter, booleano, lista, cadena} dtip
 typedef Node* List;
 
 void next(Node** l){
+	if (l == NULL)
+		return;
     if (*l == NULL)
         return;
 	if ((*l)->next != NULL)
@@ -20,6 +22,8 @@ void next(Node** l){
 }
 
 void previous(Node** l){
+	if (l == NULL)
+		return;
     if (*l == NULL)
         return;
 	if ((*l)->previous != NULL)
@@ -27,6 +31,8 @@ void previous(Node** l){
 }
 
 void begin(Node** l){
+	if (l == NULL)
+		return;
     if ((*l) == NULL)
         return;
 	while ((*l)->previous != NULL)
@@ -34,10 +40,12 @@ void begin(Node** l){
 }
 
 void end(Node** l){
-	if ((*l) != NULL){
-		while ((*l)->next != NULL)
-			next(l);
-	}
+	if (l == NULL)
+		return;
+	if ((*l) == NULL)
+        return;
+	while ((*l)->next != NULL)
+		next(l);
 }
 
 void push(Node** l, int new_data)
@@ -56,6 +64,8 @@ void push(Node** l, int new_data)
 
 void printList(Node* l)
 {
+	if (l == NULL)
+		return;
     Node* aux = l;
     int first = 1;
 	begin(&aux);
@@ -74,6 +84,8 @@ void printList(Node* l)
 
 void printListNext(Node* l)
 {
+	if (l == NULL)
+		return;
     Node* aux = l;
     int first = 1;
 	begin(&aux);
@@ -165,20 +177,9 @@ Node* deleteSince(Node* l, unsigned int pos){
 		return NULL;
 	Node* aux = l;
 	begin(&aux);
-    int l_before = 0;
-
-	for(unsigned int i=0; i<pos-1; ++i){
-    	next(&aux);
-        if(l==aux){
-            l_before = 1;
-        }
-    }
+	for(unsigned int i=0; i<pos-1; ++i)
+		next(&aux);
     aux->next = NULL;
-
-    if(!l_before)
-        begin(&l);
-    printf("EYY%d\n", l_before);
-
     /*
     Node* node_aux = aux;
 	Node* node_last = aux;
@@ -188,16 +189,45 @@ Node* deleteSince(Node* l, unsigned int pos){
 		node_aux = aux->next;
 		free(aux);
 	}
-	free(node_aux);
-    */
-
+	free(node_aux);*/
     return l;
 }
 
+/*
 Node* concatenate(Node** l1, Node** l2){
-    if (l1 == NULL)
+	if (l1 == NULL)
+		return *l2;
+	else if (l2 == NULL)
+		return *l1;
+
+    begin(l1);
+    begin(l2);
+    Node** res;
+
+    do{
+        push(res, currentData(*l1));
+        next(l1);
+    }while((l1!=NULL));
+
+    do{sip
+        push(res, currentData(*l2));
+        next(l2);
+    }while((l2!=NULL));
+
+	return *res;
+}
+*/
+
+Node* concatenate(Node** l1, Node** l2){
+	if (l1 == NULL && l2 == NULL)
+		return NULL;
+	if (l1 == NULL)
         return *l2;
     else if (l2 == NULL)
+        return *l1;
+    if (*l1 == NULL)
+        return *l2;
+    else if (*l2 == NULL)
         return *l1;
 
     end(l1);

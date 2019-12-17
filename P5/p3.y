@@ -762,7 +762,7 @@ expresion						: PARIZQ expresion PARDER	{	$$.tipoDato = $2.tipoDato;
 											$$.tipoInternoLista = $1.tipoInternoLista;
 										}
 										char* sent = (char*) malloc(200);
-										sprintf(sent, "%s%s = concatenate(%s, %s);\n", numTabs(), generarTemp(lista), $1.valor, $3.valor);
+										sprintf(sent, "%s%s = concatenate(&%s, &%s);\n", numTabs(), generarTemp(lista), $1.valor, $3.valor);
 										fputs(sent, file);
 										char* aux = (char*) malloc(20);
 										sprintf(aux, "temp%d", temp);
