@@ -48,6 +48,7 @@ Node* push(Node* l, int new_data)
 	new_node->next = NULL;
     new_node->previous = aux;
     if(aux != NULL) aux->next = new_node;
+    else l = new_node;
     return new_node;
 }
 
@@ -63,6 +64,24 @@ void printList(Node* l)
             printf("%d", aux->data);
         else
 		      printf(", %d", aux->data);
+        aux = aux->next;
+        first = 0;
+    }
+	printf("]\n");
+}
+
+void printListNext(Node* l)
+{
+    Node* aux = l;
+    int first = 1;
+	begin(aux);
+	printf("[");
+    while (aux != NULL)
+    {
+        if (first)
+            printf("%s", (char*) aux->next);
+        else
+		      printf(", %s", (char*) aux->next);
         aux = aux->next;
         first = 0;
     }
@@ -176,9 +195,11 @@ Node* concatenate(Node* l1, Node* l2){
 Node* sum(Node* l, int dat){
 	if (l == NULL)
 		return NULL;
+    printf("HOLA\n");
 	Node* aux = l;
 	begin(aux);
 	while(aux->next != NULL){
+        printf("HOLA\n");
         aux->data = aux->data + dat;
 		next(aux);
 	}
