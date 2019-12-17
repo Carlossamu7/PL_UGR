@@ -18,45 +18,46 @@ void next(Node** l){
 		*l = (*l)->next;
 }
 
-void previous(Node* l){
-    if (l == NULL)
+void previous(Node** l){
+    if (*l == NULL)
         return;
-	if (l->previous != NULL)
-		l = l->previous;
+	if ((*l)->previous != NULL)
+		(*l) = (*l)->previous;
 }
 
-void begin(Node* l){
-    if (l == NULL)
+void begin(Node** l){
+    if ((*l) == NULL)
         return;
-	while (l->previous != NULL)
+	while ((*l)->previous != NULL)
 		previous(l);
 }
 
-void end(Node* l){
-	while (l->next != NULL)
-		next(&l);
+void end(Node** l){
+	if ((*l) == NULL)
+        return;
+	while ((*l)->next != NULL)
+		next(l);
 }
 
-Node* push(Node* l, int new_data)
+void push(Node** l, int new_data)
 {
-    Node* aux = l;
+    Node** aux = l;
     if(aux != NULL){
         end(aux);
     }
 	Node* new_node = (Node*) malloc(sizeof(Node));
 	new_node->data = new_data;
 	new_node->next = NULL;
-    new_node->previous = aux;
-    if(aux != NULL) aux->next = new_node;
-    else l = new_node;
-    return new_node;
+    new_node->previous = *aux;
+    if(*aux != NULL) (*aux)->next = new_node;
+    else *l = new_node;
 }
 
 void printList(Node* l)
 {
     Node* aux = l;
     int first = 1;
-	begin(aux);
+	begin(&aux);
 	printf("[");
     while (aux != NULL)
     {
@@ -74,7 +75,7 @@ void printListNext(Node* l)
 {
     Node* aux = l;
     int first = 1;
-	begin(aux);
+	begin(&aux);
     while (aux != NULL)
     {
 		//printf("aux == NULL: %d\n", aux == NULL);
@@ -89,8 +90,8 @@ unsigned int length(Node* l){
 		return 0;
 	unsigned int count = 1;
 	Node* aux = l;
-	begin(aux);
-	while(l->next != NULL){
+	begin(&aux);
+	while(aux->next != NULL){
 		next(&aux);
 		++count;
 	}
@@ -109,7 +110,7 @@ int dataAt(Node* l, unsigned int pos){
 	if (pos >= length(l))
 		return 0;
 	Node* aux = l;
-	begin(aux);
+	begin(&aux);
 	for(int i = 0; i < pos; ++i){
 		next(&aux);
 	}
@@ -122,7 +123,7 @@ Node* addAt(Node* l, unsigned int pos, int dat){
 	if (pos >= length(l))
 		pos = length(l)-1;
 	Node* aux = l;
-	begin(aux);
+	begin(&aux);
 	for(int i = 0; i < pos; ++i){
 		next(&aux);
 	}
@@ -141,7 +142,7 @@ Node* deleteAt(Node* l, unsigned int pos){
 	if (pos >= length(l))
 		return NULL;
 	Node* aux = l;
-	begin(aux);
+	begin(&aux);
 	for(int i = 0; i < pos; ++i){
 		next(&aux);
 	}
@@ -159,7 +160,7 @@ Node* deleteSince(Node* l, unsigned int pos){
 	if (pos >= length(l))
 		return NULL;
 	Node* aux = l;
-	begin(aux);
+	begin(&aux);
 	for(int i = 0; i < pos; ++i){
 		next(&aux);
 	}
@@ -180,11 +181,11 @@ Node* concatenate(Node* l1, Node* l2){
 	else if (l2 == NULL)
 		return l1;
 
-	end(l1);
-	begin(l2);
+	end(&l1);
+	begin(&l2);
 	l1->next = l2;
 	l2->previous = l1;
-	begin(l1);
+	begin(&l1);
 	return l1;
 }
 
@@ -193,7 +194,7 @@ Node* sum(Node* l, int dat){
 		return NULL;
     //printf("HOLA\n");
 	Node* aux = l;
-	begin(aux);
+	begin(&aux);
 	//printf("%d", aux);
 	if(aux != NULL)	aux->data = aux->data + dat;
 	while(aux->next != NULL){
@@ -209,9 +210,10 @@ Node* subtract(Node* l, float dat){
 	if (l == NULL)
 		return NULL;
 	Node* aux = l;
-	begin(aux);
+	begin(&aux);
+	if(aux != NULL)	aux->data = aux->data - dat;
 	while(aux->next != NULL){
-        aux->data = aux->data - dat;
+        aux->next->data = aux->next->data - dat;
 		next(&aux);
 	}
 	return l;
@@ -221,9 +223,10 @@ Node* mult(Node* l, float dat){
 	if (l == NULL)
 		return NULL;
 	Node* aux = l;
-	begin(aux);
+	begin(&aux);
+	if(aux != NULL)	aux->data = aux->data * dat;
 	while(aux->next != NULL){
-        aux->data = aux->data * dat;
+        aux->next->data = aux->next->data * dat;
 		next(&aux);
 	}
 	return l;
@@ -233,9 +236,10 @@ Node* divi(Node* l, float dat){
 	if (l == NULL || dat == 0)
 		return NULL;
 	Node* aux = l;
-	begin(aux);
+	begin(&aux);
+	if(aux != NULL)	aux->data = aux->data * dat;
 	while(aux->next != NULL){
-        aux->data = aux->data / dat;
+        aux->next->data = aux->next->data * dat;
 		next(&aux);
 	}
 	return l;
