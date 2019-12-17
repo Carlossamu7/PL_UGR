@@ -153,14 +153,23 @@ lista_identificadores			: lista_identificadores COMA IDENTIFICADOR {
 													$3.entrada = variable;
 													if(!variableExisteBloque($3)) insertar($3);
 													else mensajeErrorDeclaradaBloque($3);
-													concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);
+													if( $0.tipoDato != lista )
+														concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);
+													else{
+														concatenarStrings5($$.valor, $1.valor, ";\n", numTabs(), tipoDeDato($0.tipoDato), " ");
+														concatenarStrings3($$.valor, $$.valor, $3.valor, " = NULL");
+													}
 												}
 								| IDENTIFICADOR {	$1.tipoDato = $0.tipoDato;
 													$1.tipoInternoLista = $0.tipoInternoLista;
 													$1.entrada = variable;
 													if(!variableExisteBloque($1)) insertar($1);
-													else mensajeErrorDeclaradaBloque($1); 
-													concatenarStrings1($$.valor, $1.valor);
+													else mensajeErrorDeclaradaBloque($1);
+													if( $0.tipoDato != lista )
+														concatenarStrings1($$.valor, $1.valor);
+													else{
+														concatenarStrings2($$.valor, $1.valor, " = NULL");
+													}
 												} ;
 
 cabecera_subprog				: tipo IDENTIFICADOR PARIZQ lista_parametros PARDER {	
@@ -415,7 +424,8 @@ lista_exp_cadena				: lista_exp_cadena COMA exp_cad {	$$.parametros++;
 												$$.tipoDato = $1.tipoDato;
 												$$.tipoInternoLista = $1.tipoDato;
 												char* sent = (char*) malloc(200);
-												sprintf(sent, "%s%s = temp%d;\n", numTabs(), generarTemp(lista), temp);
+												char* aux2 = generarTemp(lista);
+												sprintf(sent, "%s%s = temp%d;\n", numTabs(), aux2, temp);
 												fputs(sent, file);
 												sprintf(sent, "%spush(&temp%d, %s);\n", numTabs(), temp, $1.valor);
 												fputs(sent, file);

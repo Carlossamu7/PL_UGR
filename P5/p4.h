@@ -563,9 +563,12 @@ int temp = -1;
 int etiqueta = -1;
 
 char* generarTemp(dtipo tipo){
-	char* cadena = (char*) malloc(20);
+	char* cadena = (char*) malloc(30);
 	++temp;
-	sprintf(cadena, "%s temp%d;\n%stemp%d", tipoDeDato(tipo), temp, numTabs(), temp);
+	if(tipo == lista)
+		sprintf(cadena, "%s temp%d = NULL;\n%stemp%d", tipoDeDato(tipo), temp, numTabs(), temp);
+	else
+		sprintf(cadena, "%s temp%d;\n%stemp%d", tipoDeDato(tipo), temp, numTabs(), temp);
 	return cadena;
 }
 

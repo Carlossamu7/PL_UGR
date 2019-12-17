@@ -34,10 +34,10 @@ void begin(Node** l){
 }
 
 void end(Node** l){
-	if ((*l) == NULL)
-        return;
-	while ((*l)->next != NULL)
-		next(l);
+	if ((*l) != NULL){
+		while ((*l)->next != NULL)
+			next(l);
+	}
 }
 
 void push(Node** l, int new_data)

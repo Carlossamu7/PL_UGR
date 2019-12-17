@@ -1,13 +1,11 @@
 PRINCIPAL{
     VAR
         ENTERO ve, ve2 ;
-        REAL vr;
-        CARACTER vc ;
-        BOOLEANO vb ;
 
 		LISTA DE ENTERO le, le2 ;
-        LISTA DE REAL lr ;
     FINVAR 
+
+    le = le ** [10, 20];
 
 	PARA ve :=  0  HASTA 10  PASO 1 {
         le = le ++ ve @ ve ;
@@ -15,6 +13,7 @@ PRINCIPAL{
     }
 
     $le;
+
     PARA ve :=  0  HASTA #le  PASO 1 {
         le>>;
         IMPRIMIR ?le, "\n";
