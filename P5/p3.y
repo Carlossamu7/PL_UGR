@@ -339,9 +339,9 @@ sentencia_iterar				: IDENTIFICADOR OPUNARIOPOST FINLINEA {
 										}
 										char* sent = (char*) malloc(200);
 										if (strcmp($2.valor, ">>") == 0)
-											sprintf(sent, "%snext(%s);\n", numTabs(), $1.nombre);
+											sprintf(sent, "%snext(&%s);\n", numTabs(), $1.nombre);
 										else
-											sprintf(sent, "%sprevious(%s);\n", numTabs(), $1.nombre);
+											sprintf(sent, "%sprevious(&%s);\n", numTabs(), $1.nombre);
 										fputs(sent, file);
 									};
 																		
@@ -351,7 +351,7 @@ sentencia_reset_cursor			: OPDOLAR IDENTIFICADOR FINLINEA {
 												entradaTS aux = getSimboloIdentificador($2.nombre);
 												if( aux.tipoDato != lista ) mensajeErrorTipo1(aux, lista); }	
 										char* sent = (char*) malloc(200);
-										sprintf(sent, "%sbegin(%s);\n", numTabs(), $2.nombre);
+										sprintf(sent, "%sbegin(&%s);\n", numTabs(), $2.nombre);
 										fputs(sent, file);
 									};
 
@@ -378,7 +378,8 @@ lista_exp_cadena				: lista_exp_cadena COMA exp_cad {	$$.parametros++;
 																		entradaTS aux = getSimboloIdentificador($-1.nombre);
 																		if( !comprobarParametro(aux.nombre, $$.parametros, $3.tipoDato) )
 																			mensajeErrorTipoArgumento(aux.nombre, $$.parametros,
-																				getSimboloArgumento(aux.nombre, $$.parametros).tipoDato); 
+																				getSimboloArgumento(aux.nombre, $$.parametros).tipoDato);
+																		concatenarStrings4($$.valor, $1.valor, $2.valor, " ", $3.valor);
 																	}
 																	else if(strcmp($0.valor, "[") == 0){	// Lista
 																		if( $3.tipoDato != $1.tipoDato ){
@@ -390,30 +391,43 @@ lista_exp_cadena				: lista_exp_cadena COMA exp_cad {	$$.parametros++;
 																			$$.tipoDato = $1.tipoDato;
 																			$$.tipoInternoLista = $1.tipoDato;
 																		}
+																		char* sent = (char*) malloc(200);
+																		sprintf(sent, "%spush(&%s, %s);\n", numTabs(), $1.valor, $3.valor);/*TODO: Quiza */
+																		fputs(sent, file);
+																		concatenarStrings1($$.valor, $1.valor);
 																	}
 																	else if(strcmp($0.valor, "IMPRIMIR") == 0){
 																		char* sent = (char*) malloc(200);
 																		sprintf(sent, "%%%c", tipoAFormato($3.tipoDato));
 																		fputs(sent, file);
+																		concatenarStrings4($$.valor, $1.valor, $2.valor, " ", $3.valor);
 																	}
-																	concatenarStrings4($$.valor, $1.valor, $2.valor, " ", $3.valor);
 																}
 								| exp_cad {	$$.parametros = 1;
 											if (strcmp($0.valor, "(") == 0 ){		// Funcion
 												entradaTS aux = getSimboloIdentificador($-1.nombre);
 												if( !comprobarParametro(aux.nombre, $$.parametros, $1.tipoDato) )
 													mensajeErrorTipoArgumento(aux.nombre, $$.parametros,
-														getSimboloArgumento(aux.nombre, $$.parametros).tipoDato);	
+														getSimboloArgumento(aux.nombre, $$.parametros).tipoDato);
+												concatenarStrings1($$.valor, $1.valor);	
 											}else if(strcmp($0.valor, "[") == 0){	// Lista																
 												$$.tipoDato = $1.tipoDato;
 												$$.tipoInternoLista = $1.tipoDato;
+												char* sent = (char*) malloc(200);
+												sprintf(sent, "%s%s = temp%d;\n", numTabs(), generarTemp(lista), temp);
+												fputs(sent, file);
+												sprintf(sent, "%spush(&temp%d, %s);\n", numTabs(), temp, $1.valor);
+												fputs(sent, file);
+												char* aux = (char*) malloc(20);
+												sprintf(aux, "temp%d", temp);
+												concatenarStrings1($$.valor, aux);
 											}
 											else if(strcmp($0.valor, "IMPRIMIR") == 0){
 												char* sent = (char*) malloc(200);
 												sprintf(sent, "%sprintf(\"%%%c", numTabs(), tipoAFormato($1.tipoDato));
 												fputs(sent, file);
+												concatenarStrings1($$.valor, $1.valor);
 											}
-											concatenarStrings1($$.valor, $1.valor);
 										} ;
 
 exp_cad							: expresion	{	$$.tipoDato = $1.tipoDato;
@@ -867,7 +881,7 @@ constante						: ENTERO	{	$$.tipoDato = entero;
 
 lista							: ABRIRCORCHETE lista_exp_cadena CERRARCORCHETE {	$$.tipoInternoLista = $2.tipoDato;
 																					$$.tipoDato = lista;
-																					concatenarStrings3($$.valor, $1.valor, $2.valor, $3.valor);	};
+																					concatenarStrings1($$.valor, $2.valor);	};
 
 tipo							: TIPO	{	$$.tipoDato = $1.tipoDato;
 											concatenarStrings1($$.valor, $1.valor);
