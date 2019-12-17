@@ -1,0 +1,75 @@
+PRINCIPAL{
+    VAR
+        ENTERO n, ve ;
+        LISTA DE ENTERO le, le2;
+    FINVAR
+
+    LISTA DE ENTERO fib (ENTERO n){
+        VAR
+            LISTA DE ENTERO lista;
+            ENTERO x, y, z, cont, it;
+        FINVAR
+
+        ENTERO imp(LISTA DE ENTERO lis){
+            VAR
+                ENTERO ve;
+            FINVAR
+            IMPRIMIR "Imprimo lista: \n";
+            PARA ve :=  0  HASTA #lis  PASO 1 {
+                IMPRIMIR ?lis, "\n";
+                lis>>;
+            }
+            DEVOLVER 1;
+        }
+
+        x=0;
+        y=1;
+
+		SI (n==1) {
+            lista = lista ** [0];
+            imp(lista);
+            DEVOLVER lista;
+        }
+        SINO {
+            lista = lista ** [0, 1];
+
+            SI (n==2){
+                imp(lista);
+                DEVOLVER lista;
+            }
+            SINO {
+                PARA it :=  2  HASTA n  PASO 1 {
+                    cont = y + x;
+                    x = y;
+                    y = cont;
+                    lista = lista ** [cont];
+                }
+                imp(lista);
+                DEVOLVER lista;
+            }
+        }
+    }
+
+	IMPRIMIR "Introduce un numero__>\n";
+    LEER n;
+	IMPRIMIR "Sucesion de Fibonacci de tam: ", n, "\n";
+
+    le = fib(n);
+    le2 = fib(n);
+
+    IMPRIMIR "concateno: \n";
+    le = le ** le2;
+    $le;
+    PARA ve :=  0  HASTA #le  PASO 1 {
+        IMPRIMIR ?le, "\n";
+        le>>;
+    }
+
+    IMPRIMIR "Multiplico por 3: \n";
+    le = le * 3;
+    $le;
+    PARA ve :=  0  HASTA #le  PASO 1 {
+        IMPRIMIR ?le, "\n";
+        le>>;
+    }
+}

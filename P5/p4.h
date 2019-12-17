@@ -192,7 +192,7 @@ void insertarMarca(){
 	} else {
 		TS[TOPE].entrada = marca;
 		++TOPE;
-		
+
 		if( tabs == NULL ){
 			tabs = (char*) malloc(50);
 			tabs[0] = '\0';
@@ -219,48 +219,48 @@ void sacarTF(){
 
 
 /*
-// Imprime el contenido de la pila 
+// Imprime el contenido de la pila
 void imprimirTS(){
 	int i;
-	
+
 	for(i=0; i < TOPE ; ++i){
 		if(TS[i].entrada == variable){
 			if(TS[i].tipoDato == entero)
 				printf("\nLa variable %s es de tipo entero \n", TS[i].nombre);
-			
+
 			if(TS[i].tipoDato == booleano)
 				printf("\nLa variable %s es de tipo booleano \n", TS[i].nombre);
-			
+
 			if(TS[i].tipoDato == real)
 				printf("\nLa variable %s es de tipo real \n", TS[i].nombre);
-			
+
 			if(TS[i].tipoDato == caracter)
 				printf("\nLa variable %s es de tipo caracter \n", TS[i].nombre);
-			
+
 			if(TS[i].tipoDato == lista)
 				printf("\nLa variable %s es de tipo lista \n", TS[i].nombre);
 		}
-		
+
 		if(TS[i].entrada == marca)
 			printf("\nINICIO BLOQUE\n");
-		
+
 		if(TS[i].entrada == funcion){
 			if(TS[i].tipoDato == entero)
 				printf("\nLa funcion %s tiene %d argumentos y devuelve el tipo entero \n", TS[i].nombre, TS[i].parametros);
-			
+
 			if(TS[i].tipoDato == booleano)
 				printf("\nLa funcion %s tiene %d argumentos y devuelve el tipo booleano \n", TS[i].nombre, TS[i].parametros);
-			
+
 			if(TS[i].tipoDato == real)
 				printf("\nLa funcion %s tiene %d argumentos y devuelve el tipo real \n", TS[i].nombre, TS[i].parametros);
-			
+
 			if(TS[i].tipoDato == caracter)
 				printf("\nLa funcion %s tiene %d argumentos y devuelve el tipo caracter \n", TS[i].nombre, TS[i].parametros);
-			
+
 			if(TS[i].tipoDato == lista)
-				printf("\nLa funcion %s tiene %d argumentos y devuelve el tipo lista \n", TS[i].nombre, TS[i].parametros);	
+				printf("\nLa funcion %s tiene %d argumentos y devuelve el tipo lista \n", TS[i].nombre, TS[i].parametros);
 		}
-	}	
+	}
 }
 */
 
@@ -269,10 +269,10 @@ bool variableExisteBloque(entradaTS ts){
 	if(debug) printf("variableExisteBloque( %s )\n", ts.nombre);
 	if( ts.nombre != 0 ){
 		bool encontrada = false;
-		
+
 		for(int i=TOPE-1; i>=0 && !encontrada; --i){
 				if( (TS[i].entrada == variable || TS[i].entrada == funcion) && TS[i].nombre != 0 && strcmp(TS[i].nombre, ts.nombre) == 0)
-					encontrada = true;		
+					encontrada = true;
 				if(TS[i].entrada==marca)
 					return encontrada;
 		}
@@ -286,7 +286,7 @@ bool variableExiste(entradaTS ts){
 	if(debug) printf("variableExiste( %s )\n", ts.nombre);
 	if( ts.nombre != 0 ){
 		bool encontrada = false;
-		
+
 		for(int i=TOPE-1; i>=0 && !encontrada; --i){
 			if( (TS[i].entrada == variable || TS[i].entrada == funcion) && TS[i].nombre != 0 && strcmp(TS[i].nombre, ts.nombre) == 0 )
 				encontrada = true;
@@ -319,7 +319,7 @@ entradaTS getSimboloIdentificador(char* nombre){
 	if( nombre != 0 ){
 		int i;
 		bool encontrada=false;
-		
+
 		for(i=TOPE-1; i>=0 && !encontrada; --i){
 			if( (TS[i].entrada == variable || TS[i].entrada == funcion ) && TS[i].nombre != 0
 					&& strcmp(TS[i].nombre, nombre) == 0){
@@ -327,7 +327,7 @@ entradaTS getSimboloIdentificador(char* nombre){
 				ret=TS[i];
 			}
 		}
-		return ret;	
+		return ret;
 	}
 	return ret;
 }
@@ -341,18 +341,18 @@ entradaTS getSimboloArgumento(char* nombreFun, int numPar){
 	if( nombreFun != 0 ){
 		int indiceFun = -1;
 		bool encontrada=false;
-			
+
 		for(int i=TOPE-1; i>=0 && !encontrada; --i){
 			if( TS[i].entrada == funcion && TS[i].nombre != 0 && strcmp(TS[i].nombre, nombreFun) == 0){
 				encontrada = true;
 				indiceFun=i;
 			}
 		}
-		
+
 		if( indiceFun >0 && numPar > TS[indiceFun].parametros){
 			return ret;
 		}
-		
+
 		return TS[indiceFun-TS[indiceFun].parametros+numPar-1];
 	}
 	return ret;
@@ -399,8 +399,8 @@ void concatenarStrings5(char* destination, char* s1, char* s2, char* s3, char* s
 }
 
 char* toStringTipo(dtipo td){
-	if(td == entero) 	return "entero";		
-	if(td == booleano) 	return "booleano";	
+	if(td == entero) 	return "entero";
+	if(td == booleano) 	return "booleano";
 	if(td == real) 		return "real";
 	if(td == caracter)	return "caracter";
 	if(td == lista)		return "lista";
@@ -408,18 +408,18 @@ char* toStringTipo(dtipo td){
 }
 
 char* toStringEntrada(tipoEntrada te){
-	if(te == marca) 			return "marca";		
-	if(te == funcion) 			return "funcion";	
+	if(te == marca) 			return "marca";
+	if(te == funcion) 			return "funcion";
 	if(te == variable) 			return "variable";
 	if(te == parametro_formal)	return "parametro_formal";
 	return "";
 }
 
-// Imprime el contenido de la pila 
+// Imprime el contenido de la pila
 void imprimirTS(){
 	int i;
 	char* tabs;
-	
+
 	for(i=0; i < TOPE ; ++i){
 		if(TS[i].entrada == marca){
 			printf("\nINICIO BLOQUE\n");
@@ -427,10 +427,10 @@ void imprimirTS(){
 		}
 		else{
 			if( TS[i].parametros > 0 && TS[i].tipoInternoLista != desconocido )
-				printf("%s%s\t%s\t%s\t%s\t%d\n", tabs, toStringEntrada(TS[i].entrada), TS[i].nombre, 
+				printf("%s%s\t%s\t%s\t%s\t%d\n", tabs, toStringEntrada(TS[i].entrada), TS[i].nombre,
 						toStringTipo(TS[i].tipoDato), toStringTipo(TS[i].tipoInternoLista) ,TS[i].parametros );
 			else if( TS[i].parametros > 0 )
-				printf("%s%s\t%s\t%s\t%d\n", tabs, toStringEntrada(TS[i].entrada), TS[i].nombre, 
+				printf("%s%s\t%s\t%s\t%d\n", tabs, toStringEntrada(TS[i].entrada), TS[i].nombre,
 						toStringTipo(TS[i].tipoDato) ,TS[i].parametros );
 			else printf("%s%s\t%s\t%s\n", tabs, toStringEntrada(TS[i].entrada), TS[i].nombre, toStringTipo(TS[i].tipoDato));
 		}
@@ -472,12 +472,12 @@ void mensajeErrorTiposInternosNoCoinciden(entradaTS ts1, entradaTS ts2){
 
 void mensajeErrorComparacion(entradaTS ts1, entradaTS ts2){
 	if (ts1.tipoDato != desconocido && ts2.tipoDato != desconocido )
-		printf("Error semantico en la linea %d: No se pueden comparar los tipos %s y %s\n", 
+		printf("Error semantico en la linea %d: No se pueden comparar los tipos %s y %s\n",
 										numLinea, 		toStringTipo(ts1.tipoDato), toStringTipo(ts2.tipoDato));
 }
 
 void mensajeErrorTipoArgumento(char * nombre, int nParam, dtipo tipo){
-	printf("Error semantico en la linea %d: Se esperaba que el argumento %d de la funcion %s fuera de tipo %s\n", 
+	printf("Error semantico en la linea %d: Se esperaba que el argumento %d de la funcion %s fuera de tipo %s\n",
 										numLinea, 		nParam, nombre, toStringTipo(tipo));
 }
 
@@ -498,7 +498,7 @@ void mensajeErrorTipo2(entradaTS ts, dtipo esperado1, dtipo esperado2){
 			printf("Error semantico en la linea %d: La variable %s no es de tipo %s o %s\n", numLinea, ts.valor, toStringTipo(esperado1),
 						toStringTipo(esperado2));
 		else if( ts.entrada == funcion )
-			printf("Error semantico en la linea %d: La funcion %s no devuelve valores de tipo %s o %s\n", numLinea, ts.valor, 
+			printf("Error semantico en la linea %d: La funcion %s no devuelve valores de tipo %s o %s\n", numLinea, ts.valor,
 						toStringTipo(esperado1), toStringTipo(esperado2));
 		else printf("Error semantico en la linea %d: La expresion %s no es de tipo %s o %s\n", numLinea, ts.valor,  toStringTipo(esperado1),
 						toStringTipo(esperado2));
@@ -508,12 +508,12 @@ void mensajeErrorTipo2(entradaTS ts, dtipo esperado1, dtipo esperado2){
 void mensajeErrorOperarTipos(entradaTS ts1, entradaTS ts2){
 	if (ts1.tipoDato != desconocido && ts2.tipoDato != desconocido){
 		if (ts1.tipoDato == lista)
-			printf("Error semantico en la linea %d: No se pueden operar los tipos %s de %s y %s\n", numLinea, 
+			printf("Error semantico en la linea %d: No se pueden operar los tipos %s de %s y %s\n", numLinea,
 						toStringTipo(ts1.tipoDato), toStringTipo(ts1.tipoInternoLista), toStringTipo(ts2.tipoDato));
 		else if (ts2.tipoDato == lista)
-			printf("Error semantico en la linea %d: No se pueden operar los tipos %s y %s de %s\n", numLinea, 
+			printf("Error semantico en la linea %d: No se pueden operar los tipos %s y %s de %s\n", numLinea,
 						toStringTipo(ts1.tipoDato), toStringTipo(ts2.tipoDato), toStringTipo(ts2.tipoInternoLista));
-		else printf("Error semantico en la linea %d: No se pueden operar los tipos %s (%s) y %s (%s)\n", numLinea, 
+		else printf("Error semantico en la linea %d: No se pueden operar los tipos %s (%s) y %s (%s)\n", numLinea,
 						toStringTipo(ts1.tipoDato), ts1.valor , toStringTipo(ts2.tipoDato), ts2.valor);
 	}
 }
@@ -532,14 +532,14 @@ void mensajeErrorNoTipo(entradaTS ts){
 		else if( ts.entrada == funcion )
 			printf("Error semantico en la linea %d: No se esperaba que la funcion %s devolviese valores de tipo %s\n", numLinea, ts.nombre,
 						toStringTipo(ts.tipoDato));
-		else printf("Error semantico en la linea %d: No se esperaba que la expresion %s fuese de tipo %s\n", numLinea, ts.valor, 
+		else printf("Error semantico en la linea %d: No se esperaba que la expresion %s fuese de tipo %s\n", numLinea, ts.valor,
 						toStringTipo(ts.tipoDato));
 	}
 }
 
 void mensajeErrorNumParametros(entradaTS ts1, entradaTS ts2){
 	if (ts1.tipoDato != desconocido && ts2.tipoDato != desconocido )
-		printf("Error semantico en la linea %d: La %s %s esperaba %d argumentos y se han encontrado %d\n", 
+		printf("Error semantico en la linea %d: La %s %s esperaba %d argumentos y se han encontrado %d\n",
 				numLinea, toStringEntrada(ts1.entrada), ts1.nombre, ts1.parametros, ts2.parametros);
 }
 
@@ -582,6 +582,7 @@ char* generarEtiqueta() {
 void generarFicheroFunciones() {
 	file_fun = fopen("dec_fun.h", "w");
 	fputs("#include<stdio.h>\n", file_fun);
+	fputs("#include \"dec_dat.h\"\n\n", file_fun);
 	fputs("typedef int bool;\n", file_fun);
 }
 
@@ -590,7 +591,7 @@ void generarFichero() {
 	file = file_std;
 	fputs("#include<stdio.h>\n", file);
 	fputs("#include \"dec_fun.h\"\n", file);
-	fputs("#include \"dec_dat.h\"\n\n", file);
+	//fputs("#include \"dec_dat.h\"\n\n", file);
 	fputs("typedef int bool;\n\n", file);
 	generarFicheroFunciones();
 }
@@ -602,7 +603,7 @@ void cerrarFichero() {
 
 char* tipoDeDato (dtipo td) {
 	if(td == entero)	return "int";
-	if(td == booleano)	return "bool";	
+	if(td == booleano)	return "bool";
 	if(td == real)		return "float";
 	if(td == caracter)	return "char";
 	if(td == lista)		return "List";
@@ -611,7 +612,7 @@ char* tipoDeDato (dtipo td) {
 
 void insertarParametros(char* nom, int numArgumentos){
 	int index;
-	
+
 	for(int i=numArgumentos; i>0; --i) {
 		if(i!=numArgumentos)
 			fputs(",",file);
@@ -622,7 +623,7 @@ void insertarParametros(char* nom, int numArgumentos){
 		sent = (char*) malloc(200);;
 		sprintf(sent, "%s %s", midato, nombre);
 		fputs(sent, file);
-	}	
+	}
 }
 
 /*
@@ -698,6 +699,3 @@ char* numTabs(){
 		sprintf(aux, "%s\t", aux);
 	return aux;
 }
-
-
-

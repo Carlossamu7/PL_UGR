@@ -13,7 +13,7 @@ y.tab.c: p3.y lex.yy.c p4.h
 	bison -o y.tab.c p3.y -v
 
 lex.yy.c: p2.l
-	flex p2.l 
+	flex p2.l
 
 cod1: p3 codigo1 p3.y p4.h
 	./p3 codigo1
@@ -37,6 +37,10 @@ cod5: p3 codigo5 p3.y p4.h
 
 cod6: p3 codigo6 p3.y p4.h
 	./p3 codigo6
+	gcc -o p5 codigoGenerado.c -std=c99 -g
+
+ex: p3 examen p3.y p4.h
+	./p3 examen
 	gcc -o p5 codigoGenerado.c -std=c99 -g
 
 clean:

@@ -255,7 +255,7 @@ Node* sum(Node* l, int dat){
 	return l;
 }
 
-Node* subtract(Node* l, float dat){
+Node* subtract(Node* l, int dat){
 	if (l == NULL)
 		return NULL;
 	Node* aux = l;
@@ -268,7 +268,7 @@ Node* subtract(Node* l, float dat){
 	return l;
 }
 
-Node* mult(Node* l, float dat){
+Node* mult(Node* l, int dat){
 	if (l == NULL)
 		return NULL;
 	Node* aux = l;
@@ -281,7 +281,7 @@ Node* mult(Node* l, float dat){
 	return l;
 }
 
-Node* divi(Node* l, float dat){
+Node* divi(Node* l, int dat){
 	if (l == NULL || dat == 0)
 		return NULL;
 	Node* aux = l;
