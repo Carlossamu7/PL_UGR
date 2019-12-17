@@ -26,17 +26,19 @@ int main(){
     en = length(a);
     printf("%d\n", en);
 
-    c = concatenate(a, b);
-    printf("Concateno las listas a y b en c: ");
+    printList(a);
+    printList(b);
+    c = concatenate(&a, &b);
+    printf("Concateno las listas a y b en c: \n");
     printList(a);
     printList(b);
     printList(c);
 
     deleteSince(a, 2);
     printf("Borramos desde la pos 2 en adelante en lista a: "); printList(a);
-    deleteAt(b, 1);
-    printf("Borramos la pos 1 en lista b: "); printList(b);
-    addAt(c, 1, 3);
-    printf("Añadimos en pos 1 de c el valor 3: "); printList(c);
+    deleteAt(b, 0);
+    printf("Borramos la pos 0 en lista b: "); printList(b);
+    addAt(b, 0, 3);
+    printf("Añadimos en pos 0 de c el valor 3: "); printList(b);
     return 0;
 }
