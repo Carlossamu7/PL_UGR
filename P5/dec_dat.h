@@ -237,9 +237,9 @@ Node* divi(Node* l, float dat){
 		return NULL;
 	Node* aux = l;
 	begin(&aux);
-	if(aux != NULL)	aux->data = aux->data * dat;
+	if(aux != NULL)	aux->data = aux->data / dat;
 	while(aux->next != NULL){
-        aux->next->data = aux->next->data * dat;
+        aux->next->data = aux->next->data / dat;
 		next(&aux);
 	}
 	return l;
