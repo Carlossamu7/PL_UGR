@@ -5,7 +5,8 @@ PRINCIPAL{
         CARACTER vc ;
         BOOLEANO vb ;
 
-        LISTA DE ENTERO le, le2 ;
+		LISTA DE ENTERO le;
+        LISTA DE ENTERO le2 ;
         LISTA DE REAL lr ;
     FINVAR 
 	PARA ve :=  0  HASTA 10  PASO 1 {
