@@ -131,7 +131,8 @@ Node* addAt(Node* l, unsigned int pos, int dat){
 	Node* n = malloc(sizeof(Node));
 	n->previous = aux->previous;
 	n->next = aux;
-	(aux->previous)->next = n;
+    if(aux->previous != NULL)
+	   (aux->previous)->next = n;
 	aux->previous = n;
 	n->data = dat;
 	return l;
