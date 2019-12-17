@@ -33,12 +33,13 @@ int main(){
     printList(a);
     printList(b);
     printList(c);
-
     deleteSince(a, 2);
     printf("Borramos desde la pos 2 en adelante en lista a: "); printList(a);
     deleteAt(b, 0);
     printf("Borramos la pos 0 en lista b: "); printList(b);
     addAt(b, 0, 3);
     printf("Añadimos en pos 0 de c el valor 3: "); printList(b);
+    printf("Dato en la pos 0 de b: %d\n", dataAt(b,0));
+    printf("Dato actual de b: %d\n", currentData(b));
     return 0;
 }

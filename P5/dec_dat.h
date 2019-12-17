@@ -168,6 +168,7 @@ Node* deleteSince(Node* l, unsigned int pos){
 	for(unsigned int i=0; i<pos-1; ++i)
 		next(&aux);
     aux->next = NULL;
+
     /*
     Node* node_aux = aux;
 	Node* node_last = aux;
@@ -177,34 +178,11 @@ Node* deleteSince(Node* l, unsigned int pos){
 		node_aux = aux->next;
 		free(aux);
 	}
-	free(node_aux);*/
+	free(node_aux);
+    */
+
     return l;
 }
-
-/*
-Node* concatenate(Node** l1, Node** l2){
-	if (l1 == NULL)
-		return *l2;
-	else if (l2 == NULL)
-		return *l1;
-
-    begin(l1);
-    begin(l2);
-    Node** res;
-
-    do{
-        push(res, currentData(*l1));
-        next(l1);
-    }while((l1!=NULL));
-
-    do{sip
-        push(res, currentData(*l2));
-        next(l2);
-    }while((l2!=NULL));
-
-	return *res;
-}
-*/
 
 Node* concatenate(Node** l1, Node** l2){
     if (l1 == NULL)
